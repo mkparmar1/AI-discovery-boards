@@ -1037,7 +1037,7 @@ export const allTools: Tool[] = [
     "id": "164",
     "title": "InVideo",
     "description": "AI-powered video creation for marketing and social media.",
-    "tags": ["video", "content-creation", "marketing支0",
+    "tags": ["video", "content-creation", "marketing支0"],
     "clickCount": 60000,
     "category": "Video",
     "website": "https://invideo.io"
