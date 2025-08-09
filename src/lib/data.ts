@@ -404,6 +404,1005 @@ export type Post = {
 
 export const allTools: Tool[] = [
   {
+    "id": "101",
+    "title": "CommitCraft",
+    "description": "Write clear and conventional commit messages with AI assistance.",
+    "tags": ["git", "version-control", "development"],
+    "image": "https://www.commitcraft.com/assets/logo.png",
+    "clickCount": 940,
+    "category": "Devtools",
+    "website": "https://www.commitcraft.com"
+  },
+  {
+    "id": "102",
+    "title": "ChatGPT",
+    "description": "Conversational AI for writing, coding, brainstorming, and support.",
+    "tags": ["conversational-ai", "writing", "productivity"],
+    "image": "https://openai.com/favicon.ico",
+    "clickCount": 40000000,
+    "category": "Conversational AI",
+    "website": "https://chat.openai.com"
+  },
+  {
+    "id": "103",
+    "title": "Canva AI",
+    "description": "AI-powered design platform for visuals, presentations, and graphics.",
+    "tags": ["design", "creativity", "graphic-design"],
+    "image": "https://www.canva.com/favicon.ico",
+    "clickCount": 22000000,
+    "category": "Design",
+    "website": "https://www.canva.com"
+  },
+  {
+    "id": "104",
+    "title": "Grammarly",
+    "description": "AI writing assistant for grammar, tone, and clarity checks.",
+    "tags": ["writing", "productivity", "grammar"],
+    "image": "https://static.grammarly.com/assets/logo-dark.svg",
+    "clickCount": 3000000,
+    "category": "Productivity",
+    "website": "https://www.grammarly.com"
+  },
+  {
+    "id": "105",
+    "title": "GitHub Copilot",
+    "description": "AI-driven code completion tool for developers.",
+    "tags": ["coding", "development", "ai-assistant"],
+    "image": "https://github.githubassets.com/images/modules/site/copilot/copilot-logo.svg",
+    "clickCount": 1300000,
+    "category": "Devtools",
+    "website": "https://copilot.github.com"
+  },
+  {
+    "id": "106",
+    "title": "Midjourney",
+    "description": "AI tool for generating high-quality images from text prompts.",
+    "tags": ["image-generation", "creativity", "art"],
+    "image": "https://www.midjourney.com/favicon.ico",
+    "clickCount": 720000,
+    "category": "Creativity",
+    "website": "https://www.midjourney.com"
+  },
+  {
+    "id": "107",
+    "title": "Notion AI",
+    "description": "AI-enhanced note-taking, task management, and collaboration tool.",
+    "tags": ["productivity", "notes", "collaboration"],
+    "image": "https://www.notion.so/images/favicon.ico",
+    "clickCount": 1000000,
+    "category": "Productivity",
+    "website": "https://www.notion.so"
+  },
+  {
+    "id": "108",
+    "title": "Synthesia",
+    "description": "AI platform for creating videos with avatars in multiple languages.",
+    "tags": ["video", "content-creation", "ai-avatars"],
+    "image": "https://www.synthesia.io/favicon.ico",
+    "clickCount": 600000,
+    "category": "Video",
+    "website": "https://www.synthesia.io"
+  },
+  {
+    "id": "109",
+    "title": "Zapier AI",
+    "description": "Automates workflows with AI-driven app integrations.",
+    "tags": ["automation", "productivity", "integrations"],
+    "image": "https://zapier.com/favicon.ico",
+    "clickCount": 310000,
+    "category": "Automation",
+    "website": "https://zapier.com"
+  },
+  {
+    "id": "110",
+    "title": "Runway",
+    "description": "AI-powered video editing and creative content generation.",
+    "tags": ["video-editing", "creativity", "ai-tools"],
+    "image": "https://runwayml.com/favicon.ico",
+    "clickCount": 510000,
+    "category": "Creativity",
+    "website": "https://runwayml.com"
+  },
+  {
+    "id": "111",
+    "title": "Jasper",
+    "description": "AI copywriting for marketing, blogs, and social media content.",
+    "tags": ["content", "marketing", "writing"],
+    "image": "https://www.jasper.ai/favicon.ico",
+    "clickCount": 650000,
+    "category": "Marketing",
+    "website": "https://www.jasper.ai"
+  },
+  {
+    "id": "112",
+    "title": "Fathom",
+    "description": "AI meeting assistant for transcription and summarization.",
+    "tags": ["meetings", "transcription", "productivity"],
+    "image": "https://fathom.video/favicon.ico",
+    "clickCount": 520000,
+    "category": "Productivity",
+    "website": "https://fathom.video"
+  },
+  {
+    "id": "113",
+    "title": "Gemini",
+    "description": "Google’s multimodal AI for text, images, and audio processing.",
+    "tags": ["conversational-ai", "multimodal", "productivity"],
+    "image": "https://www.google.com/favicon.ico",
+    "clickCount": 2340000,
+    "category": "Conversational AI",
+    "website": "https://gemini.google.com"
+  },
+  {
+    "id": "114",
+    "title": "Murf.ai",
+    "description": "AI voiceover tool for professional audio content.",
+    "tags": ["voice", "audio", "content-creation"],
+    "image": "https://murf.ai/favicon.ico",
+    "clickCount": 130000,
+    "category": "Audio",
+    "website": "https://murf.ai"
+  },
+  {
+    "id": "115",
+    "title": "DALL·E",
+    "description": "AI for generating detailed images from text prompts.",
+    "tags": ["image-generation", "creativity", "art"],
+    "image": "https://openai.com/favicon.ico",
+    "clickCount": 800000,
+    "category": "Creativity",
+    "website": "https://openai.com/dall-e"
+  },
+  {
+    "id": "116",
+    "title": "Claude",
+    "description": "Safety-focused AI assistant for thoughtful responses.",
+    "tags": ["conversational-ai", "ethics", "writing"],
+    "image": "https://www.anthropic.com/favicon.ico",
+    "clickCount": 450000,
+    "category": "Conversational AI",
+    "website": "https://www.anthropic.com"
+  },
+  {
+    "id": "117",
+    "title": "Descript",
+    "description": "AI-driven audio and video editing with transcription.",
+    "tags": ["video-editing", "audio", "content-creation"],
+    "image": "https://www.descript.com/favicon.ico",
+    "clickCount": 300000,
+    "category": "Video",
+    "website": "https://www.descript.com"
+  },
+  {
+    "id": "118",
+    "title": "Otter.ai",
+    "description": "Real-time transcription for meetings and lectures.",
+    "tags": ["transcription", "productivity", "meetings"],
+    "image": "https://otter.ai/favicon.ico",
+    "clickCount": 250000,
+    "category": "Productivity",
+    "website": "https://otter.ai"
+  },
+  {
+    "id": "119",
+    "title": "Copy.ai",
+    "description": "AI tool for generating marketing copy and social media posts.",
+    "tags": ["content", "marketing", "writing"],
+    "image": "https://www.copy.ai/favicon.ico",
+    "clickCount": 200000,
+    "category": "Marketing",
+    "website": "https://www.copy.ai"
+  },
+  {
+    "id": "120",
+    "title": "Writesonic",
+    "description": "AI writing assistant for blogs, ads, and product descriptions.",
+    "tags": ["content", "marketing", "seo"],
+    "image": "https://writesonic.com/favicon.ico",
+    "clickCount": 180000,
+    "category": "Marketing",
+    "website": "https://writesonic.com"
+  },
+  {
+    "id": "121",
+    "title": "ElevenLabs",
+    "description": "Lifelike AI voice generation for narration and audiobooks.",
+    "tags": ["voice", "audio", "content-creation"],
+    "image": "https://elevenlabs.io/favicon.ico",
+    "clickCount": 150000,
+    "category": "Audio",
+    "website": "https://elevenlabs.io"
+  },
+  {
+    "id": "122",
+    "title": "Adobe Firefly",
+    "description": "AI-integrated creative suite for image and video effects.",
+    "tags": ["design", "creativity", "video"],
+    "image": "https://www.adobe.com/favicon.ico",
+    "clickCount": 400000,
+    "category": "Creativity",
+    "website": "https://www.adobe.com/firefly"
+  },
+  {
+    "id": "123",
+    "title": "Lumen5",
+    "description": "Turns text into engaging video content for social media.",
+    "tags": ["video", "content-creation", "marketing"],
+    "image": "https://lumen5.com/favicon.ico",
+    "clickCount": 120000,
+    "category": "Video",
+    "website": "https://lumen5.com"
+  },
+  {
+    "id": "124",
+    "title": "DeepL",
+    "description": "High-accuracy AI translation for professional texts.",
+    "tags": ["translation", "language", "productivity"],
+    "image": "https://www.deepl.com/favicon.ico",
+    "clickCount": 600000,
+    "category": "Productivity",
+    "website": "https://www.deepl.com"
+  },
+  {
+    "id": "125",
+    "title": "Perplexity AI",
+    "description": "AI-powered search and research tool for answers and insights.",
+    "tags": ["research", "productivity", "search"],
+    "image": "https://www.perplexity.ai/favicon.ico",
+    "clickCount": 350000,
+    "category": "Productivity",
+    "website": "https://www.perplexity.ai"
+  },
+  {
+    "id": "126",
+    "title": "Tableau",
+    "description": "AI-driven data visualization and analytics platform.",
+    "tags": ["data", "analytics", "business-intelligence"],
+    "image": "https://www.tableau.com/favicon.ico",
+    "clickCount": 200000,
+    "category": "Analytics",
+    "website": "https://www.tableau.com"
+  },
+  {
+    "id": "127",
+    "title": "Hugging Face",
+    "description": "Open-source hub for AI models and datasets.",
+    "tags": ["machine-learning", "development", "open-source"],
+    "image": "https://huggingface.co/favicon.ico",
+    "clickCount": 250000,
+    "category": "Devtools",
+    "website": "https://huggingface.co"
+  },
+  {
+    "id": "128",
+    "title": "Stable Diffusion",
+    "description": "Open-source AI for customizable image generation.",
+    "tags": ["image-generation", "creativity", "open-source"],
+    "image": "https://stability.ai/favicon.ico",
+    "clickCount": 300000,
+    "category": "Creativity",
+    "website": "https://stability.ai"
+  },
+  {
+    "id": "129",
+    "title": "QuillBot",
+    "description": "AI paraphrasing and grammar checking for academic writing.",
+    "tags": ["writing", "education", "grammar"],
+    "image": "https://quillbot.com/favicon.ico",
+    "clickCount": 180000,
+    "category": "Education",
+    "website": "https://quillbot.com"
+  },
+  {
+    "id": "130",
+    "title": "SEMrush",
+    "description": "AI-powered SEO and content optimization tool.",
+    "tags": ["seo", "marketing", "analytics"],
+    "image": "https://www.semrush.com/favicon.ico",
+    "clickCount": 400000,
+    "category": "Marketing",
+    "website": "https://www.semrush.com"
+  },
+  {
+    "id": "131",
+    "title": "Tidio",
+    "description": "AI chatbot for customer support and engagement.",
+    "tags": ["chatbot", "customer-support", "ecommerce"],
+    "image": "https://www.tidio.com/favicon.ico",
+    "clickCount": 100000,
+    "category": "Customer Support",
+    "website": "https://www.tidio.com"
+  },
+  {
+    "id": "132",
+    "title": "LivePerson",
+    "description": "AI-driven customer engagement and messaging platform.",
+    "tags": ["customer-support", "chatbot", "ecommerce"],
+    "image": "https://www.liveperson.com/favicon.ico",
+    "clickCount": 80000,
+    "category": "Customer Support",
+    "website": "https://www.liveperson.com"
+  },
+  {
+    "id": "133",
+    "title": "Leonardo.AI",
+    "description": "AI for high-resolution game and concept art generation.",
+    "tags": ["image-generation", "creativity", "gaming"],
+    "image": "https://leonardo.ai/favicon.ico",
+    "clickCount": 200000,
+    "category": "Creativity",
+    "website": "https://leonardo.ai"
+  },
+  {
+    "id": "134",
+    "title": "Pictory",
+    "description": "AI tool for creating short, shareable video clips.",
+    "tags": ["video", "content-creation", "marketing"],
+    "image": "https://pictory.ai/favicon.ico",
+    "clickCount": 90000,
+    "category": "Video",
+    "website": "https://pictory.ai"
+  },
+  {
+    "id": "135",
+    "title": "Beautiful.ai",
+    "description": "AI-assisted presentation design with smart templates.",
+    "tags": ["presentations", "design", "productivity"],
+    "image": "https://www.beautiful.ai/favicon.ico",
+    "clickCount": 70000,
+    "category": "Productivity",
+    "website": "https://www.beautiful.ai"
+  },
+  {
+    "id": "136",
+    "title": "Compose.ai",
+    "description": "AI autocomplete for emails and documents.",
+    "tags": ["writing", "productivity", "automation"],
+    "image": "https://www.compose.ai/favicon.ico",
+    "clickCount": 60000,
+    "category": "Productivity",
+    "website": "https://www.compose.ai"
+  },
+  {
+    "id": "137",
+    "title": "AIVA",
+    "description": "AI music composition for films and games.",
+    "tags": ["music", "creativity", "audio"],
+    "image": "https://www.aiva.ai/favicon.ico",
+    "clickCount": 50000,
+    "category": "Audio",
+    "website": "https://www.aiva.ai"
+  },
+  {
+    "id": "138",
+    "title": "Surfer SEO",
+    "description": "AI-driven content optimization for search engines.",
+    "tags": ["seo", "marketing", "content"],
+    "image": "https://surferseo.com/favicon.ico",
+    "clickCount": 110000,
+    "category": "Marketing",
+    "website": "https://surferseo.com"
+  },
+  {
+    "id": "139",
+    "title": "Frase.io",
+    "description": "AI for content research and SEO optimization.",
+    "tags": ["seo", "content", "marketing"],
+    "image": "https://www.frase.io/favicon.ico",
+    "clickCount": 80000,
+    "category": "Marketing",
+    "website": "https://www.frase.io"
+  },
+  {
+    "id": "140",
+    "title": "Zoho AI",
+    "description": "AI-powered business management and analytics.",
+    "tags": ["business", "analytics", "automation"],
+    "image": "https://www.zoho.com/favicon.ico",
+    "clickCount": 150000,
+    "category": "Business",
+    "website": "https://www.zoho.com"
+  },
+  {
+    "id": "141",
+    "title": "FaceApp",
+    "description": "AI-driven photo editing for portraits and selfies.",
+    "tags": ["photo-editing", "creativity", "mobile"],
+    "image": "https://www.faceapp.com/favicon.ico",
+    "clickCount": 120000,
+    "category": "Creativity",
+    "website": "https://www.faceapp.com"
+  },
+  {
+    "id": "142",
+    "title": "Google Translate",
+    "description": "AI-powered language translation for global communication.",
+    "tags": ["translation", "language", "productivity"],
+    "image": "https://translate.google.com/favicon.ico",
+    "clickCount": 500000,
+    "category": "Productivity",
+    "website": "https://translate.google.com"
+  },
+  {
+    "id": "143",
+    "title": "Power BI",
+    "description": "AI-enhanced data analytics and visualization tool.",
+    "tags": ["analytics", "data", "business-intelligence"],
+    "image": "https://powerbi.microsoft.com/favicon.ico",
+    "clickCount": 200000,
+    "category": "Analytics",
+    "website": "https://powerbi.microsoft.com"
+  },
+  {
+    "id": "144",
+    "title": "Dialogflow",
+    "description": "AI for building conversational interfaces for commerce.",
+    "tags": ["chatbot", "ecommerce", "conversational-ai"],
+    "image": "https://cloud.google.com/favicon.ico",
+    "clickCount": 90000,
+    "category": "Conversational AI",
+    "website": "https://cloud.google.com/dialogflow"
+  },
+  {
+    "id": "145",
+    "title": "Brandwatch",
+    "description": "AI-driven social media analysis and monitoring.",
+    "tags": ["social-media", "analytics", "marketing"],
+    "image": "https://www.brandwatch.com/favicon.ico",
+    "clickCount": 70000,
+    "category": "Marketing",
+    "website": "https://www.brandwatch.com"
+  },
+  {
+    "id": "146",
+    "title": "ManyChat",
+    "description": "AI chatbot for sales and customer engagement.",
+    "tags": ["chatbot", "sales", "ecommerce"],
+    "image": "https://manychat.com/favicon.ico",
+    "clickCount": 60000,
+    "category": "Customer Support",
+    "website": "https://manychat.com"
+  },
+  {
+    "id": "147",
+    "title": "Einstein Analytics",
+    "description": "AI-powered CRM analytics for business insights.",
+    "tags": ["analytics", "crm", "business"],
+    "image": "https://www.salesforce.com/favicon.ico",
+    "clickCount": 80000,
+    "category": "Analytics",
+    "website": "https://www.salesforce.com/products/einstein"
+  },
+  {
+    "id": "148",
+    "title": "Lovo.ai",
+    "description": "AI text-to-speech for realistic voiceovers.",
+    "tags": ["voice", "audio", "content-creation"],
+    "image": "https://www.lovo.ai/favicon.ico",
+    "clickCount": 50000,
+    "category": "Audio",
+    "website": "https://www.lovo.ai"
+  },
+  {
+    "id": "149",
+    "title": "Coursera AI",
+    "description": "AI-enhanced online learning and course recommendations.",
+    "tags": ["education", "learning", "productivity"],
+    "image": "https://www.coursera.org/favicon.ico",
+    "clickCount": 150000,
+    "category": "Education",
+    "website": "https://www.coursera.org"
+  },
+  {
+    "id": "150",
+    "title": "Semantic Scholar",
+    "description": "AI-powered research tool for academic papers.",
+    "tags": ["research", "education", "ai-tools"],
+    "image": "https://www.semanticscholar.org/favicon.ico",
+    "clickCount": 70000,
+    "category": "Education",
+    "website": "https://www.semanticscholar.org"
+  },
+  {
+    "id": "151",
+    "title": "Drift",
+    "description": "AI-driven conversational marketing platform.",
+    "tags": ["marketing", "chatbot", "sales"],
+    "image": "https://www.drift.com/favicon.ico",
+    "clickCount": 60000,
+    "category": "Marketing",
+    "website": "https://www.drift.com"
+  },
+  {
+    "id": "152",
+    "title": "IBM Watson",
+    "description": "AI platform for research and business applications.",
+    "tags": ["research", "business", "ai-tools"],
+    "image": "https://www.ibm.com/favicon.ico",
+    "clickCount": 100000,
+    "category": "Business",
+    "website": "https://www.ibm.com/watson"
+  },
+  {
+    "id": "153",
+    "title": "Shopify Chat",
+    "description": "AI chatbot for e-commerce customer support.",
+    "tags": ["ecommerce", "chatbot", "customer-support"],
+    "image": "https://www.shopify.com/favicon.ico",
+    "clickCount": 80000,
+    "category": "Customer Support",
+    "website": "https://www.shopify.com"
+  },
+  {
+    "id": "154",
+    "title": "Microsoft Azure AI",
+    "description": "Cloud-based AI for machine learning and analytics.",
+    "tags": ["cloud", "machine-learning", "analytics"],
+    "image": "https://azure.microsoft.com/favicon.ico",
+    "clickCount": 120000,
+    "category": "Devtools",
+    "website": "https://azure.microsoft.com/en-us/solutions/ai"
+  },
+  {
+    "id": "155",
+    "title": "Monday.com AI",
+    "description": "AI-enhanced project management and automation.",
+    "tags": ["project-management", "productivity", "automation"],
+    "image": "https://monday.com/favicon.ico",
+    "clickCount": 90000,
+    "category": "Productivity",
+    "website": "https://monday.com"
+  },
+  {
+    "id": "156",
+    "title": "Adext AI",
+    "description": "AI-powered marketing automation for ads.",
+    "tags": ["marketing", "advertising", "automation"],
+    "image": "https://www.adext.com/favicon.ico",
+    "clickCount": 50000,
+    "category": "Marketing",
+    "website": "https://www.adext.com"
+  },
+  {
+    "id": "157",
+    "title": "Animoto",
+    "description": "AI-driven video editing for marketing and social media.",
+    "tags": ["video", "marketing", "content-creation"],
+    "image": "https://animoto.com/favicon.ico",
+    "clickCount": 60000,
+    "category": "Video",
+    "website": "https://animoto.com"
+  },
+  {
+    "id": "158",
+    "title": "Codex",
+    "description": "AI coding assistance for multiple programming languages.",
+    "tags": ["coding", "development", "ai-assistant"],
+    "image": "https://openai.com/favicon.ico",
+    "clickCount": 70000,
+    "category": "Devtools",
+    "website": "https://openai.com"
+  },
+  {
+    "id": "159",
+    "title": "DeepArt",
+    "description": "AI for transforming photos into artistic styles.",
+    "tags": ["image-generation", "creativity", "art"],
+    "image": "https://deepart.io/favicon.ico",
+    "clickCount": 50000,
+    "category": "Creativity",
+    "website": "https://deepart.io"
+  },
+  {
+    "id": "160",
+    "title": "Sisense",
+    "description": "AI-powered business intelligence and analytics.",
+    "tags": ["analytics", "business-intelligence", "data"],
+    "image": "https://www.sisense.com/favicon.ico",
+    "clickCount": 60000,
+    "category": "Analytics",
+    "website": "https://www.sisense.com"
+  },
+  {
+    "id": "161",
+    "title": "Speechify",
+    "description": "AI text-to-speech for reading documents aloud.",
+    "tags": ["audio", "productivity", "education"],
+    "image": "https://speechify.com/favicon.ico",
+    "clickCount": 70000,
+    "category": "Productivity",
+    "website": "https://speechify.com"
+  },
+  {
+    "id": "162",
+    "title": "Zoho Desk",
+    "description": "AI-powered customer support and ticketing system.",
+    "tags": ["customer-support", "automation", "business"],
+    "image": "https://www.zoho.com/favicon.ico",
+    "clickCount": 80000,
+    "category": "Customer Support",
+    "website": "https://www.zoho.com/desk"
+  },
+  {
+    "id": "163",
+    "title": "AutoML by Google",
+    "description": "AI for building custom machine learning models.",
+    "tags": ["machine-learning", "development", "ai-tools"],
+    "image": "https://cloud.google.com/favicon.ico",
+    "clickCount": 90000,
+    "category": "Devtools",
+    "website": "https://cloud.google.com/automl"
+  },
+  {
+    "id": "164",
+    "title": "InVideo",
+    "description": "AI-powered video creation for marketing and social media.",
+    "tags": ["video", "content-creation", "marketing支0",
+    "clickCount": 60000,
+    "category": "Video",
+    "website": "https://invideo.io"
+  },
+  {
+    "id": "165",
+    "title": "Fireflies.ai",
+    "description": "AI transcription and analysis for meetings.",
+    "tags": ["transcription", "meetings", "productivity"],
+    "image": "https://www.fireflies.ai/favicon.ico",
+    "clickCount": 70000,
+    "category": "Productivity",
+    "website": "https://www.fireflies.ai"
+  },
+  {
+    "id": "166",
+    "title": "Visualping",
+    "description": "AI-driven web monitoring for changes and updates.",
+    "tags": ["automation", "monitoring", "productivity"],
+    "image": "https://www.visualping.io/favicon.ico",
+    "clickCount": 50000,
+    "category": "Productivity",
+    "website": "https://www.visualping.io"
+  },
+  {
+    "id": "167",
+    "title": "Ada",
+    "description": "AI chatbot for automated customer service.",
+    "tags": ["chatbot", "customer-support", "automation"],
+    "image": "https://www.ada.cx/favicon.ico",
+    "clickCount": 60000,
+    "category": "Customer Support",
+    "website": "https://www.ada.cx"
+  },
+  {
+    "id": "168",
+    "title": "Kuki",
+    "description": "AI conversational chatbot for engagement.",
+    "tags": ["chatbot", "conversational-ai", "entertainment"],
+    "image": "https://www.pandorabots.com/favicon.ico",
+    "clickCount": 40000,
+    "category": "Conversational AI",
+    "website": "https://www.pandorabots.com"
+  },
+  {
+    "id": "169",
+    "title": "MarketMuse",
+    "description": "AI for content strategy and optimization.",
+    "tags": ["content", "seo", "marketing"],
+    "image": "https://www.marketmuse.com/favicon.ico",
+    "clickCount": 50000,
+    "category": "Marketing",
+    "website": "https://www.marketmuse.com"
+  },
+  {
+    "id": "170",
+    "title": "Anyword",
+    "description": "AI for performance-driven ad copy generation.",
+    "tags": ["marketing", "content", "advertising"],
+    "image": "https://anyword.com/favicon.ico",
+    "clickCount": 60000,
+    "category": "Marketing",
+    "website": "https://anyword.com"
+  },
+  {
+    "id": "171",
+    "title": "Textio",
+    "description": "AI for inclusive language in job descriptions.",
+    "tags": ["writing", "hr", "productivity"],
+    "image": "https://textio.com/favicon.ico",
+    "clickCount": 40000,
+    "category": "Productivity",
+    "website": "https://textio.com"
+  },
+  {
+    "id": "172",
+    "title": "BigML",
+    "description": "AI platform for data modeling and predictions.",
+    "tags": ["machine-learning", "analytics", "data"],
+    "image": "https://www.bigml.com/favicon.ico",
+    "clickCount": 50000,
+    "category": "Analytics",
+    "website": "https://www.bigml.com"
+  },
+  {
+    "id": "173",
+    "title": "Artbreeder",
+    "description": "AI for collaborative image generation.",
+    "tags": ["image-generation", "creativity", "art"],
+    "image": "https://www.artbreeder.com/favicon.ico",
+    "clickCount": 60000,
+    "category": "Creativity",
+    "website": "https://www.artbreeder.com"
+  },
+  {
+    "id": "174",
+    "title": "LeadGenius",
+    "description": "AI-driven lead generation for businesses.",
+    "tags": ["marketing", "sales", "business"],
+    "image": "https://www.leadgenius.com/favicon.ico",
+    "clickCount": 40000,
+    "category": "Marketing",
+    "website": "https://www.leadgenius.com"
+  },
+  {
+    "id": "175",
+    "title": "Kapwing",
+    "description": "AI-powered online video editing platform.",
+    "tags": ["video", "content-creation", "marketing"],
+    "image": "https://www.kapwing.com/favicon.ico",
+    "clickCount": 70000,
+    "category": "Video",
+    "website": "https://www.kapwing.com"
+  },
+  {
+    "id": "176",
+    "title": "DataRobot",
+    "description": "AI for predictive modeling and analytics.",
+    "tags": ["analytics", "machine-learning", "data"],
+    "image": "https://www.datarobot.com/favicon.ico",
+    "clickCount": 50000,
+    "category": "Analytics",
+    "website": "https://www.datarobot.com"
+  },
+  {
+    "id": "177",
+    "title": "Synthesys",
+    "description": "AI text-to-speech for professional voiceovers.",
+    "tags": ["voice", "audio", "content-creation"],
+    "image": "https://synthesys.io/favicon.ico",
+    "clickCount": 60000,
+    "category": "Audio",
+    "website": "https://synthesys.io"
+  },
+  {
+    "id": "178",
+    "title": "Wordtune",
+    "description": "AI writing enhancement for clarity and style.",
+    "tags": ["writing", "productivity", "content"],
+    "image": "https://www.wordtune.com/favicon.ico",
+    "clickCount": 70000,
+    "category": "Productivity",
+    "website": "https://www.wordtune.com"
+  },
+  {
+    "id": "179",
+    "title": "Coda AI",
+    "description": "AI-powered document management and collaboration.",
+    "tags": ["productivity", "documents", "collaboration"],
+    "image": "https://coda.io/favicon.ico",
+    "clickCount": 50000,
+    "category": "Productivity",
+    "website": "https://coda.io"
+  },
+  {
+    "id": "180",
+    "title": "Emarsys",
+    "description": "AI-driven marketing platform for personalized campaigns.",
+    "tags": ["marketing", "automation", "ecommerce"],
+    "image": "https://www.emarsys.com/favicon.ico",
+    "clickCount": 60000,
+    "category": "Marketing",
+    "website": "https://www.emarsys.com"
+  },
+  {
+    "id": "181",
+    "title": "Duolingo",
+    "description": "AI-enhanced language learning platform.",
+    "tags": ["education", "language", "learning"],
+    "image": "https://www.duolingo.com/favicon.ico",
+    "clickCount": 200000,
+    "category": "Education",
+    "website": "https://www.duolingo.com"
+  },
+  {
+    "id": "182",
+    "title": "Lucidpic",
+    "description": "AI for generating realistic photo portraits.",
+    "tags": ["photo-editing", "creativity", "image-generation"],
+    "image": "https://www.lucidpic.com/favicon.ico",
+    "clickCount": 50000,
+    "category": "Creativity",
+    "website": "https://www.lucidpic.com"
+  },
+  {
+    "id": "183",
+    "title": "Babylon Health",
+    "description": "AI-driven health diagnostics and consultations.",
+    "tags": ["healthcare", "diagnostics", "ai-tools"],
+    "image": "https://www.babylonhealth.com/favicon.ico",
+    "clickCount": 60000,
+    "category": "Healthcare",
+    "website": "https://www.babylonhealth.com"
+  },
+  {
+    "id": "184",
+    "title": "Scribe",
+    "description": "AI for process documentation and workflow guides.",
+    "tags": ["productivity", "documentation", "automation"],
+    "image": "https://www.scribehow.com/favicon.ico",
+    "clickCount": 40000,
+    "category": "Productivity",
+    "website": "https://www.scribehow.com"
+  },
+  {
+    "id": "185",
+    "title": "Rasa",
+    "description": "AI for building conversational chatbots.",
+    "tags": ["chatbot", "conversational-ai", "development"],
+    "image": "https://rasa.com/favicon.ico",
+    "clickCount": 50000,
+    "category": "Devtools",
+    "website": "https://rasa.com"
+  },
+  {
+    "id": "186",
+    "title": "Magisto",
+    "description": "AI-driven video production for marketing.",
+    "tags": ["video", "content-creation", "marketing"],
+    "image": "https://www.magisto.com/favicon.ico",
+    "clickCount": 60000,
+    "category": "Video",
+    "website": "https://www.magisto.com"
+  },
+  {
+    "id": "187",
+    "title": "Darktrace",
+    "description": "AI-powered cybersecurity for threat detection.",
+    "tags": ["cybersecurity", "ai-tools", "security"],
+    "image": "https://www.darktrace.com/favicon.ico",
+    "clickCount": 70000,
+    "category": "Security",
+    "website": "https://www.darktrace.com"
+  },
+  {
+    "id": "188",
+    "title": "Scalenut",
+    "description": "AI for content generation and SEO optimization.",
+    "tags": ["content", "seo", "marketing"],
+    "image": "https://www.scalenut.com/favicon.ico",
+    "clickCount": 50000,
+    "category": "Marketing",
+    "website": "https://www.scalenut.com"
+  },
+  {
+    "id": "189",
+    "title": "Clearscope",
+    "description": "AI-powered SEO content optimization.",
+    "tags": ["seo", "content", "marketing"],
+    "image": "https://www.clearscope.io/favicon.ico",
+    "clickCount": 40000,
+    "category": "Marketing",
+    "website": "https://www.clearscope.io"
+  },
+  {
+    "id": "190",
+    "title": "Rephrase.ai",
+    "description": "AI for personalized video content creation.",
+    "tags": ["video", "content-creation", "marketing"],
+    "image": "https://www.rephrase.ai/favicon.ico",
+    "clickCount": 50000,
+    "category": "Video",
+    "website": "https://www.rephrase.ai"
+  },
+  {
+    "id": "191",
+    "title": "PathAI",
+    "description": "AI for pathology diagnosis in healthcare.",
+    "tags": ["healthcare", "diagnostics", "ai-tools"],
+    "image": "https://www.pathai.com/favicon.ico",
+    "clickCount": 60000,
+    "category": "Healthcare",
+    "website": "https://www.pathai.com"
+  },
+  {
+    "id": "192",
+    "title": "FunnelAI",
+    "description": "AI for customer data analytics and insights.",
+    "tags": ["analytics", "customer-data", "business"],
+    "image": "https://www.funnelai.com/favicon.ico",
+    "clickCount": 40000,
+    "category": "Analytics",
+    "website": "https://www.funnelai.com"
+  },
+  {
+    "id": "193",
+    "title": "Moveworks",
+    "description": "AI for workplace automation and support.",
+    "tags": ["automation", "workplace", "productivity"],
+    "image": "https://www.moveworks.com/favicon.ico",
+    "clickCount": 50000,
+    "category": "Productivity",
+    "website": "https://www.moveworks.com"
+  },
+  {
+    "id": "194",
+    "title": "DeepBrain",
+    "description": "AI for creating video avatars and presentations.",
+    "tags": ["video", "ai-avatars", "content-creation"],
+    "image": "https://www.deepbrain.io/favicon.ico",
+    "clickCount": 60000,
+    "category": "Video",
+    "website": "https://www.deepbrain.io"
+  },
+  {
+    "id": "195",
+    "title": "Deep Vision",
+    "description": "AI for image recognition and analysis.",
+    "tags": ["image-recognition", "ai-tools", "analytics"],
+    "image": "https://www.deepvision.ai/favicon.ico",
+    "clickCount": 50000,
+    "category": "Analytics",
+    "website": "https://www.deepvision.ai"
+  },
+  {
+    "id": "196",
+    "title": "Observe.ai",
+    "description": "AI for call analysis and customer insights.",
+    "tags": ["analytics", "customer-support", "ai-tools"],
+    "image": "https://www.observe.ai/favicon.ico",
+    "clickCount": 40000,
+    "category": "Customer Support",
+    "website": "https://www.observe.ai"
+  },
+  {
+    "id": "197",
+    "title": "Viz.ai",
+    "description": "AI for healthcare diagnostics and stroke detection.",
+    "tags": ["healthcare", "diagnostics", "ai-tools"],
+    "image": "https://www.viz.ai/favicon.ico",
+    "clickCount": 50000,
+    "category": "Healthcare",
+    "website": "https://www.viz.ai"
+  },
+  {
+    "id": "198",
+    "title": "RapidMiner",
+    "description": "AI platform for data science and analytics.",
+    "tags": ["data-science", "analytics", "ai-tools"],
+    "image": "https://www.rapidminer.com/favicon.ico",
+    "clickCount": 60000,
+    "category": "Analytics",
+    "website": "https://www.rapidminer.com"
+  },
+  {
+    "id": "199",
+    "title": "Qlik",
+    "description": "AI-powered business intelligence and analytics.",
+    "tags": ["analytics", "business-intelligence", "data"],
+    "image": "https://www.qlik.com/favicon.ico",
+    "clickCount": 70000,
+    "category": "Analytics",
+    "website": "https://www.qlik.com"
+  },
+  {
+    "id": "200",
+    "title": "Auphonic",
+    "description": "AI for audio post-production and enhancement.",
+    "tags": ["audio", "content-creation", "productivity"],
+    "image": "https://auphonic.com/favicon.ico",
+    "clickCount": 40000,
+    "category": "Audio",
+    "website": "https://auphonic.com"
+  },
+  {
     id: '1',
     title: 'ChatSphere',
     description: 'An advanced conversational AI for seamless dialogue and task automation.',
