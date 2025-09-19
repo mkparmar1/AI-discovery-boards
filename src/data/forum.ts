@@ -1,4 +1,4 @@
-import { ForumPost, Reply, User } from '@/types'
+import { ForumPost, User } from '@/types'
 
 // Sample users for forum posts
 const sampleUsers: User[] = [

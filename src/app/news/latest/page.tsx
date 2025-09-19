@@ -17,7 +17,7 @@ const LatestNewsPage = () => {
   const filteredNews = newsArticles.filter(article => {
     const matchesSearch = article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          article.summary.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         article.source.toLowerCase().includes(searchTerm.toLowerCase())
+                         article.sourceUrl.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesCategory = !selectedCategory || article.category === selectedCategory
     return matchesSearch && matchesCategory
   })
