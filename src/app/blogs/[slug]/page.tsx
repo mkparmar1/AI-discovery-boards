@@ -9,9 +9,9 @@ import MainLayout from '@/components/layout/MainLayout'
 import Link from 'next/link'
 
 interface BlogDetailPageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 // Helper function to create URL-friendly slugs from titles

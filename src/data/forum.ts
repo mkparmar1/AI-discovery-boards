@@ -69,45 +69,7 @@ const sampleUsers: User[] = [
   }
 ]
 
-const createReplies = (postId: string, count: number): Reply[] => {
-  const replies: Reply[] = []
-  const users = sampleUsers.slice(1) // Exclude the first user for variety
-  
-  for (let i = 0; i < count; i++) {
-    const user = users[i % users.length]
-    const baseDate = new Date('2024-01-01')
-    const replyDate = new Date(baseDate.getTime() + (i * 24 * 60 * 60 * 1000))
-    
-    replies.push({
-      id: `${postId}-reply-${i + 1}`,
-      content: getReplyContent(i),
-      author: user,
-      createdAt: replyDate.toISOString(),
-      updatedAt: replyDate.toISOString(),
-      likes: Math.floor(Math.random() * 20),
-      parentId: i > 0 && Math.random() > 0.7 ? `${postId}-reply-${i}` : undefined
-    })
-  }
-  
-  return replies
-}
 
-const getReplyContent = (index: number): string => {
-  const contents = [
-    "Great question! I\'ve been working with similar models and found that fine-tuning on domain-specific data really helps. Have you tried adjusting the learning rate?",
-    "I had the same issue last month. The solution was to increase the batch size and use gradient accumulation. Here\'s a code snippet that worked for me: ```python\noptimizer = torch.optim.Adam(model.parameters(), lr=0.001)\n```",
-    "This is a common problem in NLP. You might want to look into using pre-trained embeddings like Word2Vec or GloVe as a starting point.",
-    "Thanks for sharing this! I\'ve bookmarked it for later. The approach you described is similar to what we use at my company.",
-    "Have you considered using transfer learning? It can significantly reduce training time and improve performance on smaller datasets.",
-    "Interesting perspective! I disagree with point 3 though. In my experience, regularization techniques like dropout are still very effective.",
-    "Could you share more details about your dataset? The preprocessing steps might be crucial for getting better results.",
-    "This reminds me of a paper I read recently: \'Attention Is All You Need\'. The transformer architecture might be worth exploring for your use case.",
-    "I\'m a beginner in this area, but this discussion is really helpful. Are there any good resources you\'d recommend for learning more?",
-    "Update: I tried the suggested approach and it worked! My model accuracy improved from 78% to 85%. Thanks everyone!"
-  ]
-  
-  return contents[index % contents.length]
-}
 
 export const forumPosts: ForumPost[] = [
   // ... your forum posts as before
