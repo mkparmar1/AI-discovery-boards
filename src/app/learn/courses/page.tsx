@@ -138,7 +138,7 @@ const CoursesPage = () => {
               </div>
 
               <div className="mb-4">
-                <h4 className="text-sm font-medium mb-2">Skills you'll learn:</h4>
+                <h4 className="text-sm font-medium mb-2">Skills you&apos;ll learn:</h4>
                 <div className="flex flex-wrap gap-1">
                   {course.skills.slice(0, 3).map(skill => (
                     <Badge key={skill} variant="outline" className="text-xs">

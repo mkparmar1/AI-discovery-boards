@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Search, Filter, Clock, Users, Star, Play, BookOpen, Video, Award, MapPin, Brain } from 'lucide-react'
+import { Search, Filter, Clock, Users, Star, Play, BookOpen, Video, Award, MapPin } from 'lucide-react'
 
 interface Course {
   id: string

@@ -141,7 +141,7 @@ const ToolsPage = () => {
       {/* End of Results */}
       {!hasMore && !isLoading && (
         <div className="text-center py-8">
-          <p className="text-muted-foreground">You've reached the end! All {allTools.length} tools loaded.</p>
+          <p className="text-muted-foreground">You&apos;ve reached the end! All {allTools.length} tools loaded.</p>
         </div>
       )}
 

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react'
 import { allPosts } from '@/lib/data'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ExternalLink, Loader2, Calendar, Clock } from 'lucide-react'
@@ -184,7 +184,7 @@ const BlogsPage = () => {
         {/* End of Results */}
         {!hasMore && displayedPosts.length > 0 && (
           <div className="text-center py-8">
-            <p className="text-muted-foreground">You've reached the end! {allPosts.length} posts loaded.</p>
+            <p className="text-muted-foreground">You&apos;ve reached the end! {allPosts.length} posts loaded.</p>
           </div>
         )}
       </div>

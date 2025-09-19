@@ -2,21 +2,21 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { ArrowRight, Zap, BookOpen, TrendingUp, Users, Search, Star, Clock, ExternalLink, Calendar, FileText } from 'lucide-react'
+import { ArrowRight, Zap, Users, Star, ExternalLink, Calendar, FileText } from 'lucide-react'
 import MainLayout from '@/components/layout/MainLayout'
-import Footer from '@/components/layout/Footer'
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { aiTools, researchPapers, courses, newsArticles } from '@/data/data'
+import { aiTools, researchPapers, courses } from '@/data/data'
 import { aiPrompts } from '@/lib/data'
 import { formatDate } from '@/lib/utils'
 
 export default function Home() {
   const featuredTools = aiTools.slice(0, 3)
   const featuredPapers = researchPapers.slice(0, 3)
-  const featuredCourses = courses.slice(0, 3)
-  const latestNews = newsArticles.slice(0, 3)
+
+
   const latestPrompts = aiPrompts.slice(0, 3)
 
   return (
@@ -254,76 +254,7 @@ export default function Home() {
 
 
 
-      {/* Latest News */}
-      <section className="py-10">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-3xl font-bold text-foreground">📰 AI News & Trends</h2>
-            <p className="text-muted-foreground mt-2">Stay informed about the latest developments in AI</p>
-          </div>
-          <Button variant="outline" asChild>
-            <Link href="/news">
-              Read More News
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {latestNews.map((article) => (
-            <Card key={article.id} className="group hover:shadow-lg transition-all duration-300 border border-border bg-card flex flex-col h-full">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <Badge variant="secondary" className="text-xs">
-                    {article.category}
-                  </Badge>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Calendar className="h-3 w-3" />
-                    <span>{formatDate(article.publishedDate)}</span>
-                  </div>
-                </div>
-                
-                <CardTitle className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                  {article.title}
-                </CardTitle>
-                
-                <CardDescription className="text-sm text-muted-foreground line-clamp-1">
-                  by {article.author} • {article.readTime} min read
-                </CardDescription>
-              </CardHeader>
-              
-              <CardContent className="flex-1 flex flex-col">
-                <p className="text-sm text-muted-foreground mb-4 line-clamp-3 flex-1">
-                  {article.summary}
-                </p>
-                
-                <div className="flex flex-wrap gap-1 mb-4">
-                  {article.tags.slice(0, 3).map((tag) => (
-                    <Badge key={tag} variant="outline" className="text-xs">
-                      {tag}
-                    </Badge>
-                  ))}
-                  {article.tags.length > 3 && (
-                    <Badge variant="outline" className="text-xs">
-                      +{article.tags.length - 3}
-                    </Badge>
-                  )}
-                </div>
-                
-                <Button 
-                  variant="outline"
-                  className="w-full mt-auto bg-white hover:bg-blue-50 text-blue-600 border-blue-300 dark:bg-transparent dark:border-border dark:text-foreground dark:hover:bg-accent dark:hover:text-accent-foreground font-medium transition-all duration-300 group-hover:shadow-lg" 
-                  asChild
-                >
-                  <Link href={`/news/${article.id}`}>
-                    Read Article
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
+
     </MainLayout>
   )
 }

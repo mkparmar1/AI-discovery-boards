@@ -1,16 +1,14 @@
 'use client'
 
 import React, { useState, useEffect, useCallback } from 'react'
-import { Copy, Check, Star, Tag, Zap, Loader2 } from 'lucide-react'
+import { Copy, Check, Star, Zap, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import MainLayout from '@/components/layout/MainLayout'
 import { aiPrompts } from '@/lib/data'
 
-interface CopiedState {
-  [key: string]: boolean
-}
+
 
 const ITEMS_PER_PAGE = 12
 
@@ -179,7 +177,7 @@ export default function PromptsPage() {
           {/* End of Results */}
           {!hasMore && !isLoading && (
             <div className="text-center py-8">
-              <p className="text-muted-foreground">You've reached the end! All {aiPrompts.length} prompts loaded.</p>
+              <p className="text-muted-foreground">You&apos;ve reached the end! All {aiPrompts.length} prompts loaded.</p>
             </div>
           )}
         </div>

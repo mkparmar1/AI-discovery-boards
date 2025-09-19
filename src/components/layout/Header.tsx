@@ -2,25 +2,15 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { Search, Menu, X, Bell, User } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import ThemeToggle from '@/components/ui/ThemeToggle'
-import { cn } from '@/lib/utils'
+
 
 interface HeaderProps {
-  className?: string
   onMenuToggle?: () => void
-  isMobileMenuOpen?: boolean
 }
 
-const Header: React.FC<HeaderProps> = ({ className, onMenuToggle, isMobileMenuOpen }) => {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [isSearchFocused, setIsSearchFocused] = useState(false)
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    // TODO: Implement search functionality
-    console.log('Search query:', searchQuery)
-  }
+const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

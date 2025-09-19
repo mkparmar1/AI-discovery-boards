@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Calendar, Clock, ExternalLink } from 'lucide-react'
 import MainLayout from '@/components/layout/MainLayout'
-import Image from 'next/image'
+
 import Link from 'next/link'
 
 interface BlogDetailPageProps {

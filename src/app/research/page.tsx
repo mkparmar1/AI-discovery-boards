@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ExternalLink, Loader2, Calendar, Users, FileText } from 'lucide-react'
 import MainLayout from '@/components/layout/MainLayout'
-import Link from 'next/link'
+
 
 const ITEMS_PER_PAGE = 12
 
@@ -157,7 +157,7 @@ const ResearchPage = () => {
         {/* End Message */}
         {!hasMore && !isLoading && displayedPapers.length > 0 && (
           <div className="text-center py-8">
-            <p className="text-muted-foreground">You've reached the end of our research papers collection.</p>
+            <p className="text-muted-foreground">You&apos;ve reached the end of our research papers collection.</p>
           </div>
         )}
 

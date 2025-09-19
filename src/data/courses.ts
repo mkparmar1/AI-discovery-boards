@@ -1,4 +1,4 @@
-import { Course, CourseModule, Lesson } from '@/types'
+import { Course, Lesson } from '@/types'
 
 const createLessons = (count: number, type: 'video' | 'text' | 'quiz' | 'exercise' = 'video'): Lesson[] => {
   return Array.from({ length: count }, (_, i) => ({
