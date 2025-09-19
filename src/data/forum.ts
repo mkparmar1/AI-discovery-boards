@@ -94,15 +94,15 @@ const createReplies = (postId: string, count: number): Reply[] => {
 
 const getReplyContent = (index: number): string => {
   const contents = [
-    "Great question! I've been working with similar models and found that fine-tuning on domain-specific data really helps. Have you tried adjusting the learning rate?",
-    "I had the same issue last month. The solution was to increase the batch size and use gradient accumulation. Here's a code snippet that worked for me: ```python\noptimizer = torch.optim.Adam(model.parameters(), lr=0.001)\n```",
+    "Great question! I\'ve been working with similar models and found that fine-tuning on domain-specific data really helps. Have you tried adjusting the learning rate?",
+    "I had the same issue last month. The solution was to increase the batch size and use gradient accumulation. Here\'s a code snippet that worked for me: ```python\noptimizer = torch.optim.Adam(model.parameters(), lr=0.001)\n```",
     "This is a common problem in NLP. You might want to look into using pre-trained embeddings like Word2Vec or GloVe as a starting point.",
-    "Thanks for sharing this! I've bookmarked it for later. The approach you described is similar to what we use at my company.",
+    "Thanks for sharing this! I\'ve bookmarked it for later. The approach you described is similar to what we use at my company.",
     "Have you considered using transfer learning? It can significantly reduce training time and improve performance on smaller datasets.",
     "Interesting perspective! I disagree with point 3 though. In my experience, regularization techniques like dropout are still very effective.",
     "Could you share more details about your dataset? The preprocessing steps might be crucial for getting better results.",
-    "This reminds me of a paper I read recently: 'Attention Is All You Need'. The transformer architecture might be worth exploring for your use case.",
-    "I'm a beginner in this area, but this discussion is really helpful. Are there any good resources you'd recommend for learning more?",
+    "This reminds me of a paper I read recently: \'Attention Is All You Need\'. The transformer architecture might be worth exploring for your use case.",
+    "I\'m a beginner in this area, but this discussion is really helpful. Are there any good resources you\'d recommend for learning more?",
     "Update: I tried the suggested approach and it worked! My model accuracy improved from 78% to 85%. Thanks everyone!"
   ]
   
@@ -113,9 +113,9 @@ export const forumPosts: ForumPost[] = [
   {
     id: '1',
     title: 'Best practices for fine-tuning large language models?',
-    content: `I'm working on fine-tuning a BERT model for sentiment analysis on customer reviews. I have about 50k labeled examples, but I'm struggling with overfitting.
+    content: `I\'m working on fine-tuning a BERT model for sentiment analysis on customer reviews. I have about 50k labeled examples, but I\'m struggling with overfitting.
 
-Here's what I've tried so far:
+Here\'s what I\'ve tried so far:
 - Reduced learning rate to 2e-5
 - Added dropout layers
 - Used early stopping
@@ -128,7 +128,7 @@ Dataset details:
 - Average review length: 150 words
 - Balanced across rating categories
 
-I'm using PyTorch and Hugging Face Transformers. Any help would be appreciated!`,
+I\'m using PyTorch and Hugging Face Transformers. Any help would be appreciated!`,
     author: sampleUsers[0],
     category: 'Machine Learning',
     tags: ['NLP', 'BERT', 'Fine-tuning', 'Overfitting', 'PyTorch'],
@@ -168,7 +168,7 @@ Built a real-time object detection system using YOLOv8 that can identify and tra
 
 **Demo:** [GitHub Repository](https://github.com/example/object-detection)
 
-Feel free to ask questions or suggest improvements! I'm planning to add support for custom object classes next.
+Feel free to ask questions or suggest improvements! I\'m planning to add support for custom object classes next.
 
 **What I learned:**
 - Data augmentation is crucial for robust performance
@@ -188,7 +188,7 @@ Feel free to ask questions or suggest improvements! I'm planning to add support 
   {
     id: '3',
     title: 'Career advice: Transitioning from software engineering to ML?',
-    content: `I'm a software engineer with 5 years of experience in web development (React, Node.js, Python). I'm really interested in transitioning to machine learning but feeling overwhelmed by where to start.
+    content: `I\'m a software engineer with 5 years of experience in web development (React, Node.js, Python). I\'m really interested in transitioning to machine learning but feeling overwhelmed by where to start.
 
 **My background:**
 - Strong programming skills (Python, JavaScript, SQL)
@@ -197,14 +197,14 @@ Feel free to ask questions or suggest improvements! I'm planning to add support 
 - CS degree (graduated 2019)
 
 **Questions:**
-1. Should I pursue a master's degree or self-study?
-2. What's the best learning path for someone with my background?
+1. Should I pursue a master\'s degree or self-study?
+2. What\'s the best learning path for someone with my background?
 3. How important are ML certifications?
 4. Should I start with a data analyst role first?
 5. What projects should I build for my portfolio?
 
 **My plan so far:**
-- Complete Andrew Ng's ML course
+- Complete Andrew Ng\'s ML course
 - Build 3-4 ML projects
 - Learn pandas, scikit-learn, TensorFlow
 - Apply for ML engineer positions
@@ -226,7 +226,7 @@ Also, are there any companies known for hiring career changers into ML roles?`,
   {
     id: '4',
     title: 'Deep dive: Understanding transformer attention mechanisms',
-    content: `I've been studying transformer architectures and want to share my understanding of attention mechanisms. This is both for my own learning and to help others who might be struggling with the concept.
+    content: `I\'ve been studying transformer architectures and want to share my understanding of attention mechanisms. This is both for my own learning and to help others who might be struggling with the concept.
 
 ## What is Attention?
 
@@ -304,7 +304,7 @@ Would love to hear your thoughts and any corrections to my understanding!`,
   {
     id: '5',
     title: 'Help needed: Model deployment on AWS SageMaker',
-    content: `I'm trying to deploy my trained PyTorch model on AWS SageMaker but running into several issues. Hoping someone with experience can help!
+    content: `I\'m trying to deploy my trained PyTorch model on AWS SageMaker but running into several issues. Hoping someone with experience can help!
 
 **Model Details:**
 - Custom PyTorch model for image classification
@@ -312,7 +312,7 @@ Would love to hear your thoughts and any corrections to my understanding!`,
 - Input: 224x224 RGB images
 - Output: 10 classes
 
-**Issues I'm facing:**
+**Issues I\'m facing:**
 
 1. **Inference script errors:** Getting import errors when SageMaker tries to load my model
 2. **Container issues:** Custom dependencies not installing properly
@@ -342,8 +342,8 @@ def predict_fn(input_data, model):
 
 **Specific questions:**
 
-1. What's the best way to handle custom dependencies?
-2. Should I use SageMaker's built-in PyTorch container or create a custom one?
+1. What\'s the best way to handle custom dependencies?
+2. Should I use SageMaker\'s built-in PyTorch container or create a custom one?
 3. How do I optimize for cost vs performance?
 4. Any tips for debugging deployment issues?
 
@@ -352,7 +352,7 @@ def predict_fn(input_data, model):
 ModuleNotFoundError: No module named 'efficientnet_pytorch'
 ```
 
-I've tried adding it to requirements.txt but still getting errors. Any help would be greatly appreciated!
+I\'ve tried adding it to requirements.txt but still getting errors. Any help would be greatly appreciated!
 
 **Budget constraints:** Looking for the most cost-effective solution for ~1000 predictions per day.`,
     author: sampleUsers[4],
