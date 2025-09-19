@@ -1,0 +1,61 @@
+// Remaining 85 prompts to add (IDs 16-100)
+
+  {
+    id: '16',
+    title: 'Fitness & Nutrition Coach',
+    prompt: 'Create a personalized fitness and nutrition plan for [GOALS] (weight loss/muscle gain/endurance). Include: 1) Weekly workout schedule 2) Meal plans with macros 3) Supplement recommendations 4) Progress tracking methods 5) Motivation strategies 6) Injury prevention tips. Consider: Age [AGE], fitness level [LEVEL], dietary restrictions [RESTRICTIONS].',
+    category: 'Health & Fitness',
+    tags: ['fitness', 'nutrition', 'health', 'workout'],
+    description: 'Personalized fitness and nutrition planning',
+    useCase: 'Health coaching, fitness planning, wellness programs',
+    difficulty: 'Intermediate',
+    createdAt: '2024-01-30'
+  },
+  {
+    id: '17',
+    title: 'Legal Document Analyzer',
+    prompt: 'Review this [CONTRACT/AGREEMENT] and provide analysis: 1) Key terms and obligations 2) Potential risks and liabilities 3) Missing clauses or protections 4) Negotiation points 5) Compliance requirements 6) Plain English summary. Document: [DOCUMENT]. Note: This is for informational purposes only, not legal advice.',
+    category: 'Legal',
+    tags: ['legal analysis', 'contracts', 'compliance'],
+    description: 'Legal document review and analysis',
+    useCase: 'Contract review, legal research, compliance checking',
+    difficulty: 'Advanced',
+    createdAt: '2024-01-31'
+  },
+  {
+    id: '18',
+    title: 'Travel Itinerary Planner',
+    prompt: 'Plan a [DURATION] trip to [DESTINATION] for [TRAVELERS]. Include: 1) Daily itinerary with attractions 2) Accommodation recommendations 3) Transportation options 4) Local cuisine suggestions 5) Budget breakdown 6) Cultural tips and etiquette 7) Packing checklist. Budget: [BUDGET], Interests: [INTERESTS].',
+    category: 'Travel',
+    tags: ['travel planning', 'itinerary', 'vacation'],
+    description: 'Comprehensive travel planning and itinerary creation',
+    useCase: 'Travel planning, vacation organization, tourism',
+    difficulty: 'Beginner',
+    createdAt: '2024-02-01'
+  },
+  {
+    id: '19',
+    title: 'Grant Writing Specialist',
+    prompt: 'Write a compelling grant proposal for [PROJECT/ORGANIZATION]. Include: 1) Executive summary 2) Problem statement with data 3) Project description and methodology 4) Budget justification 5) Timeline and milestones 6) Evaluation metrics 7) Sustainability plan. Grant type: [GRANT_TYPE], Amount: [AMOUNT].',
+    category: 'Non-Profit',
+    tags: ['grant writing', 'fundraising', 'non-profit'],
+    description: 'Professional grant proposal writing',
+    useCase: 'Non-profit fundraising, research funding, project grants',
+    difficulty: 'Advanced',
+    createdAt: '2024-02-02'
+  },
+  {
+    id: '20',
+    title: 'Cybersecurity Audit Consultant',
+    prompt: 'Conduct a cybersecurity assessment for [ORGANIZATION/SYSTEM]. Evaluate: 1) Network security vulnerabilities 2) Data protection measures 3) Access control systems 4) Incident response procedures 5) Compliance with regulations 6) Employee security awareness 7) Recommendations for improvement.',
+    category: 'Cybersecurity',
+    tags: ['cybersecurity', 'audit', 'security assessment'],
+    description: 'Comprehensive cybersecurity evaluation and recommendations',
+    useCase: 'Security audits, compliance checking, risk assessment',
+    difficulty: 'Advanced',
+    createdAt: '2024-02-03'
+  }
+
+// Continue with more prompts...
+// This file contains the structure for the remaining 85 prompts
+// Each prompt follows the same format with unique IDs, titles, categories, etc.
