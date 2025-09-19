@@ -1,4 +1,4 @@
-import { AITool, ResearchPaper, Course, NewsArticle } from '../types'
+import { AITool, ResearchPaper, Course } from '../types'
 
 // AI Tools Data
 export const aiTools: AITool[] = [
@@ -170,61 +170,7 @@ export const researchPapers: ResearchPaper[] = [
   }
 ]
 
-// News Articles Data
-export const newsArticles: NewsArticle[] = [
-  {
-    id: '1',
-    title: 'OpenAI Announces GPT-4 Turbo with Enhanced Capabilities',
-    summary: 'OpenAI releases GPT-4 Turbo with improved performance, longer context window, and reduced costs.',
-    content: 'OpenAI has announced the release of GPT-4 Turbo, featuring significant improvements...',
-    author: 'Sarah Chen',
-    publishedDate: new Date('2024-01-15'),
-    category: 'AI News',
-    tags: ['OpenAI', 'GPT-4', 'Language Models', 'AI'],
-    imageUrl: '/news/gpt4-turbo.jpg',
-    sourceUrl: 'https://openai.com/blog/gpt-4-turbo',
-    readTime: 5
-  },
-  {
-    id: '2',
-    title: 'Google Introduces Gemini: A New Era of AI Models',
-    summary: 'Google unveils Gemini, its most capable AI model designed to be multimodal from the ground up.',
-    content: 'Google has introduced Gemini, a new family of AI models that represents a significant leap...',
-    author: 'Michael Rodriguez',
-    publishedDate: new Date('2024-01-12'),
-    category: 'AI News',
-    tags: ['Google', 'Gemini', 'Multimodal AI', 'AI Models'],
-    imageUrl: '/news/gemini.jpg',
-    sourceUrl: 'https://blog.google/technology/ai/google-gemini-ai',
-    readTime: 7
-  },
-  {
-    id: '3',
-    title: 'Meta Releases Code Llama: AI Assistant for Programming',
-    summary: 'Meta open-sources Code Llama, a specialized version of Llama 2 designed for code generation.',
-    content: 'Meta has released Code Llama, an AI model specifically trained for programming tasks...',
-    author: 'Emily Watson',
-    publishedDate: new Date('2024-01-10'),
-    category: 'Development',
-    tags: ['Meta', 'Code Llama', 'Programming', 'Open Source'],
-    imageUrl: '/news/code-llama.jpg',
-    sourceUrl: 'https://ai.meta.com/blog/code-llama-large-language-model-coding',
-    readTime: 6
-  },
-  {
-    id: '4',
-    title: 'AI Safety Summit 2024: Global Leaders Discuss AI Governance',
-    summary: 'World leaders and AI experts gather to discuss the future of AI safety and regulation.',
-    content: 'The AI Safety Summit 2024 brought together government officials, researchers, and industry leaders...',
-    author: 'David Kim',
-    publishedDate: new Date('2024-01-08'),
-    category: 'AI Policy',
-    tags: ['AI Safety', 'Governance', 'Policy', 'Summit'],
-    imageUrl: '/news/ai-safety-summit.jpg',
-    sourceUrl: 'https://aisafetysummit.gov.uk',
-    readTime: 8
-  }
-]
+
 
 // Courses Data
 export const courses: Course[] = [
@@ -324,17 +270,4 @@ export const courseCategories = [
   'Programming',
   'Mathematics',
   'Statistics'
-]
-
-export const newsCategories = [
-  'AI News',
-  'Research',
-  'Industry',
-  'Policy',
-  'Technology',
-  'Startups',
-  'Investment',
-  'Ethics',
-  'Education',
-  'Career'
 ]

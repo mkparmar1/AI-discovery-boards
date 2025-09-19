@@ -64,19 +64,7 @@ export interface Lesson {
   completed?: boolean
 }
 
-export interface NewsArticle {
-  id: string
-  title: string
-  summary: string
-  content: string
-  author: string
-  publishedDate: Date
-  category: string
-  tags: string[]
-  imageUrl?: string
-  sourceUrl: string
-  readTime: number
-}
+
 
 export interface CareerPath {
   id: string
@@ -157,4 +145,6 @@ export type Theme = 'light' | 'dark'
 export interface ThemeContextType {
   theme: Theme
   toggleTheme: () => void
+  setLightTheme: () => void
+  setDarkTheme: () => void
 }

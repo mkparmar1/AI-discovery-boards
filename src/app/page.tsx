@@ -240,7 +240,7 @@ export default function Home() {
                   className="w-full mt-auto bg-white hover:bg-blue-50 text-blue-600 border-blue-300 dark:bg-transparent dark:border-border dark:text-foreground dark:hover:bg-accent dark:hover:text-accent-foreground font-medium transition-all duration-300 group-hover:shadow-lg" 
                   asChild
                 >
-                  <a href={paper.arxivUrl} target="_blank" rel="noopener noreferrer">
+                  <a href={paper.pdfUrl} target="_blank" rel="noopener noreferrer">
                     Read Paper
                     <ExternalLink className="ml-2 h-4 w-4" />
                   </a>

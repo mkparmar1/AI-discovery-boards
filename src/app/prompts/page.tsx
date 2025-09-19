@@ -91,7 +91,7 @@ export default function PromptsPage() {
                     {prompt.category}
                   </Badge>
                   <Badge 
-                    variant={prompt.difficulty === 'Easy' ? 'default' : prompt.difficulty === 'Medium' ? 'secondary' : 'destructive'}
+                    variant={prompt.difficulty === 'Beginner' ? 'default' : prompt.difficulty === 'Intermediate' ? 'secondary' : 'destructive'}
                     className="text-xs"
                   >
                     <Zap className="h-3 w-3 mr-1" />

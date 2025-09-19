@@ -26,7 +26,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, className }) => {
       {/* Header */}
       <Header 
         onMenuToggle={toggleMobileMenu}
-        isMobileMenuOpen={isMobileMenuOpen}
       />
       
       <div className="flex">
