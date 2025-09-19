@@ -7,23 +7,7 @@ import {
   Home,
   Wrench,
   FileText,
-
-  MapPin,
-  Users,
-  ChevronDown,
-  ChevronRight,
-  Bot,
-  Brain,
-  Eye,
   MessageSquare,
-  Database,
-  Cloud,
-  Zap,
-  BookOpen,
-  Video,
-  Award,
-  Briefcase,
-  Code,
   Microscope
 } from 'lucide-react'
 import { cn } from '@/lib/utils'

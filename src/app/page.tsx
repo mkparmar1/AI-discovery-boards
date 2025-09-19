@@ -8,9 +8,8 @@ import MainLayout from '@/components/layout/MainLayout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { aiTools, researchPapers, courses } from '@/data/data'
+import { aiTools, researchPapers } from '@/data/data'
 import { aiPrompts } from '@/lib/data'
-import { formatDate } from '@/lib/utils'
 
 export default function Home() {
   const featuredTools = aiTools.slice(0, 3)

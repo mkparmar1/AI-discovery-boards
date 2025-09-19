@@ -80,7 +80,7 @@ export default function PromptsPage() {
 
         {/* Prompts Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displayedPrompts.map((prompt, index) => (
+          {displayedPrompts.map((prompt) => (
             <Card key={prompt.id} className="group relative overflow-hidden bg-card border border-border/50 hover:border-primary/30 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between mb-3">

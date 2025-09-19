@@ -128,7 +128,7 @@ Dataset details:
 - Average review length: 150 words
 - Balanced across rating categories
 
-I\'m using PyTorch and Hugging Face Transformers. Any help would be appreciated!`,
+I'm using PyTorch and Hugging Face Transformers. Any help would be appreciated!`,
     author: sampleUsers[0],
     category: 'Machine Learning',
     tags: ['NLP', 'BERT', 'Fine-tuning', 'Overfitting', 'PyTorch'],
