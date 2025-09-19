@@ -80,7 +80,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className, isOpen = true, onClose }) 
       {/* Sidebar */}
       <aside
         className={cn(
-          "w-64 bg-sidebar border-r border-border h-[calc(100vh-4rem)] overflow-y-auto",
+          "w-64 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:bg-transparent border-r border-border h-[calc(100vh-4rem)] overflow-y-auto",
           "scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent",
           "fixed left-0 top-16 z-50 transform transition-transform duration-300 ease-in-out md:fixed md:top-16 md:z-auto md:translate-x-0",
           isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
