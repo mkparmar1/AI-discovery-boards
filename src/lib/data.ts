@@ -539,7 +539,7 @@ export const allTools: Tool[] = [
     "tags": ["meetings", "transcription", "productivity"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 520000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://fathom.video"
   },
   {
@@ -559,7 +559,7 @@ export const allTools: Tool[] = [
     "tags": ["image-generation", "creativity", "art"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 800000,
-    "category": "Creativity",
+    "category": "Image",
     "website": "https://openai.com/dall-e"
   },
   {
@@ -579,7 +579,7 @@ export const allTools: Tool[] = [
     "tags": ["transcription", "productivity", "meetings"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 250000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://otter.ai"
   },
   {
@@ -599,7 +599,7 @@ export const allTools: Tool[] = [
     "tags": ["content", "marketing", "seo"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 180000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://writesonic.com"
   },
   {
@@ -619,7 +619,7 @@ export const allTools: Tool[] = [
     "tags": ["design", "creativity", "video"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 400000,
-    "category": "Creativity",
+    "category": "Image",
     "website": "https://www.adobe.com/firefly"
   },
   {
@@ -629,7 +629,7 @@ export const allTools: Tool[] = [
     "tags": ["video", "content-creation", "marketing"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 120000,
-    "category": "Video",
+    "category": "Other",
     "website": "https://lumen5.com"
   },
   {
@@ -639,7 +639,7 @@ export const allTools: Tool[] = [
     "tags": ["translation", "language", "productivity"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 600000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://www.deepl.com"
   },
   {
@@ -649,7 +649,7 @@ export const allTools: Tool[] = [
     "tags": ["research", "productivity", "search"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 350000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://www.perplexity.ai"
   },
   {
@@ -679,7 +679,7 @@ export const allTools: Tool[] = [
     "tags": ["image-generation", "creativity", "open-source"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 300000,
-    "category": "Creativity",
+    "category": "Image",
     "website": "https://stability.ai"
   },
   {
@@ -699,7 +699,7 @@ export const allTools: Tool[] = [
     "tags": ["seo", "marketing", "analytics"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 400000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://www.semrush.com"
   },
   {
@@ -729,7 +729,7 @@ export const allTools: Tool[] = [
     "tags": ["image-generation", "creativity", "gaming"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 200000,
-    "category": "Creativity",
+    "category": "Image",
     "website": "https://leonardo.ai"
   },
   {
@@ -739,7 +739,7 @@ export const allTools: Tool[] = [
     "tags": ["video", "content-creation", "marketing"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 90000,
-    "category": "Video",
+    "category": "Other",
     "website": "https://pictory.ai"
   },
   {
@@ -749,7 +749,7 @@ export const allTools: Tool[] = [
     "tags": ["presentations", "design", "productivity"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 70000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://www.beautiful.ai"
   },
   {
@@ -759,7 +759,7 @@ export const allTools: Tool[] = [
     "tags": ["writing", "productivity", "automation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://www.compose.ai"
   },
   {
@@ -769,7 +769,7 @@ export const allTools: Tool[] = [
     "tags": ["music", "creativity", "audio"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Audio",
+    "category": "Other",
     "website": "https://www.aiva.ai"
   },
   {
@@ -779,7 +779,7 @@ export const allTools: Tool[] = [
     "tags": ["seo", "marketing", "content"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 110000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://surferseo.com"
   },
   {
@@ -789,7 +789,7 @@ export const allTools: Tool[] = [
     "tags": ["seo", "content", "marketing"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 80000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://www.frase.io"
   },
   {
@@ -809,7 +809,7 @@ export const allTools: Tool[] = [
     "tags": ["photo-editing", "creativity", "mobile"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 120000,
-    "category": "Creativity",
+    "category": "Image",
     "website": "https://www.faceapp.com"
   },
   {
@@ -819,7 +819,7 @@ export const allTools: Tool[] = [
     "tags": ["translation", "language", "productivity"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 500000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://translate.google.com"
   },
   {
@@ -849,7 +849,7 @@ export const allTools: Tool[] = [
     "tags": ["social-media", "analytics", "marketing"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 70000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://www.brandwatch.com"
   },
   {
@@ -859,7 +859,7 @@ export const allTools: Tool[] = [
     "tags": ["chatbot", "sales", "ecommerce"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Customer Support",
+    "category": "Other",
     "website": "https://manychat.com"
   },
   {
@@ -869,7 +869,7 @@ export const allTools: Tool[] = [
     "tags": ["analytics", "crm", "business"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 80000,
-    "category": "Analytics",
+    "category": "Other",
     "website": "https://www.salesforce.com/products/einstein"
   },
   {
@@ -879,7 +879,7 @@ export const allTools: Tool[] = [
     "tags": ["voice", "audio", "content-creation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Audio",
+    "category": "Other",
     "website": "https://www.lovo.ai"
   },
   {
@@ -899,7 +899,7 @@ export const allTools: Tool[] = [
     "tags": ["research", "education", "ai-tools"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 70000,
-    "category": "Education",
+    "category": "Other",
     "website": "https://www.semanticscholar.org"
   },
   {
@@ -909,7 +909,7 @@ export const allTools: Tool[] = [
     "tags": ["marketing", "chatbot", "sales"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://www.drift.com"
   },
   {
@@ -929,7 +929,7 @@ export const allTools: Tool[] = [
     "tags": ["ecommerce", "chatbot", "customer-support"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 80000,
-    "category": "Customer Support",
+    "category": "Other",
     "website": "https://www.shopify.com"
   },
   {
@@ -949,7 +949,7 @@ export const allTools: Tool[] = [
     "tags": ["project-management", "productivity", "automation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 90000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://monday.com"
   },
   {
@@ -959,7 +959,7 @@ export const allTools: Tool[] = [
     "tags": ["marketing", "advertising", "automation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://www.adext.com"
   },
   {
@@ -969,7 +969,7 @@ export const allTools: Tool[] = [
     "tags": ["video", "marketing", "content-creation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Video",
+    "category": "Other",
     "website": "https://animoto.com"
   },
   {
@@ -989,7 +989,7 @@ export const allTools: Tool[] = [
     "tags": ["image-generation", "creativity", "art"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Creativity",
+    "category": "Image",
     "website": "https://deepart.io"
   },
   {
@@ -999,7 +999,7 @@ export const allTools: Tool[] = [
     "tags": ["analytics", "business-intelligence", "data"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Analytics",
+    "category": "Other",
     "website": "https://www.sisense.com"
   },
   {
@@ -1009,7 +1009,7 @@ export const allTools: Tool[] = [
     "tags": ["audio", "productivity", "education"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 70000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://speechify.com"
   },
   {
@@ -1019,7 +1019,7 @@ export const allTools: Tool[] = [
     "tags": ["customer-support", "automation", "business"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 80000,
-    "category": "Customer Support",
+    "category": "Other",
     "website": "https://www.zoho.com/desk"
   },
   {
@@ -1036,9 +1036,10 @@ export const allTools: Tool[] = [
     "id": "164",
     "title": "InVideo",
     "description": "AI-powered video creation for marketing and social media.",
-    "tags": ["video", "content-creation", "marketing支0"],
+    "tags": ["video", "content-creation", "marketing"],
+    "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Video",
+    "category": "Other",
     "website": "https://invideo.io"
   },
   {
@@ -1048,7 +1049,7 @@ export const allTools: Tool[] = [
     "tags": ["transcription", "meetings", "productivity"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 70000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://www.fireflies.ai"
   },
   {
@@ -1058,7 +1059,7 @@ export const allTools: Tool[] = [
     "tags": ["automation", "monitoring", "productivity"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://www.visualping.io"
   },
   {
@@ -1068,7 +1069,7 @@ export const allTools: Tool[] = [
     "tags": ["chatbot", "customer-support", "automation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Customer Support",
+    "category": "Other",
     "website": "https://www.ada.cx"
   },
   {
@@ -1088,7 +1089,7 @@ export const allTools: Tool[] = [
     "tags": ["content", "seo", "marketing"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://www.marketmuse.com"
   },
   {
@@ -1098,7 +1099,7 @@ export const allTools: Tool[] = [
     "tags": ["marketing", "content", "advertising"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://anyword.com"
   },
   {
@@ -1108,7 +1109,7 @@ export const allTools: Tool[] = [
     "tags": ["writing", "hr", "productivity"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 40000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://textio.com"
   },
   {
@@ -1118,7 +1119,7 @@ export const allTools: Tool[] = [
     "tags": ["machine-learning", "analytics", "data"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Analytics",
+    "category": "Other",
     "website": "https://www.bigml.com"
   },
   {
@@ -1128,7 +1129,7 @@ export const allTools: Tool[] = [
     "tags": ["image-generation", "creativity", "art"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Creativity",
+    "category": "Image",
     "website": "https://www.artbreeder.com"
   },
   {
@@ -1138,7 +1139,7 @@ export const allTools: Tool[] = [
     "tags": ["marketing", "sales", "business"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 40000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://www.leadgenius.com"
   },
   {
@@ -1148,7 +1149,7 @@ export const allTools: Tool[] = [
     "tags": ["video", "content-creation", "marketing"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 70000,
-    "category": "Video",
+    "category": "Other",
     "website": "https://www.kapwing.com"
   },
   {
@@ -1158,7 +1159,7 @@ export const allTools: Tool[] = [
     "tags": ["analytics", "machine-learning", "data"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Analytics",
+    "category": "Other",
     "website": "https://www.datarobot.com"
   },
   {
@@ -1168,7 +1169,7 @@ export const allTools: Tool[] = [
     "tags": ["voice", "audio", "content-creation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Audio",
+    "category": "Other",
     "website": "https://synthesys.io"
   },
   {
@@ -1178,7 +1179,7 @@ export const allTools: Tool[] = [
     "tags": ["writing", "productivity", "content"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 70000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://www.wordtune.com"
   },
   {
@@ -1188,7 +1189,7 @@ export const allTools: Tool[] = [
     "tags": ["productivity", "documents", "collaboration"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://coda.io"
   },
   {
@@ -1198,7 +1199,7 @@ export const allTools: Tool[] = [
     "tags": ["marketing", "automation", "ecommerce"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://www.emarsys.com"
   },
   {
@@ -1208,7 +1209,7 @@ export const allTools: Tool[] = [
     "tags": ["education", "language", "learning"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 200000,
-    "category": "Education",
+    "category": "Other",
     "website": "https://www.duolingo.com"
   },
   {
@@ -1218,7 +1219,7 @@ export const allTools: Tool[] = [
     "tags": ["photo-editing", "creativity", "image-generation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Creativity",
+    "category": "Image",
     "website": "https://www.lucidpic.com"
   },
   {
@@ -1238,7 +1239,7 @@ export const allTools: Tool[] = [
     "tags": ["productivity", "documentation", "automation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 40000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://www.scribehow.com"
   },
   {
@@ -1258,7 +1259,7 @@ export const allTools: Tool[] = [
     "tags": ["video", "content-creation", "marketing"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Video",
+    "category": "Other",
     "website": "https://www.magisto.com"
   },
   {
@@ -1278,7 +1279,7 @@ export const allTools: Tool[] = [
     "tags": ["content", "seo", "marketing"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://www.scalenut.com"
   },
   {
@@ -1288,7 +1289,7 @@ export const allTools: Tool[] = [
     "tags": ["seo", "content", "marketing"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 40000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://www.clearscope.io"
   },
   {
@@ -1298,7 +1299,7 @@ export const allTools: Tool[] = [
     "tags": ["video", "content-creation", "marketing"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Video",
+    "category": "Other",
     "website": "https://www.rephrase.ai"
   },
   {
@@ -1318,7 +1319,7 @@ export const allTools: Tool[] = [
     "tags": ["analytics", "customer-data", "business"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 40000,
-    "category": "Analytics",
+    "category": "Other",
     "website": "https://www.funnelai.com"
   },
   {
@@ -1328,7 +1329,7 @@ export const allTools: Tool[] = [
     "tags": ["automation", "workplace", "productivity"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://www.moveworks.com"
   },
   {
@@ -1338,7 +1339,7 @@ export const allTools: Tool[] = [
     "tags": ["video", "ai-avatars", "content-creation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Video",
+    "category": "Other",
     "website": "https://www.deepbrain.io"
   },
   {
@@ -1348,7 +1349,7 @@ export const allTools: Tool[] = [
     "tags": ["image-recognition", "ai-tools", "analytics"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Analytics",
+    "category": "Other",
     "website": "https://www.deepvision.ai"
   },
   {
@@ -1358,7 +1359,7 @@ export const allTools: Tool[] = [
     "tags": ["analytics", "customer-support", "ai-tools"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 40000,
-    "category": "Customer Support",
+    "category": "Other",
     "website": "https://www.observe.ai"
   },
   {
@@ -1368,7 +1369,7 @@ export const allTools: Tool[] = [
     "tags": ["healthcare", "diagnostics", "ai-tools"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Healthcare",
+    "category": "Other",
     "website": "https://www.viz.ai"
   },
   {
@@ -1378,7 +1379,7 @@ export const allTools: Tool[] = [
     "tags": ["data-science", "analytics", "ai-tools"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Analytics",
+    "category": "Other",
     "website": "https://www.rapidminer.com"
   },
   {
@@ -1388,7 +1389,7 @@ export const allTools: Tool[] = [
     "tags": ["analytics", "business-intelligence", "data"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 70000,
-    "category": "Analytics",
+    "category": "Other",
     "website": "https://www.qlik.com"
   },
   {
@@ -1398,7 +1399,7 @@ export const allTools: Tool[] = [
     "tags": ["audio", "content-creation", "productivity"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 40000,
-    "category": "Audio",
+    "category": "Other",
     "website": "https://auphonic.com"
   },
   {
