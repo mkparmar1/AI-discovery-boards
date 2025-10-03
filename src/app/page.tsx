@@ -20,33 +20,6 @@ export default function Home() {
 
   return (
     <MainLayout>
-      {/* Hero Section */}
-      <section className="py-12 text-center">
-        <div className="mx-auto max-w-4xl">
-          <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl">
-            Your Gateway to the
-            <span className="text-primary"> AI Universe 2025</span>
-          </h1>
-          <p className="mt-6 text-lg leading-8 text-muted-foreground">
-            Discover trending AI tools, explore breakthrough research, master GenAI & LLMs, 
-            and connect with the fastest-growing AI community. Stay ahead in 2025!
-          </p>
-          <div className="mt-10 flex items-center justify-center gap-x-6">
-            <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3">
-              <Link href="/tools">
-                Explore AI Tools
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            {/* Start Learning button - Hidden */}
-            {/* <Button variant="outline" asChild className="px-6 py-3">
-              <Link href="/learn">
-                Start Learning
-              </Link>
-            </Button> */}
-          </div>
-        </div>
-      </section>
 
 
 

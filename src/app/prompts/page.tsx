@@ -6,18 +6,52 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import MainLayout from '@/components/layout/MainLayout'
-import { aiPrompts } from '@/lib/data'
+import { trackPromptView } from '@/utils/activityTracker'
 
-
+interface AIPrompt {
+  id: string
+  title: string
+  prompt: string
+  category: string
+  tags: string[]
+  description: string
+  useCase: string
+  difficulty: 'Beginner' | 'Intermediate' | 'Advanced'
+  createdAt: string
+}
 
 const ITEMS_PER_PAGE = 12
 
 export default function PromptsPage() {
-  const [displayedPrompts, setDisplayedPrompts] = useState(aiPrompts.slice(0, ITEMS_PER_PAGE))
+  const [allPrompts, setAllPrompts] = useState<AIPrompt[]>([])
+  const [displayedPrompts, setDisplayedPrompts] = useState<AIPrompt[]>([])
   const [currentPage, setCurrentPage] = useState(1)
-  const [isLoading, setIsLoading] = useState(false)
-  const [hasMore, setHasMore] = useState(aiPrompts.length > ITEMS_PER_PAGE)
+  const [isLoading, setIsLoading] = useState(true)
+  const [hasMore, setHasMore] = useState(false)
   const [copiedStates, setCopiedStates] = useState<{ [key: string]: boolean }>({})
+
+  // Fetch prompts from API
+  const fetchPrompts = useCallback(async () => {
+    try {
+      setIsLoading(true)
+      const response = await fetch('/api/prompts')
+      if (!response.ok) {
+        throw new Error('Failed to fetch prompts')
+      }
+      const data = await response.json()
+       setAllPrompts(data.data || [])
+       setDisplayedPrompts(data.data?.slice(0, ITEMS_PER_PAGE) || [])
+       setHasMore((data.data?.length || 0) > ITEMS_PER_PAGE)
+    } catch (error) {
+      console.error('Error fetching prompts:', error)
+      // Fallback to empty array if API fails
+      setAllPrompts([])
+      setDisplayedPrompts([])
+      setHasMore(false)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
 
   const loadMorePrompts = useCallback(() => {
     if (isLoading || !hasMore) return
@@ -29,19 +63,19 @@ export default function PromptsPage() {
       const nextPage = currentPage + 1
       const startIndex = (nextPage - 1) * ITEMS_PER_PAGE
       const endIndex = startIndex + ITEMS_PER_PAGE
-      const newPrompts = aiPrompts.slice(startIndex, endIndex)
+      const newPrompts = allPrompts.slice(startIndex, endIndex)
       
       if (newPrompts.length > 0) {
         setDisplayedPrompts(prev => [...prev, ...newPrompts])
         setCurrentPage(nextPage)
-        setHasMore(endIndex < aiPrompts.length)
+        setHasMore(endIndex < allPrompts.length)
       } else {
         setHasMore(false)
       }
       
       setIsLoading(false)
     }, 500)
-  }, [currentPage, isLoading, hasMore])
+  }, [currentPage, isLoading, hasMore, allPrompts])
 
   const handleScroll = useCallback(() => {
     if (isLoading || !hasMore) return
@@ -52,6 +86,10 @@ export default function PromptsPage() {
   }, [loadMorePrompts, isLoading, hasMore])
 
   useEffect(() => {
+    fetchPrompts()
+  }, [fetchPrompts])
+
+  useEffect(() => {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [handleScroll])
@@ -60,6 +98,14 @@ export default function PromptsPage() {
     try {
       await navigator.clipboard.writeText(text)
       setCopiedStates(prev => ({ ...prev, [promptId]: true }))
+      
+      // Track prompt view/usage
+      const prompt = allPrompts.find(p => p.id === promptId)
+      if (prompt) {
+        await trackPromptView(prompt.id, prompt.title, prompt.category, prompt.tags)
+      }
+      
+      // Reset copied state after 2 seconds
       setTimeout(() => {
         setCopiedStates(prev => ({ ...prev, [promptId]: false }))
       }, 2000)
@@ -74,7 +120,11 @@ export default function PromptsPage() {
         {/* Prompts Count */}
         <div className="mb-6">
           <p className="text-sm text-muted-foreground">
-            Showing {Math.min(displayedPrompts.length, aiPrompts.length)} of {aiPrompts.length} AI prompts
+            {isLoading && displayedPrompts.length === 0 ? (
+              'Loading prompts...'
+            ) : (
+              `Showing ${Math.min(displayedPrompts.length, allPrompts.length)} of ${allPrompts.length} AI prompts`
+            )}
           </p>
         </div>
 
@@ -177,7 +227,7 @@ export default function PromptsPage() {
           {/* End of Results */}
           {!hasMore && !isLoading && (
             <div className="text-center py-8">
-              <p className="text-muted-foreground">You&apos;ve reached the end! All {aiPrompts.length} prompts loaded.</p>
+              <p className="text-muted-foreground">You&apos;ve reached the end! All {allPrompts.length} prompts loaded.</p>
             </div>
           )}
         </div>

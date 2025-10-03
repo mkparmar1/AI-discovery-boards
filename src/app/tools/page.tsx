@@ -1,57 +1,176 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react'
-import { allTools } from '@/lib/data'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
+import { Tool } from '@/lib/data'
+import ToolCard from '@/components/ToolCard'
 import { Button } from '@/components/ui/button'
-import { ExternalLink, Loader2 } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
+import { Search, Filter, Grid, List, Loader2 } from 'lucide-react'
 import MainLayout from '@/components/layout/MainLayout'
 
 const ITEMS_PER_PAGE = 20
 
-const ToolsPage = () => {
-  const [displayedTools, setDisplayedTools] = useState(allTools.slice(0, ITEMS_PER_PAGE))
+interface ApiResponse {
+  success: boolean
+  data: Tool[]
+  pagination: {
+    page: number
+    limit: number
+    totalCount: number
+    totalPages: number
+    hasMore: boolean
+  }
+  meta?: {
+    categories: string[]
+    tags: string[]
+    totalCount: number
+  }
+}
+
+export default function ToolsPage() {
+  // Remove client-side full dataset; rely on server-side pagination and filtering
+  const [displayedTools, setDisplayedTools] = useState<Tool[]>([])
   const [currentPage, setCurrentPage] = useState(1)
-  const [isLoading, setIsLoading] = useState(false)
-  const [hasMore, setHasMore] = useState(allTools.length > ITEMS_PER_PAGE)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [rawSearchTerm, setRawSearchTerm] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const [selectedTag, setSelectedTag] = useState<string>('all')
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [categories, setCategories] = useState<string[]>([])
+  const [allTags, setAllTags] = useState<string[]>([])
+  const [hasMore, setHasMore] = useState(true)
+  const [totalCount, setTotalCount] = useState(0)
 
-  const loadMoreTools = useCallback(() => {
-    if (isLoading || !hasMore) return
+  // Debounce the search input to improve responsiveness
+  useEffect(() => {
+    const t = setTimeout(() => setSearchTerm(rawSearchTerm), 300)
+    return () => clearTimeout(t)
+  }, [rawSearchTerm])
 
-    setIsLoading(true)
-    
-    // Simulate loading delay for better UX
-    setTimeout(() => {
-      const nextPage = currentPage + 1
-      const startIndex = (nextPage - 1) * ITEMS_PER_PAGE
-      const endIndex = startIndex + ITEMS_PER_PAGE
-      const newTools = allTools.slice(startIndex, endIndex)
-      
-      if (newTools.length > 0) {
-        setDisplayedTools(prev => [...prev, ...newTools])
+  // Use a module-level flag to avoid duplicate calls under React Strict Mode in dev
+  const initRef = useRef(false)
+  useEffect(() => {
+    if (initRef.current) return
+    initRef.current = true
+
+    const fetchInitialData = async () => {
+      try {
+        setIsLoading(true)
+        // Fetch meta (categories, tags, total count) without loading all tools
+        const metaResponse = await fetch('/api/tools?metaOnly=true')
+        const metaData: ApiResponse = await metaResponse.json()
+
+        // Fetch first page of tools (unfiltered)
+        const toolsResponse = await fetch(`/api/tools?limit=${ITEMS_PER_PAGE}&page=1`)
+        const toolsData: ApiResponse = await toolsResponse.json()
+        
+        if (toolsData.success) {
+          setDisplayedTools(toolsData.data)
+          setHasMore(toolsData.pagination.hasMore)
+          setTotalCount(toolsData.pagination.totalCount)
+        }
+        if (metaData.success && metaData.meta) {
+          setCategories(metaData.meta.categories)
+          setAllTags(metaData.meta.tags)
+        }
+      } catch (error) {
+        console.error('Error fetching tools:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchInitialData()
+  }, [])
+
+  // Filter tools based on search term, category, and tag (server-side)
+  useEffect(() => {
+    const fetchFiltered = async () => {
+      try {
+        setIsLoading(true)
+        setCurrentPage(1)
+        const params = new URLSearchParams()
+        params.set('limit', String(ITEMS_PER_PAGE))
+        params.set('page', '1')
+        if (searchTerm) params.set('search', searchTerm)
+        if (selectedCategory !== 'all') params.set('category', selectedCategory)
+        if (selectedTag !== 'all') params.set('tags', selectedTag)
+
+        const response = await fetch(`/api/tools?${params.toString()}`)
+        const data: ApiResponse = await response.json()
+        if (data.success) {
+          setDisplayedTools(data.data)
+          setHasMore(data.pagination.hasMore)
+          setTotalCount(data.pagination.totalCount)
+        }
+      } catch (error) {
+        console.error('Error fetching filtered tools:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    // Fetch when filters change
+    fetchFiltered()
+  }, [searchTerm, selectedCategory, selectedTag])
+
+  // Removed legacy scroll-based pagination and cooldown; using IntersectionObserver with page guard below
+
+  // Replace cooldown and scroll-based loading with page guard + IntersectionObserver
+  const lastRequestedPageRef = useRef<number>(1)
+  const sentinelRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    lastRequestedPageRef.current = 1
+  }, [searchTerm, selectedCategory, selectedTag])
+
+  const loadMoreTools = useCallback(async () => {
+    if (isLoadingMore || !hasMore) return
+    const nextPage = currentPage + 1
+    if (lastRequestedPageRef.current === nextPage) return
+    lastRequestedPageRef.current = nextPage
+
+    setIsLoadingMore(true)
+    try {
+      const params = new URLSearchParams()
+      params.set('limit', String(ITEMS_PER_PAGE))
+      params.set('page', String(nextPage))
+      if (searchTerm) params.set('search', searchTerm)
+      if (selectedCategory !== 'all') params.set('category', selectedCategory)
+      if (selectedTag !== 'all') params.set('tags', selectedTag)
+
+      const response = await fetch(`/api/tools?${params.toString()}`)
+      const data: ApiResponse = await response.json()
+      if (data.success && data.data.length > 0) {
+        setDisplayedTools(prev => [...prev, ...data.data])
         setCurrentPage(nextPage)
-        setHasMore(endIndex < allTools.length)
+        setHasMore(data.pagination.hasMore)
       } else {
         setHasMore(false)
       }
-      
-      setIsLoading(false)
-    }, 500)
-  }, [currentPage, isLoading, hasMore])
-
-  const handleScroll = useCallback(() => {
-    if (isLoading || !hasMore) return
-    
-    if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 1000) {
-      loadMoreTools()
+    } catch (error) {
+      console.error('Error loading more tools:', error)
+      setHasMore(false)
+    } finally {
+      setIsLoadingMore(false)
     }
-  }, [loadMoreTools, isLoading, hasMore])
+  }, [currentPage, isLoadingMore, hasMore, searchTerm, selectedCategory, selectedTag])
 
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [handleScroll])
+    if (!sentinelRef.current) return
+    const observer = new IntersectionObserver(
+      entries => {
+        const entry = entries[0]
+        if (entry.isIntersecting) loadMoreTools()
+      },
+      { root: null, rootMargin: '200px', threshold: 0 }
+    )
+    observer.observe(sentinelRef.current)
+    return () => observer.disconnect()
+  }, [loadMoreTools])
 
   return (
     <MainLayout>
@@ -59,95 +178,124 @@ const ToolsPage = () => {
         {/* Tools Count */}
         <div className="mb-6">
           <p className="text-sm text-muted-foreground">
-            Showing {Math.min(displayedTools.length, allTools.length)} of {allTools.length} tools
+            Showing {displayedTools.length} of {totalCount} tools
           </p>
         </div>
 
-        {/* Tools Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {displayedTools.map((tool, index) => (
-          <Card key={`${tool.id}-${index}`} className="group relative overflow-hidden bg-card border border-border/50 hover:border-primary/30 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-start mb-3">
-                <Badge 
-                  variant="outline" 
-                  className="text-xs font-medium bg-primary/5 text-primary border-primary/20"
+        {/* Search and Filters in One Row */}
+        <div className="mb-6">
+          <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center">
+            {/* Search Bar */}
+            <div className="relative flex-1 min-w-0">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                placeholder="Search tools by name, description, or tags..."
+                value={rawSearchTerm}
+                onChange={(e) => setRawSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+
+            {/* Filters */}
+            <div className="flex flex-wrap gap-3 items-center">
+              {/* Category Filter */}
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-muted-foreground" />
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="border border-input bg-background px-3 py-2 text-sm rounded-md min-w-[140px]"
                 >
-                  {tool.category}
-                </Badge>
-              </div>
-              
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-8 h-8 rounded-lg flex-shrink-0 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">
-                    {tool.title.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-                
-                <CardTitle className="text-lg font-bold text-foreground group-hover:text-primary transition-colors duration-300 line-clamp-1">
-                  {tool.title}
-                </CardTitle>
-              </div>
-              
-              <CardDescription className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
-                {tool.description}
-              </CardDescription>
-            </CardHeader>
-            
-            <CardContent className="flex-1 flex flex-col p-4 pt-0">
-              {/* Tags */}
-              <div className="flex flex-wrap gap-1 mb-3">
-                {tool.tags.slice(0, 3).map(tag => (
-                  <Badge key={tag} variant="secondary" className="text-xs bg-muted/50 text-muted-foreground hover:bg-muted transition-colors">
-                    #{tag}
-                  </Badge>
-                ))}
+                  <option value="all">All Categories</option>
+                  {categories.map(category => (
+                    <option key={category} value={category}>{category}</option>
+                  ))}
+                </select>
               </div>
 
-              {/* Click Count */}
-              <div className="mb-4">
-                <Badge 
-                  variant="secondary"
-                  className="text-xs font-medium bg-blue-500/90 text-white border-0"
+              {/* Tag Filter */}
+              <div className="flex items-center gap-2">
+                <select
+                  value={selectedTag}
+                  onChange={(e) => setSelectedTag(e.target.value)}
+                  className="border border-input bg-background px-3 py-2 text-sm rounded-md min-w-[120px]"
                 >
-                  {tool.clickCount.toLocaleString()} clicks
-                </Badge>
+                  <option value="all">All Tags</option>
+                  {allTags.map(tag => (
+                    <option key={tag} value={tag}>#{tag}</option>
+                  ))}
+                </select>
               </div>
 
-              {/* CTA Button */}
-              <Button 
-                className="w-full mt-auto bg-white hover:bg-blue-50 text-blue-600 border-blue-300 dark:bg-transparent dark:border-border dark:text-foreground dark:hover:bg-accent dark:hover:text-accent-foreground font-medium transition-all duration-300 group-hover:shadow-lg" 
-                variant="outline"
-                asChild
-              >
-                <a href={tool.website} target="_blank" rel="noopener noreferrer">
-                  Visit Tool
-                  <ExternalLink className="ml-2 h-4 w-4" />
-                </a>
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Loading Indicator */}
-      {isLoading && (
-        <div className="flex justify-center items-center py-8">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <span className="ml-2 text-muted-foreground">Loading more tools...</span>
+              {/* Clear Filters */}
+              {(searchTerm || selectedCategory !== 'all' || selectedTag !== 'all') && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSearchTerm('')
+                    setSelectedCategory('all')
+                    setSelectedTag('all')
+                  }}
+                >
+                  Clear Filters
+                </Button>
+              )}
+            </div>
+          </div>
         </div>
-      )}
 
-      {/* End of Results */}
-      {!hasMore && !isLoading && (
-        <div className="text-center py-8">
-          <p className="text-muted-foreground">You&apos;ve reached the end! All {allTools.length} tools loaded.</p>
-        </div>
-      )}
+        {/* Loading State */}
+        {isLoading ? (
+          <div className="flex justify-center items-center py-12">
+            <div className="text-center">
+              <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
+              <p className="text-muted-foreground">Loading tools...</p>
+            </div>
+          </div>
+        ) : displayedTools.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground mb-4">No tools found matching your criteria.</p>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSearchTerm('')
+                setSelectedCategory('all')
+                setSelectedTag('all')
+              }}
+            >
+              Clear Filters
+            </Button>
+          </div>
+        ) : (
+          <>
+            {/* Tools Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {displayedTools.map((tool, index) => (
+                <ToolCard key={`${tool.id}-${index}`} tool={tool} viewMode="grid" />
+              ))}
+            </div>
 
+            {/* Loading More Indicator */}
+            {isLoadingMore && (
+              <div className="flex justify-center items-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <span className="ml-2 text-muted-foreground">Loading more tools...</span>
+              </div>
+            )}
+
+            {/* End of Results */}
+            {!hasMore && !isLoadingMore && (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">You&apos;ve reached the end! All {displayedTools.length} tools loaded.</p>
+              </div>
+            )}
+
+            {/* Sentinel for IntersectionObserver */}
+            <div ref={sentinelRef} className="h-1" />
+          </>
+        )}
       </div>
     </MainLayout>
   )
 }
-
-export default ToolsPage
