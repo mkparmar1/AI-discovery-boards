@@ -122,6 +122,10 @@ export default function ToolsPage() {
   // Replace cooldown and scroll-based loading with page guard + IntersectionObserver
   const lastRequestedPageRef = useRef<number>(1)
   const sentinelRef = useRef<HTMLDivElement | null>(null)
+  // Add visibility state and debounce/throttle refs for reliable infinite scroll
+  const [isSentinelVisible, setIsSentinelVisible] = useState(false)
+  const debounceTimerRef = useRef<number | null>(null)
+  const intersectingRef = useRef<boolean>(false)
 
   useEffect(() => {
     lastRequestedPageRef.current = 1
@@ -160,18 +164,45 @@ export default function ToolsPage() {
   }, [currentPage, isLoadingMore, hasMore, searchTerm, selectedCategory, selectedTag])
 
   useEffect(() => {
-    if (!sentinelRef.current) return
+    const node = sentinelRef.current
+    if (!node) return
     const observer = new IntersectionObserver(
       entries => {
         const entry = entries[0]
-        if (entry.isIntersecting) loadMoreTools()
+        setIsSentinelVisible(entry.isIntersecting)
+        intersectingRef.current = entry.isIntersecting
+        // Do not call loadMoreTools here directly; rely on debounced effect below
       },
-      { root: null, rootMargin: '200px', threshold: 0 }
+      { root: null, rootMargin: '800px', threshold: 0 }
     )
-    observer.observe(sentinelRef.current)
-    return () => observer.disconnect()
-  }, [loadMoreTools])
-
+    observer.observe(node)
+    return () => {
+      observer.disconnect()
+      intersectingRef.current = false
+    }
+  }, [displayedTools.length, hasMore, isLoading])
+  
+  // Debounced trigger when sentinel becomes visible
+  useEffect(() => {
+    if (!isSentinelVisible || isLoadingMore || !hasMore) return
+  
+    // Debounce 1.2s to prevent rapid multiple requests
+    if (debounceTimerRef.current) {
+      window.clearTimeout(debounceTimerRef.current)
+    }
+    debounceTimerRef.current = window.setTimeout(() => {
+      // Safety re-check to avoid duplicate or skipped pages
+      if (intersectingRef.current && !isLoadingMore && hasMore) {
+        loadMoreTools()
+      }
+    }, 1200)
+  
+    return () => {
+      if (debounceTimerRef.current) {
+        window.clearTimeout(debounceTimerRef.current)
+      }
+    }
+  }, [isSentinelVisible, isLoadingMore, hasMore, loadMoreTools])
   return (
     <MainLayout>
       <div>

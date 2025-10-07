@@ -8,7 +8,8 @@ import {
   Wrench,
   FileText,
   MessageSquare,
-  Microscope
+  Microscope,
+  GraduationCap
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -51,6 +52,11 @@ const navigationItems: NavItem[] = [
     title: 'Research Papers',
     href: '/research',
     icon: Microscope
+  },
+  {
+    title: 'Learn AI',
+    href: '/learn-ai',
+    icon: GraduationCap
   }
 ]
 

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Copy, Check, Star, Zap, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -22,90 +22,150 @@ interface AIPrompt {
 
 const ITEMS_PER_PAGE = 12
 
+interface ApiResponse {
+  success: boolean
+  data: AIPrompt[]
+  pagination: {
+    page: number
+    limit: number
+    totalCount: number
+    totalPages: number
+    hasMore: boolean
+  }
+}
+
 export default function PromptsPage() {
-  const [allPrompts, setAllPrompts] = useState<AIPrompt[]>([])
+  // Remove allPrompts; rely on server pagination
+  // const [allPrompts, setAllPrompts] = useState<AIPrompt[]>([])
   const [displayedPrompts, setDisplayedPrompts] = useState<AIPrompt[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [hasMore, setHasMore] = useState(false)
+  const [totalCount, setTotalCount] = useState(0)
   const [copiedStates, setCopiedStates] = useState<{ [key: string]: boolean }>({})
+  // IntersectionObserver-based infinite scroll refs/state
+  const sentinelRef = useRef<HTMLDivElement | null>(null)
+  const [isSentinelVisible, setIsSentinelVisible] = useState(false)
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const intersectingRef = useRef(false)
+  const loadingRef = useRef(false)
 
-  // Fetch prompts from API
+  // Fetch prompts from API (server-side pagination)
   const fetchPrompts = useCallback(async () => {
     try {
       setIsLoading(true)
-      const response = await fetch('/api/prompts')
+      const response = await fetch(`/api/prompts?limit=${ITEMS_PER_PAGE}&page=1`)
       if (!response.ok) {
         throw new Error('Failed to fetch prompts')
       }
-      const data = await response.json()
-       setAllPrompts(data.data || [])
-       setDisplayedPrompts(data.data?.slice(0, ITEMS_PER_PAGE) || [])
-       setHasMore((data.data?.length || 0) > ITEMS_PER_PAGE)
+      const data: ApiResponse = await response.json()
+      setDisplayedPrompts(data.data || [])
+      setHasMore(data.pagination?.hasMore ?? false)
+      setTotalCount(data.pagination?.totalCount ?? (data.data?.length || 0))
+      setCurrentPage(1)
     } catch (error) {
       console.error('Error fetching prompts:', error)
       // Fallback to empty array if API fails
-      setAllPrompts([])
       setDisplayedPrompts([])
       setHasMore(false)
+      setTotalCount(0)
     } finally {
       setIsLoading(false)
     }
   }, [])
 
-  const loadMorePrompts = useCallback(() => {
-    if (isLoading || !hasMore) return
+  const loadMorePrompts = useCallback(async () => {
+    if (loadingRef.current || isLoadingMore || isLoading || !hasMore) return
 
-    setIsLoading(true)
-    
-    // Simulate loading delay for better UX
-    setTimeout(() => {
+    setIsLoadingMore(true)
+    loadingRef.current = true
+    try {
       const nextPage = currentPage + 1
-      const startIndex = (nextPage - 1) * ITEMS_PER_PAGE
-      const endIndex = startIndex + ITEMS_PER_PAGE
-      const newPrompts = allPrompts.slice(startIndex, endIndex)
-      
+      const response = await fetch(`/api/prompts?limit=${ITEMS_PER_PAGE}&page=${nextPage}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch more prompts')
+      }
+      const data: ApiResponse = await response.json()
+      const newPrompts = data.data || []
+
       if (newPrompts.length > 0) {
         setDisplayedPrompts(prev => [...prev, ...newPrompts])
         setCurrentPage(nextPage)
-        setHasMore(endIndex < allPrompts.length)
+        setHasMore(data.pagination?.hasMore ?? false)
+        setTotalCount(data.pagination?.totalCount ?? totalCount)
       } else {
         setHasMore(false)
       }
-      
-      setIsLoading(false)
-    }, 500)
-  }, [currentPage, isLoading, hasMore, allPrompts])
-
-  const handleScroll = useCallback(() => {
-    if (isLoading || !hasMore) return
-    
-    if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 1000) {
-      loadMorePrompts()
+    } catch (error) {
+      console.error('Error loading more prompts:', error)
+      setHasMore(false)
+    } finally {
+      setIsLoadingMore(false)
+      loadingRef.current = false
     }
-  }, [loadMorePrompts, isLoading, hasMore])
+  }, [currentPage, isLoading, isLoadingMore, hasMore, totalCount])
+
+  // Remove window scroll listener; use IntersectionObserver instead
+  // useEffect(() => {
+  //   window.addEventListener('scroll', handleScroll)
+  //   return () => window.removeEventListener('scroll', handleScroll)
+  // }, [handleScroll])
+
+  // Initialize observer after initial data is rendered
+  useEffect(() => {
+    if (!sentinelRef.current || isLoading) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0]
+        setIsSentinelVisible(entry.isIntersecting)
+        intersectingRef.current = entry.isIntersecting
+      },
+      { root: null, rootMargin: '800px', threshold: 0 }
+    )
+
+    observer.observe(sentinelRef.current)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [displayedPrompts.length, hasMore, isLoading])
+
+  // Debounced trigger when sentinel becomes visible
+  useEffect(() => {
+    if (!isSentinelVisible || isLoadingMore || !hasMore) return
+
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current)
+    }
+
+    debounceTimerRef.current = setTimeout(() => {
+      if (intersectingRef.current && !isLoadingMore && hasMore) {
+        void loadMorePrompts()
+      }
+    }, 1200)
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current)
+      }
+    }
+  }, [isSentinelVisible, isLoadingMore, hasMore, loadMorePrompts])
 
   useEffect(() => {
     fetchPrompts()
   }, [fetchPrompts])
 
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [handleScroll])
-
   const copyToClipboard = async (text: string, promptId: string) => {
     try {
       await navigator.clipboard.writeText(text)
       setCopiedStates(prev => ({ ...prev, [promptId]: true }))
-      
-      // Track prompt view/usage
-      const prompt = allPrompts.find(p => p.id === promptId)
+      // Track prompt view/usage using displayed list
+      const prompt = displayedPrompts.find(p => p.id === promptId)
       if (prompt) {
         await trackPromptView(prompt.id, prompt.title, prompt.category, prompt.tags)
       }
-      
-      // Reset copied state after 2 seconds
       setTimeout(() => {
         setCopiedStates(prev => ({ ...prev, [promptId]: false }))
       }, 2000)
@@ -123,7 +183,7 @@ export default function PromptsPage() {
             {isLoading && displayedPrompts.length === 0 ? (
               'Loading prompts...'
             ) : (
-              `Showing ${Math.min(displayedPrompts.length, allPrompts.length)} of ${allPrompts.length} AI prompts`
+              `Showing ${displayedPrompts.length} of ${totalCount} AI prompts`
             )}
           </p>
         </div>
@@ -224,10 +284,15 @@ export default function PromptsPage() {
             </div>
           )}
 
+          {/* Sentinel for infinite scroll */}
+          {hasMore && !isLoading && (
+            <div ref={sentinelRef} className="h-10 w-full" aria-hidden="true" />
+          )}
+
           {/* End of Results */}
           {!hasMore && !isLoading && (
             <div className="text-center py-8">
-              <p className="text-muted-foreground">You&apos;ve reached the end! All {allPrompts.length} prompts loaded.</p>
+              <p className="text-muted-foreground">You&apos;ve reached the end! All {totalCount} prompts loaded.</p>
             </div>
           )}
         </div>
