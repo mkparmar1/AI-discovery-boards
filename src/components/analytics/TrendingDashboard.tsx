@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -34,11 +34,9 @@ export default function TrendingDashboard({ timeframe = '7d', limit = 10 }: Tren
   const [selectedResourceType, setSelectedResourceType] = useState<string>('all')
   const [activeTab, setActiveTab] = useState<'trending' | 'most-used'>('trending')
 
-  useEffect(() => {
-    fetchAnalytics()
-  }, [selectedTimeframe, selectedResourceType])
+  // useEffect moved below after fetchAnalytics declaration to satisfy TypeScript ordering
 
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     try {
       setIsLoading(true)
       
@@ -80,7 +78,11 @@ export default function TrendingDashboard({ timeframe = '7d', limit = 10 }: Tren
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [selectedTimeframe, selectedResourceType, limit])
+
+  useEffect(() => {
+    fetchAnalytics()
+  }, [fetchAnalytics])
 
   const formatTimeAgo = (dateString: string) => {
     const date = new Date(dateString)
@@ -174,7 +176,7 @@ export default function TrendingDashboard({ timeframe = '7d', limit = 10 }: Tren
           
           <select
             value={selectedTimeframe}
-            onChange={(e) => setSelectedTimeframe(e.target.value as any)}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedTimeframe(e.target.value as '1d' | '7d' | '30d' | '90d')}
             className="px-3 py-1 text-sm border border-border rounded-md bg-background"
           >
             <option value="1d">Last 24 hours</option>
