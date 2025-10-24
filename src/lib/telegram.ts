@@ -171,3 +171,62 @@ export async function sendUserActionNotification(user: { _id: unknown, name?: st
   })
   await sendTelegramMessage(html)
 }
+
+export async function sendContactNotification(details: { name?: string | null; email?: string | null; subject?: string | null; message?: string | null }, request: NextRequest) {
+  const ctx = getRequestContext(request)
+  const location = await lookupIpLocation(ctx.ipAddress)
+  const title = '📝 <b>New Contact Submission</b>'
+  const maxMsgLen = 500
+  const safeMessage = (details.message || '')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+  const messagePreview = safeMessage.length > maxMsgLen ? safeMessage.slice(0, maxMsgLen) + '…' : safeMessage
+
+  const lines = [
+    title,
+    '━━━━━━━━━━━━━━━━━━━',
+    details.name ? `👤 Name: ${details.name}` : '',
+    details.email ? `📧 Email: ${details.email}` : '',
+    details.subject ? `🧾 Subject: ${details.subject}` : '',
+    messagePreview ? `✉️ Message:\n<code>${messagePreview}</code>` : '',
+    ctx.ipAddress ? `🌍 IP: ${ctx.ipAddress}` : '',
+    ctx.device ? `💻 Device: ${ctx.device}` : '',
+    `🕒 Time: ${formatTime(new Date())}`,
+    location ? `📍 Location: ${location}` : '',
+    '🔗 Website: <code>https://www.aidiscoveryboards.info</code>',
+    '━━━━━━━━━━━━━━━━━━━'
+  ].filter(Boolean)
+
+  await sendTelegramMessage(lines.join('\n'))
+}
+
+export async function sendFeedbackNotification(details: { name?: string | null; email?: string | null; type: 'bug' | 'idea' | 'other'; message: string; pageUrl?: string | null }, request: NextRequest) {
+  const ctx = getRequestContext(request)
+  const location = await lookupIpLocation(ctx.ipAddress)
+
+  const typeLabel = details.type === 'bug' ? '🐞 Bug' : details.type === 'idea' ? '💡 Idea' : '💬 Other'
+  const title = `🗂️ <b>New Feedback</b> — ${typeLabel}`
+
+  const maxMsgLen = 600
+  const safeMessage = (details.message || '')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+  const messagePreview = safeMessage.length > maxMsgLen ? safeMessage.slice(0, maxMsgLen) + '…' : safeMessage
+
+  const lines = [
+    title,
+    '━━━━━━━━━━━━━━━━━━━',
+    details.name ? `👤 Name: ${details.name}` : '',
+    details.email ? `📧 Email: ${details.email}` : '',
+    details.pageUrl ? `🔗 Page: <code>${details.pageUrl}</code>` : '',
+    messagePreview ? `✉️ Message:\n<code>${messagePreview}</code>` : '',
+    ctx.ipAddress ? `🌍 IP: ${ctx.ipAddress}` : '',
+    ctx.device ? `💻 Device: ${ctx.device}` : '',
+    `🕒 Time: ${formatTime(new Date())}`,
+    location ? `📍 Location: ${location}` : '',
+    '🔗 Website: <code>https://www.aidiscoveryboards.info</code>',
+    '━━━━━━━━━━━━━━━━━━━'
+  ].filter(Boolean)
+
+  await sendTelegramMessage(lines.join('\n'))
+}

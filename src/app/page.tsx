@@ -2,7 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { ArrowRight, Zap, Users, Star, ExternalLink, Calendar, FileText } from 'lucide-react'
+import { ArrowRight, Zap, Users, Star, ExternalLink, Calendar, FileText, Mail, Github, Globe } from 'lucide-react'
 import MainLayout from '@/components/layout/MainLayout'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -223,6 +223,82 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+
+
+
+      {/* Contact Section */}
+      <section className="py-12" id="contact">
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-foreground">📫 Get in Touch</h2>
+          <p className="text-muted-foreground mt-2">Questions, feedback, or partnerships? We’d love to hear from you.</p>
+        </div>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
+          <Card className="border border-border bg-card">
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-2 text-foreground">
+                <Mail className="h-4 w-4" />
+                <CardTitle className="text-base">Email</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-2">Direct support and inquiries</p>
+              <a href="mailto:mkparmar.131@gmail.com" className="text-sm font-medium text-primary hover:underline">mkparmar.131@gmail.com</a>
+            </CardContent>
+          </Card>
+
+          <Card className="border border-border bg-card">
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-2 text-foreground">
+                <Github className="h-4 w-4" />
+                <CardTitle className="text-base">GitHub</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-2">Issues, ideas, and contributions</p>
+              <a href="https://github.com/mkparmar1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-sm font-medium text-primary hover:underline">
+                github.com/mkparmar1
+                <ExternalLink className="ml-1 h-3 w-3" />
+              </a>
+            </CardContent>
+          </Card>
+        </div>
+
+      </section>
+
+      {/* Footer */}
+      <footer className="mt-8 border-t">
+        <div className="container mx-auto px-4 py-8 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              <span className="text-sm font-bold">AI</span>
+            </div>
+            <div>
+              <p className="text-sm font-semibold">AI Discovery Boards</p>
+              <p className="text-xs text-muted-foreground">Discover AI tools, prompts, research, and learning paths.</p>
+            </div>
+          </div>
+
+          <nav className="flex flex-wrap items-center gap-4 text-sm">
+            <Link href="/" className="text-muted-foreground hover:text-foreground">Home</Link>
+            <Link href="/tools" className="text-muted-foreground hover:text-foreground">AI Tools</Link>
+            <Link href="/prompts" className="text-muted-foreground hover:text-foreground">AI Prompts</Link>
+            <Link href="/blogs" className="text-muted-foreground hover:text-foreground">Blogs</Link>
+            <Link href="/research" className="text-muted-foreground hover:text-foreground">Research</Link>
+            <Link href="/learn-ai" className="text-muted-foreground hover:text-foreground">Learn AI</Link>
+            <a href="#contact" className="text-muted-foreground hover:text-foreground">Contact</a>
+          </nav>
+
+          <div className="flex items-center gap-3 text-muted-foreground">
+            <a href="mailto:mkparmar.131@gmail.com" className="hover:text-foreground" aria-label="Email"><Mail className="h-4 w-4" /></a>
+            <a href="https://github.com/mkparmar1" target="_blank" rel="noopener noreferrer" className="hover:text-foreground" aria-label="GitHub"><Github className="h-4 w-4" /></a>
+            <a href="https://aidiscoveryboards.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground" aria-label="Website"><Globe className="h-4 w-4" /></a>
+          </div>
+        </div>
+        <div className="container mx-auto px-4 pb-8">
+          <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} AI Discovery Boards. All rights reserved.</p>
+        </div>
+      </footer>
 
 
 

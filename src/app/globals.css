@@ -178,6 +178,17 @@
   }
 }
 
+@keyframes softPulse {
+  0%, 100% { transform: scale(1); opacity: 0.95; }
+  50% { transform: scale(1.04); opacity: 1; }
+}
+
+@layer utilities {
+  .animate-soft-pulse {
+    animation: softPulse 1.8s ease-in-out infinite;
+  }
+}
+
 /* Responsive design utilities */
 @media (max-width: 768px) {
   .mobile-hidden {
