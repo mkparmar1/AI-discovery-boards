@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { Tool } from '@/lib/data'
 import ToolCard from '@/components/ToolCard'
 import { Button } from '@/components/ui/button'
@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Search, Filter, Grid, List, Loader2 } from 'lucide-react'
 import MainLayout from '@/components/layout/MainLayout'
+import SearchableSelect from '@/components/ui/searchable-select'
 
 const ITEMS_PER_PAGE = 20
 
@@ -43,6 +44,16 @@ export default function ToolsPage() {
   const [allTags, setAllTags] = useState<string[]>([])
   const [hasMore, setHasMore] = useState(true)
   const [totalCount, setTotalCount] = useState(0)
+
+  const categoryOptions = useMemo(() => [
+    { value: 'all', label: 'All Categories' },
+    ...categories.map(c => ({ value: c, label: c }))
+  ], [categories])
+
+  const tagOptions = useMemo(() => [
+    { value: 'all', label: 'All Tags' },
+    ...allTags.map(t => ({ value: t, label: `#${t}` }))
+  ], [allTags])
 
   // Debounce the search input to improve responsiveness
   useEffect(() => {
@@ -232,30 +243,24 @@ export default function ToolsPage() {
               {/* Category Filter */}
               <div className="flex items-center gap-2">
                 <Filter className="h-4 w-4 text-muted-foreground" />
-                <select
+                <SearchableSelect
                   value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="border border-input bg-background px-3 py-2 text-sm rounded-md min-w-[140px]"
-                >
-                  <option value="all">All Categories</option>
-                  {categories.map(category => (
-                    <option key={category} value={category}>{category}</option>
-                  ))}
-                </select>
+                  onChange={(v) => setSelectedCategory(v)}
+                  options={categoryOptions}
+                  placeholder="All Categories"
+                  className="min-w-[140px]"
+                />
               </div>
 
               {/* Tag Filter */}
               <div className="flex items-center gap-2">
-                <select
+                <SearchableSelect
                   value={selectedTag}
-                  onChange={(e) => setSelectedTag(e.target.value)}
-                  className="border border-input bg-background px-3 py-2 text-sm rounded-md min-w-[120px]"
-                >
-                  <option value="all">All Tags</option>
-                  {allTags.map(tag => (
-                    <option key={tag} value={tag}>#{tag}</option>
-                  ))}
-                </select>
+                  onChange={(v) => setSelectedTag(v)}
+                  options={tagOptions}
+                  placeholder="All Tags"
+                  className="min-w-[120px]"
+                />
               </div>
 
               {/* Clear Filters */}
