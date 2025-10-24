@@ -47,6 +47,10 @@ const LoginForm: React.FC = () => {
       
       // Store user data in localStorage (in a real app, you'd use proper session management)
       localStorage.setItem('user', JSON.stringify(data.user))
+      // Cache identifiers for analytics
+      localStorage.setItem('user_id', data.user?.id || data.user?._id || '')
+      if (data.user?.name) localStorage.setItem('user_name', data.user.name)
+      if (data.user?.email) localStorage.setItem('user_email', data.user.email)
       
       // Reset form
       setEmail('')
@@ -149,9 +153,6 @@ const LoginForm: React.FC = () => {
                   Remember me
                 </label>
               </div>
-              <Link href="/forgot-password" className="text-sm text-primary hover:underline">
-                Forgot password?
-              </Link>
             </div>
 
             <Button type="submit" className="w-full" disabled={isLoading}>

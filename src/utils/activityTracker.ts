@@ -37,9 +37,29 @@ export function getSessionId(): string {
 export function getUserId(): string {
   if (typeof window === 'undefined') return 'anonymous';
   
-  // Try to get from localStorage or your auth system
-  const userId = localStorage.getItem('user_id') || 'anonymous';
-  return userId;
+  // Prefer an explicit cached id
+  const directId = localStorage.getItem('user_id');
+  if (directId) return directId;
+
+  // Fall back to parsing stored user object from login
+  const userJson = localStorage.getItem('user');
+  if (userJson) {
+    try {
+      const user = JSON.parse(userJson);
+      const id = user?.id || user?._id;
+      if (typeof id === 'string' && id.length > 0) {
+        // Cache for future calls; also cache name/email for convenience
+        localStorage.setItem('user_id', id);
+        if (user?.name) localStorage.setItem('user_name', user.name);
+        if (user?.email) localStorage.setItem('user_email', user.email);
+        return id;
+      }
+    } catch {
+      // ignore parse errors
+    }
+  }
+
+  return 'anonymous';
 }
 
 // Track user activity
