@@ -38,7 +38,7 @@ const Footer: React.FC = () => {
     { icon: Github, href: 'https://github.com/aidiscoveryboards', label: 'GitHub' },
     { icon: Twitter, href: 'https://twitter.com/aidiscoveryboards', label: 'Twitter' },
     { icon: Linkedin, href: 'https://linkedin.com/company/aidiscoveryboards', label: 'LinkedIn' },
-    { icon: Mail, href: 'mailto:hello@aidiscoveryboards.com', label: 'Email' },
+    { icon: Mail, href: 'mailto:mkparmar.131@gmail.com', label: 'Email' },
   ]
 
   return (

@@ -292,7 +292,7 @@ export default function Home() {
           <div className="flex items-center gap-3 text-muted-foreground">
             <a href="mailto:mkparmar.131@gmail.com" className="hover:text-foreground" aria-label="Email"><Mail className="h-4 w-4" /></a>
             <a href="https://github.com/mkparmar1" target="_blank" rel="noopener noreferrer" className="hover:text-foreground" aria-label="GitHub"><Github className="h-4 w-4" /></a>
-            <a href="https://aidiscoveryboards.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground" aria-label="Website"><Globe className="h-4 w-4" /></a>
+            <a href="https://aidiscoveryboards.info" target="_blank" rel="noopener noreferrer" className="hover:text-foreground" aria-label="Website"><Globe className="h-4 w-4" /></a>
           </div>
         </div>
         <div className="container mx-auto px-4 pb-8">

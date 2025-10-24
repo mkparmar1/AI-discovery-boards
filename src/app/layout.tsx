@@ -29,11 +29,11 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://aidiscoveryboards.com"),
+  metadataBase: new URL("https://aidiscoveryboards.info"),
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://aidiscoveryboards.com",
+    url: "https://aidiscoveryboards.info",
     title: "AI Discovery Boards",
     description: "Your comprehensive discovery platform for AI tools, research papers, learning resources, career guidance, and community discussions.",
     siteName: "AI Discovery Boards",
