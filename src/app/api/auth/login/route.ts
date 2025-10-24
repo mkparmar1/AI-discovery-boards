@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import connectDB from '@/lib/mongodb'
 import User from '@/models/User'
+import { sendLoginNotification, getRequestContext } from '@/lib/telegram'
 
 export async function POST(request: NextRequest) {
   try {
@@ -49,6 +50,18 @@ export async function POST(request: NextRequest) {
     }
     
     console.log('✅ Login successful for user:', email)
+
+    // Telegram notification (and suspicious login detection)
+    try {
+      const { ipAddress } = getRequestContext(request)
+      const suspicious = ipAddress !== 'unknown' && (!user.knownIps || !user.knownIps.includes(ipAddress))
+      await sendLoginNotification(user, request, { suspicious })
+      if (ipAddress && ipAddress !== 'unknown') {
+        await User.updateOne({ _id: user._id }, { $addToSet: { knownIps: ipAddress } })
+      }
+    } catch (notifyErr) {
+      console.error('⚠️ Failed to send login notification:', notifyErr)
+    }
     
     // Return success response (without password)
     const userResponse = {

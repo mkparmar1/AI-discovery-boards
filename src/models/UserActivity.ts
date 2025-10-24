@@ -56,8 +56,7 @@ const UserActivitySchema = new mongoose.Schema<IUserActivity>({
   },
   timestamp: {
     type: Date,
-    default: Date.now,
-    index: true
+    default: Date.now
   },
   sessionId: {
     type: String,

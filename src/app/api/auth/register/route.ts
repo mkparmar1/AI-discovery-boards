@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import connectDB from '@/lib/mongodb'
 import User from '@/models/User'
+import { sendRegisterNotification } from '@/lib/telegram'
 
 export async function POST(request: NextRequest) {
   try {
@@ -63,6 +64,13 @@ export async function POST(request: NextRequest) {
     
     await user.save()
     console.log('✅ User created successfully:', email)
+
+    // Telegram notification for registration
+    try {
+      await sendRegisterNotification(user, request)
+    } catch (notifyErr) {
+      console.error('⚠️ Failed to send registration notification:', notifyErr)
+    }
     
     // Return success response (without password)
     const userResponse = {

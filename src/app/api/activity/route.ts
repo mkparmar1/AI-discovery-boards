@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import UserActivity from '@/models/UserActivity';
+import User from '@/models/User';
+import { sendUserActionNotification } from '@/lib/telegram';
+import mongoose from 'mongoose';
 
 export async function POST(request: NextRequest) {
   try {
@@ -67,6 +70,24 @@ export async function POST(request: NextRequest) {
     });
 
     await activity.save();
+
+    // Telegram notification for user action (important events)
+    try {
+      let user: any = null;
+      if (typeof userId === 'string' && userId !== 'anonymous' && mongoose.Types.ObjectId.isValid(userId)) {
+        user = await User.findById(userId).lean();
+      }
+      const actionLabel = activityType === 'tool_click'
+        ? `Tool Click: ${resourceTitle || resourceId}`
+        : activityType.replace(/_/g, ' ');
+      await sendUserActionNotification(
+        user ?? { _id: null, name: 'Anonymous' },
+        request,
+        actionLabel
+      );
+    } catch (notifyErr) {
+      console.error('⚠️ Failed to send user action notification:', notifyErr);
+    }
 
     return NextResponse.json(
       { 

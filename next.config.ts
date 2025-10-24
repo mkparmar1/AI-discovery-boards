@@ -1,10 +1,6 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-  eslint: {
-    // Skip ESLint during production builds to prevent lint errors from failing the build
-    ignoreDuringBuilds: true,
-  },
   images: {
     remotePatterns: [
       {
@@ -15,6 +11,11 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-};
+  eslint: {
+    // Temporarily ignore ESLint errors during production builds to allow compiling
+    // We will re-enable once lint issues are resolved in code
+    ignoreDuringBuilds: true,
+  },
+}
 
-export default nextConfig;
+export default nextConfig
