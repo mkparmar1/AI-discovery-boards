@@ -115,37 +115,3 @@ export async function POST(request: NextRequest) {
     )
   }
 }
-
-// GET_LIKED - Get all liked prompts for a user
-export async function GET_LIKED(userId: string) {
-  try {
-    await connectDB()
-    
-    const likedInteractions = await UserPromptInteraction.find({
-      userId,
-      isLiked: true
-    }).select('promptId')
-
-    return likedInteractions.map(interaction => interaction.promptId)
-  } catch (error) {
-    console.error('Error fetching liked prompts:', error)
-    return []
-  }
-}
-
-// GET_BOOKMARKED - Get all bookmarked prompts for a user
-export async function GET_BOOKMARKED(userId: string) {
-  try {
-    await connectDB()
-    
-    const bookmarkedInteractions = await UserPromptInteraction.find({
-      userId,
-      isBookmarked: true
-    }).select('promptId')
-
-    return bookmarkedInteractions.map(interaction => interaction.promptId)
-  } catch (error) {
-    console.error('Error fetching bookmarked prompts:', error)
-    return []
-  }
-}

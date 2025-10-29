@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { connectToDatabase } from '@/lib/mongodb'
+import connectDB from '@/lib/mongodb'
 import UserPromptInteraction from '@/models/UserPromptInteraction'
-import AIPrompt from '@/models/AIPrompt'
+import Prompt from '@/models/Prompt'
 
 export async function GET(request: NextRequest) {
   try {
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    await connectToDatabase()
+    await connectDB()
 
     // Get liked prompt IDs for the user
     const likedInteractions = await UserPromptInteraction.find({
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
     const totalCount = likedPromptIds.length
 
     // Get the actual prompts
-    const prompts = await AIPrompt.find({
+    const prompts = await Prompt.find({
       id: { $in: likedPromptIds }
     })
     .skip(skip)

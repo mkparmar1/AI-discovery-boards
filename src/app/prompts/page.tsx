@@ -476,7 +476,7 @@ export default function PromptsPage() {
             <SearchableSelect
               options={categoryOptions}
               value={selectedCategory}
-              onValueChange={setSelectedCategory}
+              onChange={setSelectedCategory}
               placeholder="Category"
               className="w-40"
             />
@@ -485,7 +485,7 @@ export default function PromptsPage() {
             <SearchableSelect
               options={tagOptions}
               value={selectedTag}
-              onValueChange={setSelectedTag}
+              onChange={setSelectedTag}
               placeholder="Tag"
               className="w-40"
             />
@@ -494,7 +494,7 @@ export default function PromptsPage() {
             <SearchableSelect
               options={difficultyOptions}
               value={selectedDifficulty}
-              onValueChange={setSelectedDifficulty}
+              onChange={setSelectedDifficulty}
               placeholder="Difficulty"
               className="w-40"
             />

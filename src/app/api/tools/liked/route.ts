@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { connectDB } from '@/lib/mongodb'
+import connectDB from '@/lib/mongodb'
 import UserToolInteraction from '@/models/UserToolInteraction'
 import Tool from '@/models/Tool'
 
