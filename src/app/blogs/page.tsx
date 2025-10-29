@@ -67,7 +67,7 @@ const BlogsPage = () => {
 
   // Handle like toggle
   const handleLikeToggle = useCallback(async (blogId: string) => {
-    if (!isAuthenticated || !user) return
+    if (!isAuthenticated) return
 
     const currentState = userInteractions[blogId]?.isLiked || false
     const newState = !currentState
@@ -129,7 +129,7 @@ const BlogsPage = () => {
 
   // Handle bookmark toggle
   const handleBookmarkToggle = useCallback(async (blogId: string) => {
-    if (!isAuthenticated || !user) return
+    if (!isAuthenticated) return
 
     const currentState = userInteractions[blogId]?.isBookmarked || false
     const newState = !currentState
