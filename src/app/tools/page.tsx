@@ -6,9 +6,10 @@ import ToolCard from '@/components/ToolCard'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Search, Filter, Grid, List, Loader2 } from 'lucide-react'
+import { Search, Filter, Grid, List, Loader2, Heart, Bookmark } from 'lucide-react'
 import MainLayout from '@/components/layout/MainLayout'
 import SearchableSelect from '@/components/ui/searchable-select'
+import { useAuth } from '@/contexts/AuthContext'
 
 const ITEMS_PER_PAGE = 20
 
@@ -30,13 +31,18 @@ interface ApiResponse {
 }
 
 export default function ToolsPage() {
+  const { user, isAuthenticated } = useAuth()
+  
   // Remove client-side full dataset; rely on server-side pagination and filtering
-  const [displayedTools, setDisplayedTools] = useState<Tool[]>([])
+  const [rawTools, setRawTools] = useState<Tool[]>([]) // Tools from API before client-side filtering
+  const [displayedTools, setDisplayedTools] = useState<Tool[]>([]) // Final filtered tools to display
   const [currentPage, setCurrentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState('')
   const [rawSearchTerm, setRawSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [selectedTag, setSelectedTag] = useState<string>('all')
+  const [showLikedOnly, setShowLikedOnly] = useState(false)
+  const [showSavedOnly, setShowSavedOnly] = useState(false)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [isLoading, setIsLoading] = useState(true)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
@@ -44,6 +50,10 @@ export default function ToolsPage() {
   const [allTags, setAllTags] = useState<string[]>([])
   const [hasMore, setHasMore] = useState(true)
   const [totalCount, setTotalCount] = useState(0)
+  
+  // User interaction states
+  const [userInteractions, setUserInteractions] = useState<Record<string, { isLiked: boolean; isBookmarked: boolean }>>({})
+  const [isLoadingInteractions, setIsLoadingInteractions] = useState(false)
 
   const categoryOptions = useMemo(() => [
     { value: 'all', label: 'All Categories' },
@@ -54,6 +64,56 @@ export default function ToolsPage() {
     { value: 'all', label: 'All Tags' },
     ...allTags.map(t => ({ value: t, label: `#${t}` }))
   ], [allTags])
+
+  // Fetch user interactions for displayed tools
+  const fetchUserInteractions = useCallback(async (toolIds: string[]) => {
+    if (!isAuthenticated || !user || toolIds.length === 0) return
+
+    setIsLoadingInteractions(true)
+    try {
+      const response = await fetch(`/api/tools/interactions?userId=${user.id}&toolIds=${toolIds.join(',')}`)
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success) {
+          setUserInteractions(prev => ({ ...prev, ...data.data }))
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch user interactions:', error)
+    } finally {
+      setIsLoadingInteractions(false)
+    }
+  }, [isAuthenticated, user])
+
+  // Handle like toggle
+  const handleLikeToggle = useCallback((toolId: string, isLiked: boolean) => {
+    setUserInteractions(prev => ({
+      ...prev,
+      [toolId]: {
+        ...prev[toolId],
+        isLiked
+      }
+    }))
+  }, [])
+
+  // Handle bookmark toggle
+  const handleBookmarkToggle = useCallback((toolId: string, isBookmarked: boolean) => {
+    setUserInteractions(prev => ({
+      ...prev,
+      [toolId]: {
+        ...prev[toolId],
+        isBookmarked
+      }
+    }))
+  }, [])
+
+  // Fetch user interactions when tools change or user logs in
+  useEffect(() => {
+    if (displayedTools.length > 0) {
+      const toolIds = displayedTools.map(tool => tool.id)
+      fetchUserInteractions(toolIds)
+    }
+  }, [displayedTools, fetchUserInteractions])
 
   // Debounce the search input to improve responsiveness
   useEffect(() => {
@@ -79,7 +139,7 @@ export default function ToolsPage() {
         const toolsData: ApiResponse = await toolsResponse.json()
         
         if (toolsData.success) {
-          setDisplayedTools(toolsData.data)
+          setRawTools(toolsData.data)
           setHasMore(toolsData.pagination.hasMore)
           setTotalCount(toolsData.pagination.totalCount)
         }
@@ -113,7 +173,7 @@ export default function ToolsPage() {
         const response = await fetch(`/api/tools?${params.toString()}`)
         const data: ApiResponse = await response.json()
         if (data.success) {
-          setDisplayedTools(data.data)
+          setRawTools(data.data)
           setHasMore(data.pagination.hasMore)
           setTotalCount(data.pagination.totalCount)
         }
@@ -128,6 +188,25 @@ export default function ToolsPage() {
     fetchFiltered()
   }, [searchTerm, selectedCategory, selectedTag])
 
+  // Client-side filtering for liked/saved tools
+  useEffect(() => {
+    let filtered = [...rawTools]
+    
+    if (showLikedOnly) {
+      filtered = filtered.filter(tool => {
+        const interaction = userInteractions[tool.id]
+        return interaction?.isLiked === true
+      })
+    } else if (showSavedOnly) {
+      filtered = filtered.filter(tool => {
+        const interaction = userInteractions[tool.id]
+        return interaction?.isBookmarked === true
+      })
+    }
+    
+    setDisplayedTools(filtered)
+  }, [rawTools, showLikedOnly, showSavedOnly, userInteractions])
+
   // Removed legacy scroll-based pagination and cooldown; using IntersectionObserver with page guard below
 
   // Replace cooldown and scroll-based loading with page guard + IntersectionObserver
@@ -140,7 +219,7 @@ export default function ToolsPage() {
 
   useEffect(() => {
     lastRequestedPageRef.current = 1
-  }, [searchTerm, selectedCategory, selectedTag])
+  }, [searchTerm, selectedCategory, selectedTag, showLikedOnly, showSavedOnly])
 
   const loadMoreTools = useCallback(async () => {
     if (isLoadingMore || !hasMore) return
@@ -160,7 +239,7 @@ export default function ToolsPage() {
       const response = await fetch(`/api/tools?${params.toString()}`)
       const data: ApiResponse = await response.json()
       if (data.success && data.data.length > 0) {
-        setDisplayedTools(prev => [...prev, ...data.data])
+        setRawTools(prev => [...prev, ...data.data])
         setCurrentPage(nextPage)
         setHasMore(data.pagination.hasMore)
       } else {
@@ -172,7 +251,7 @@ export default function ToolsPage() {
     } finally {
       setIsLoadingMore(false)
     }
-  }, [currentPage, isLoadingMore, hasMore, searchTerm, selectedCategory, selectedTag])
+  }, [currentPage, isLoadingMore, hasMore, searchTerm, selectedCategory, selectedTag, showLikedOnly, showSavedOnly])
 
   useEffect(() => {
     const node = sentinelRef.current
@@ -263,8 +342,36 @@ export default function ToolsPage() {
                 />
               </div>
 
+              {/* Liked Filter */}
+              <Button
+                variant={showLikedOnly ? "default" : "outline"}
+                size="sm"
+                onClick={() => {
+                  setShowLikedOnly(!showLikedOnly)
+                  if (!showLikedOnly) setShowSavedOnly(false) // Only one filter at a time
+                }}
+                className="flex items-center gap-2"
+              >
+                <Heart className={`h-4 w-4 ${showLikedOnly ? 'fill-current' : ''}`} />
+                Liked
+              </Button>
+
+              {/* Saved Filter */}
+              <Button
+                variant={showSavedOnly ? "default" : "outline"}
+                size="sm"
+                onClick={() => {
+                  setShowSavedOnly(!showSavedOnly)
+                  if (!showSavedOnly) setShowLikedOnly(false) // Only one filter at a time
+                }}
+                className="flex items-center gap-2"
+              >
+                <Bookmark className={`h-4 w-4 ${showSavedOnly ? 'fill-current' : ''}`} />
+                Saved
+              </Button>
+
               {/* Clear Filters */}
-              {(searchTerm || selectedCategory !== 'all' || selectedTag !== 'all') && (
+              {(searchTerm || selectedCategory !== 'all' || selectedTag !== 'all' || showLikedOnly || showSavedOnly) && (
                 <Button
                   variant="outline"
                   size="sm"
@@ -272,6 +379,8 @@ export default function ToolsPage() {
                     setSearchTerm('')
                     setSelectedCategory('all')
                     setSelectedTag('all')
+                    setShowLikedOnly(false)
+                    setShowSavedOnly(false)
                   }}
                 >
                   Clear Filters
@@ -298,6 +407,8 @@ export default function ToolsPage() {
                 setSearchTerm('')
                 setSelectedCategory('all')
                 setSelectedTag('all')
+                setShowLikedOnly(false)
+                setShowSavedOnly(false)
               }}
             >
               Clear Filters
@@ -307,9 +418,20 @@ export default function ToolsPage() {
           <>
             {/* Tools Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {displayedTools.map((tool, index) => (
-                <ToolCard key={`${tool.id}-${index}`} tool={tool} viewMode="grid" />
-              ))}
+              {displayedTools.map((tool, index) => {
+                const interaction = userInteractions[tool.id] || { isLiked: false, isBookmarked: false }
+                return (
+                  <ToolCard 
+                    key={`${tool.id}-${index}`} 
+                    tool={tool} 
+                    viewMode="grid"
+                    isLiked={interaction.isLiked}
+                    isBookmarked={interaction.isBookmarked}
+                    onLikeToggle={handleLikeToggle}
+                    onBookmarkToggle={handleBookmarkToggle}
+                  />
+                )
+              })}
             </div>
 
             {/* Loading More Indicator */}

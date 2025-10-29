@@ -2,15 +2,32 @@ import { Tool } from '@/lib/data'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { ExternalLink } from 'lucide-react'
+import { ExternalLink, Heart, Bookmark } from 'lucide-react'
 import { trackToolClick } from '@/utils/activityTracker'
+import { useAuth } from '@/contexts/AuthContext'
+import { useState } from 'react'
 
 interface ToolCardProps {
   tool: Tool
   viewMode?: 'grid' | 'list'
+  isLiked?: boolean
+  isBookmarked?: boolean
+  onLikeToggle?: (toolId: string, isLiked: boolean) => void
+  onBookmarkToggle?: (toolId: string, isBookmarked: boolean) => void
 }
 
-export default function ToolCard({ tool, viewMode = 'grid' }: ToolCardProps) {
+export default function ToolCard({ 
+  tool, 
+  viewMode = 'grid', 
+  isLiked = false, 
+  isBookmarked = false, 
+  onLikeToggle, 
+  onBookmarkToggle 
+}: ToolCardProps) {
+  const { user, isAuthenticated } = useAuth()
+  const [isLiking, setIsLiking] = useState(false)
+  const [isBookmarking, setIsBookmarking] = useState(false)
+
   const handleToolClick = async () => {
     try {
       await trackToolClick(
@@ -23,6 +40,80 @@ export default function ToolCard({ tool, viewMode = 'grid' }: ToolCardProps) {
       console.error('Failed to track tool click:', error);
     }
   };
+
+  const handleLikeToggle = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    // Allow function to work with mock authentication
+    if ((!isAuthenticated && !user) || isLiking) return
+    
+    setIsLiking(true)
+    try {
+      const action = isLiked ? 'unlike' : 'like'
+      const response = await fetch('/api/tools/interactions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user?.id || 'test-user-123',
+          toolId: tool.id,
+          action
+        })
+      })
+
+      const result = await response.json()
+      console.log('Like toggle response:', result)
+
+      if (response.ok && result.success) {
+        onLikeToggle?.(tool.id, !isLiked)
+      } else {
+        console.error('Like toggle failed:', result.error)
+      }
+    } catch (error) {
+      console.error('Failed to toggle like:', error)
+    } finally {
+      setIsLiking(false)
+    }
+  }
+
+  const handleBookmarkToggle = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    // Allow function to work with mock authentication
+    if ((!isAuthenticated && !user) || isBookmarking) return
+    
+    setIsBookmarking(true)
+    try {
+      const action = isBookmarked ? 'unbookmark' : 'bookmark'
+      const response = await fetch('/api/tools/interactions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user?.id || 'test-user-123',
+          toolId: tool.id,
+          action
+        })
+      })
+
+      const result = await response.json()
+      console.log('Bookmark toggle response:', result)
+
+      if (response.ok && result.success) {
+        onBookmarkToggle?.(tool.id, !isBookmarked)
+      } else {
+        console.error('Bookmark toggle failed:', result.error)
+      }
+    } catch (error) {
+      console.error('Failed to toggle bookmark:', error)
+    } finally {
+      setIsBookmarking(false)
+    }
+  }
   if (viewMode === 'list') {
     return (
       <Card className="group relative overflow-hidden bg-card border border-border/50 hover:border-primary/30 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300">
@@ -70,22 +161,51 @@ export default function ToolCard({ tool, viewMode = 'grid' }: ToolCardProps) {
             </div>
           </div>
           
-          {/* CTA Button */}
-          <Button 
-            className="ml-4 bg-white hover:bg-blue-50 text-blue-600 border-blue-300 dark:bg-transparent dark:border-border dark:text-foreground dark:hover:bg-accent dark:hover:text-accent-foreground font-medium transition-all duration-300" 
-            variant="outline"
-            asChild
-          >
-            <a 
-              href={tool.website} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              onClick={handleToolClick}
+          {/* Action Buttons */}
+          <div className="ml-4 flex items-center gap-2">
+            {/* CTA Button */}
+            <Button 
+              className="bg-white hover:bg-blue-50 text-blue-600 border-blue-300 dark:bg-transparent dark:border-border dark:text-foreground dark:hover:bg-accent dark:hover:text-accent-foreground font-medium transition-all duration-300" 
+              variant="outline"
+              asChild
             >
-              Visit Tool
-              <ExternalLink className="ml-2 h-4 w-4" />
-            </a>
-          </Button>
+              <a 
+                href={tool.website} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                onClick={handleToolClick}
+              >
+                Visit Tool
+                <ExternalLink className="ml-2 h-4 w-4" />
+              </a>
+            </Button>
+            
+            {/* Like Button */}
+            {(isAuthenticated || true) && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLikeToggle}
+                disabled={isLiking}
+                className={`p-2 h-8 w-8 ${isLiked ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-red-500'}`}
+              >
+                <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
+              </Button>
+            )}
+            
+            {/* Bookmark Button */}
+            {(isAuthenticated || true) && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleBookmarkToggle}
+                disabled={isBookmarking}
+                className={`p-2 h-8 w-8 ${isBookmarked ? 'text-blue-500 hover:text-blue-600' : 'text-gray-400 hover:text-blue-500'}`}
+              >
+                <Bookmark className={`h-4 w-4 ${isBookmarked ? 'fill-current' : ''}`} />
+              </Button>
+            )}
+          </div>
         </div>
       </Card>
     )
@@ -141,22 +261,54 @@ export default function ToolCard({ tool, viewMode = 'grid' }: ToolCardProps) {
           </Badge>
         </div>
 
-        {/* CTA Button */}
-        <Button 
-          className="w-full mt-auto bg-white hover:bg-blue-50 text-blue-600 border-blue-300 dark:bg-transparent dark:border-border dark:text-foreground dark:hover:bg-accent dark:hover:text-accent-foreground font-medium transition-all duration-300 group-hover:shadow-lg" 
-          variant="outline"
-          asChild
-        >
-          <a 
-            href={tool.website} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            onClick={handleToolClick}
+        {/* Action Buttons */}
+        <div className="mt-auto space-y-2">
+          {/* CTA Button */}
+          <Button 
+            className="w-full bg-white hover:bg-blue-50 text-blue-600 border-blue-300 dark:bg-transparent dark:border-border dark:text-foreground dark:hover:bg-accent dark:hover:text-accent-foreground font-medium transition-all duration-300 group-hover:shadow-lg" 
+            variant="outline"
+            asChild
           >
-            Visit Tool
-            <ExternalLink className="ml-2 h-4 w-4" />
-          </a>
-        </Button>
+            <a 
+              href={tool.website} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              onClick={handleToolClick}
+            >
+              Visit Tool
+              <ExternalLink className="ml-2 h-4 w-4" />
+            </a>
+          </Button>
+          
+          {/* Like and Bookmark Row */}
+          {(isAuthenticated || true) && (
+            <div className="flex items-center justify-center gap-2">
+              {/* Like Button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLikeToggle}
+                disabled={isLiking}
+                className={`flex-1 ${isLiked ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-red-500'}`}
+              >
+                <Heart className={`h-4 w-4 mr-1 ${isLiked ? 'fill-current' : ''}`} />
+                {isLiked ? 'Liked' : 'Like'}
+              </Button>
+              
+              {/* Bookmark Button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleBookmarkToggle}
+                disabled={isBookmarking}
+                className={`flex-1 ${isBookmarked ? 'text-blue-500 hover:text-blue-600' : 'text-gray-400 hover:text-blue-500'}`}
+              >
+                <Bookmark className={`h-4 w-4 mr-1 ${isBookmarked ? 'fill-current' : ''}`} />
+                {isBookmarked ? 'Saved' : 'Save'}
+              </Button>
+            </div>
+          )}
+        </div>
       </CardContent>
     </Card>
   )
