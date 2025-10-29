@@ -63,10 +63,19 @@ export default function ToolCard({
         })
       })
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const contentType = response.headers.get('content-type')
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Response is not JSON')
+      }
+
       const result = await response.json()
       console.log('Like toggle response:', result)
 
-      if (response.ok && result.success) {
+      if (result.success) {
         onLikeToggle?.(tool.id, !isLiked)
       } else {
         console.error('Like toggle failed:', result.error)
@@ -100,10 +109,19 @@ export default function ToolCard({
         })
       })
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const contentType = response.headers.get('content-type')
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Response is not JSON')
+      }
+
       const result = await response.json()
       console.log('Bookmark toggle response:', result)
 
-      if (response.ok && result.success) {
+      if (result.success) {
         onBookmarkToggle?.(tool.id, !isBookmarked)
       } else {
         console.error('Bookmark toggle failed:', result.error)
@@ -117,6 +135,33 @@ export default function ToolCard({
   if (viewMode === 'list') {
     return (
       <Card className="group relative overflow-hidden bg-card border border-border/50 hover:border-primary/30 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300">
+        {/* Like and Save Icons - Top Right */}
+        {(isAuthenticated || true) && (
+          <div className="absolute top-3 right-3 flex items-center gap-1 z-10">
+            {/* Like Button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLikeToggle}
+              disabled={isLiking}
+              className={`p-2.5 h-10 w-10 rounded-lg bg-white/90 backdrop-blur-sm hover:bg-white shadow-md border border-gray-200/50 hover:border-red-200 hover:shadow-lg transition-all duration-200 ${isLiked ? 'text-red-500 hover:text-red-600 border-red-200 bg-red-50/80' : 'text-gray-400 hover:text-red-500'}`}
+            >
+              <Heart className={`h-5 w-5 ${isLiked ? 'fill-current' : ''}`} />
+            </Button>
+            
+            {/* Bookmark Button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleBookmarkToggle}
+              disabled={isBookmarking}
+              className={`p-2.5 h-10 w-10 rounded-lg bg-white/90 backdrop-blur-sm hover:bg-white shadow-md border border-gray-200/50 hover:border-blue-200 hover:shadow-lg transition-all duration-200 ${isBookmarked ? 'text-blue-500 hover:text-blue-600 border-blue-200 bg-blue-50/80' : 'text-gray-400 hover:text-blue-500'}`}
+            >
+              <Bookmark className={`h-5 w-5 ${isBookmarked ? 'fill-current' : ''}`} />
+            </Button>
+          </div>
+        )}
+
         <div className="flex items-center p-6">
           {/* Tool Icon */}
           <div className="w-12 h-12 rounded-lg flex-shrink-0 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mr-4">
@@ -179,32 +224,6 @@ export default function ToolCard({
                 <ExternalLink className="ml-2 h-4 w-4" />
               </a>
             </Button>
-            
-            {/* Like Button */}
-            {(isAuthenticated || true) && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleLikeToggle}
-                disabled={isLiking}
-                className={`p-2 h-8 w-8 ${isLiked ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-red-500'}`}
-              >
-                <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
-              </Button>
-            )}
-            
-            {/* Bookmark Button */}
-            {(isAuthenticated || true) && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleBookmarkToggle}
-                disabled={isBookmarking}
-                className={`p-2 h-8 w-8 ${isBookmarked ? 'text-blue-500 hover:text-blue-600' : 'text-gray-400 hover:text-blue-500'}`}
-              >
-                <Bookmark className={`h-4 w-4 ${isBookmarked ? 'fill-current' : ''}`} />
-              </Button>
-            )}
           </div>
         </div>
       </Card>
@@ -214,6 +233,33 @@ export default function ToolCard({
   // Grid view (default)
   return (
     <Card className="group relative overflow-hidden bg-card border border-border/50 hover:border-primary/30 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
+      {/* Like and Save Icons - Top Right */}
+      {(isAuthenticated || true) && (
+        <div className="absolute top-3 right-3 flex items-center gap-1 z-10">
+          {/* Like Button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleLikeToggle}
+            disabled={isLiking}
+            className={`p-2.5 h-10 w-10 rounded-lg bg-white/90 backdrop-blur-sm hover:bg-white shadow-md border border-gray-200/50 hover:border-red-200 hover:shadow-lg transition-all duration-200 ${isLiked ? 'text-red-500 hover:text-red-600 border-red-200 bg-red-50/80' : 'text-gray-400 hover:text-red-500'}`}
+          >
+            <Heart className={`h-5 w-5 ${isLiked ? 'fill-current' : ''}`} />
+          </Button>
+          
+          {/* Bookmark Button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleBookmarkToggle}
+            disabled={isBookmarking}
+            className={`p-2.5 h-10 w-10 rounded-lg bg-white/90 backdrop-blur-sm hover:bg-white shadow-md border border-gray-200/50 hover:border-blue-200 hover:shadow-lg transition-all duration-200 ${isBookmarked ? 'text-blue-500 hover:text-blue-600 border-blue-200 bg-blue-50/80' : 'text-gray-400 hover:text-blue-500'}`}
+          >
+            <Bookmark className={`h-5 w-5 ${isBookmarked ? 'fill-current' : ''}`} />
+          </Button>
+        </div>
+      )}
+
       <CardHeader className="pb-3">
         <div className="flex items-start justify-start mb-3">
           <Badge 
@@ -262,7 +308,7 @@ export default function ToolCard({
         </div>
 
         {/* Action Buttons */}
-        <div className="mt-auto space-y-2">
+        <div className="mt-auto">
           {/* CTA Button */}
           <Button 
             className="w-full bg-white hover:bg-blue-50 text-blue-600 border-blue-300 dark:bg-transparent dark:border-border dark:text-foreground dark:hover:bg-accent dark:hover:text-accent-foreground font-medium transition-all duration-300 group-hover:shadow-lg" 
@@ -279,35 +325,6 @@ export default function ToolCard({
               <ExternalLink className="ml-2 h-4 w-4" />
             </a>
           </Button>
-          
-          {/* Like and Bookmark Row */}
-          {(isAuthenticated || true) && (
-            <div className="flex items-center justify-center gap-2">
-              {/* Like Button */}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleLikeToggle}
-                disabled={isLiking}
-                className={`flex-1 ${isLiked ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-red-500'}`}
-              >
-                <Heart className={`h-4 w-4 mr-1 ${isLiked ? 'fill-current' : ''}`} />
-                {isLiked ? 'Liked' : 'Like'}
-              </Button>
-              
-              {/* Bookmark Button */}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleBookmarkToggle}
-                disabled={isBookmarking}
-                className={`flex-1 ${isBookmarked ? 'text-blue-500 hover:text-blue-600' : 'text-gray-400 hover:text-blue-500'}`}
-              >
-                <Bookmark className={`h-4 w-4 mr-1 ${isBookmarked ? 'fill-current' : ''}`} />
-                {isBookmarked ? 'Saved' : 'Save'}
-              </Button>
-            </div>
-          )}
         </div>
       </CardContent>
     </Card>

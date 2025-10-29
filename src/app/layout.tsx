@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import QueryProvider from "@/contexts/QueryProvider";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -74,15 +75,17 @@ export default function RootLayout({
         <meta name="theme-color" content="#3b82f6" />
       </head>
       <body className={`${inter.variable} font-sans antialiased min-h-screen bg-background`} suppressHydrationWarning>
-        <ThemeProvider>
-          <AuthProvider>
-            <div className="relative flex min-h-screen flex-col">
-              <div className="flex-1">
-                {children}
+        <QueryProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <div className="relative flex min-h-screen flex-col">
+                <div className="flex-1">
+                  {children}
+                </div>
               </div>
-            </div>
-          </AuthProvider>
-        </ThemeProvider>
+            </AuthProvider>
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );

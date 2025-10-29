@@ -10,186 +10,52 @@ import { Search, Filter, Grid, List, Loader2, Heart, Bookmark } from 'lucide-rea
 import MainLayout from '@/components/layout/MainLayout'
 import SearchableSelect from '@/components/ui/searchable-select'
 import { useAuth } from '@/contexts/AuthContext'
+import { useInfiniteTools, useToolsMetadata, useAllToolsFromInfinite, useUserInteractions } from '@/hooks/useTools'
+import { useDebounce } from '@/hooks/useDebounce'
 
 const ITEMS_PER_PAGE = 20
-
-interface ApiResponse {
-  success: boolean
-  data: Tool[]
-  pagination: {
-    page: number
-    limit: number
-    totalCount: number
-    totalPages: number
-    hasMore: boolean
-  }
-  meta?: {
-    categories: string[]
-    tags: string[]
-    totalCount: number
-  }
-}
 
 export default function ToolsPage() {
   const { user, isAuthenticated } = useAuth()
   
-  // Remove client-side full dataset; rely on server-side pagination and filtering
-  const [rawTools, setRawTools] = useState<Tool[]>([]) // Tools from API before client-side filtering
-  const [displayedTools, setDisplayedTools] = useState<Tool[]>([]) // Final filtered tools to display
-  const [currentPage, setCurrentPage] = useState(1)
-  const [searchTerm, setSearchTerm] = useState('')
+  // Filter states
   const [rawSearchTerm, setRawSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [selectedTag, setSelectedTag] = useState<string>('all')
   const [showLikedOnly, setShowLikedOnly] = useState(false)
   const [showSavedOnly, setShowSavedOnly] = useState(false)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-  const [isLoading, setIsLoading] = useState(true)
-  const [isLoadingMore, setIsLoadingMore] = useState(false)
-  const [categories, setCategories] = useState<string[]>([])
-  const [allTags, setAllTags] = useState<string[]>([])
-  const [hasMore, setHasMore] = useState(true)
-  const [totalCount, setTotalCount] = useState(0)
   
-  // User interaction states
-  const [userInteractions, setUserInteractions] = useState<Record<string, { isLiked: boolean; isBookmarked: boolean }>>({})
-  const [isLoadingInteractions, setIsLoadingInteractions] = useState(false)
-
-  const categoryOptions = useMemo(() => [
-    { value: 'all', label: 'All Categories' },
-    ...categories.map(c => ({ value: c, label: c }))
-  ], [categories])
-
-  const tagOptions = useMemo(() => [
-    { value: 'all', label: 'All Tags' },
-    ...allTags.map(t => ({ value: t, label: `#${t}` }))
-  ], [allTags])
-
-  // Fetch user interactions for displayed tools
-  const fetchUserInteractions = useCallback(async (toolIds: string[]) => {
-    if (!isAuthenticated || !user || toolIds.length === 0) return
-
-    setIsLoadingInteractions(true)
-    try {
-      const response = await fetch(`/api/tools/interactions?userId=${user.id}&toolIds=${toolIds.join(',')}`)
-      if (response.ok) {
-        const data = await response.json()
-        if (data.success) {
-          setUserInteractions(prev => ({ ...prev, ...data.data }))
-        }
-      }
-    } catch (error) {
-      console.error('Failed to fetch user interactions:', error)
-    } finally {
-      setIsLoadingInteractions(false)
-    }
-  }, [isAuthenticated, user])
-
-  // Handle like toggle
-  const handleLikeToggle = useCallback((toolId: string, isLiked: boolean) => {
-    setUserInteractions(prev => ({
-      ...prev,
-      [toolId]: {
-        ...prev[toolId],
-        isLiked
-      }
-    }))
-  }, [])
-
-  // Handle bookmark toggle
-  const handleBookmarkToggle = useCallback((toolId: string, isBookmarked: boolean) => {
-    setUserInteractions(prev => ({
-      ...prev,
-      [toolId]: {
-        ...prev[toolId],
-        isBookmarked
-      }
-    }))
-  }, [])
-
-  // Fetch user interactions when tools change or user logs in
-  useEffect(() => {
-    if (displayedTools.length > 0) {
-      const toolIds = displayedTools.map(tool => tool.id)
-      fetchUserInteractions(toolIds)
-    }
-  }, [displayedTools, fetchUserInteractions])
-
-  // Debounce the search input to improve responsiveness
-  useEffect(() => {
-    const t = setTimeout(() => setSearchTerm(rawSearchTerm), 300)
-    return () => clearTimeout(t)
-  }, [rawSearchTerm])
-
-  // Use a module-level flag to avoid duplicate calls under React Strict Mode in dev
-  const initRef = useRef(false)
-  useEffect(() => {
-    if (initRef.current) return
-    initRef.current = true
-
-    const fetchInitialData = async () => {
-      try {
-        setIsLoading(true)
-        // Fetch meta (categories, tags, total count) without loading all tools
-        const metaResponse = await fetch('/api/tools?metaOnly=true')
-        const metaData: ApiResponse = await metaResponse.json()
-
-        // Fetch first page of tools (unfiltered)
-        const toolsResponse = await fetch(`/api/tools?limit=${ITEMS_PER_PAGE}&page=1`)
-        const toolsData: ApiResponse = await toolsResponse.json()
-        
-        if (toolsData.success) {
-          setRawTools(toolsData.data)
-          setHasMore(toolsData.pagination.hasMore)
-          setTotalCount(toolsData.pagination.totalCount)
-        }
-        if (metaData.success && metaData.meta) {
-          setCategories(metaData.meta.categories)
-          setAllTags(metaData.meta.tags)
-        }
-      } catch (error) {
-        console.error('Error fetching tools:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchInitialData()
-  }, [])
-
-  // Filter tools based on search term, category, and tag (server-side)
-  useEffect(() => {
-    const fetchFiltered = async () => {
-      try {
-        setIsLoading(true)
-        setCurrentPage(1)
-        const params = new URLSearchParams()
-        params.set('limit', String(ITEMS_PER_PAGE))
-        params.set('page', '1')
-        if (searchTerm) params.set('search', searchTerm)
-        if (selectedCategory !== 'all') params.set('category', selectedCategory)
-        if (selectedTag !== 'all') params.set('tags', selectedTag)
-
-        const response = await fetch(`/api/tools?${params.toString()}`)
-        const data: ApiResponse = await response.json()
-        if (data.success) {
-          setRawTools(data.data)
-          setHasMore(data.pagination.hasMore)
-          setTotalCount(data.pagination.totalCount)
-        }
-      } catch (error) {
-        console.error('Error fetching filtered tools:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    // Fetch when filters change
-    fetchFiltered()
-  }, [searchTerm, selectedCategory, selectedTag])
-
+  // Debounce search term to avoid too many API calls
+  const debouncedSearchTerm = useDebounce(rawSearchTerm, 300)
+  
+  // React Query hooks
+  const metadataQuery = useToolsMetadata()
+  const toolsQuery = useInfiniteTools({
+    search: debouncedSearchTerm || undefined,
+    category: selectedCategory !== 'all' ? selectedCategory : undefined,
+    tags: selectedTag !== 'all' ? selectedTag : undefined,
+    limit: ITEMS_PER_PAGE,
+  })
+  
+  const {
+    tools: rawTools,
+    totalCount,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    isLoading,
+    isError,
+    error,
+  } = useAllToolsFromInfinite(toolsQuery)
+  
+  // Get user interactions for displayed tools
+  const toolIds = rawTools.map(tool => tool.id)
+  const userInteractionsQuery = useUserInteractions(user?.id, toolIds)
+  const userInteractions = userInteractionsQuery.data || {}
+  
   // Client-side filtering for liked/saved tools
-  useEffect(() => {
+  const displayedTools = useMemo(() => {
     let filtered = [...rawTools]
     
     if (showLikedOnly) {
@@ -204,86 +70,75 @@ export default function ToolsPage() {
       })
     }
     
-    setDisplayedTools(filtered)
+    return filtered
   }, [rawTools, showLikedOnly, showSavedOnly, userInteractions])
 
-  // Removed legacy scroll-based pagination and cooldown; using IntersectionObserver with page guard below
+  // Get metadata
+  const categories = metadataQuery.data?.categories || []
+  const allTags = metadataQuery.data?.tags || []
 
-  // Replace cooldown and scroll-based loading with page guard + IntersectionObserver
-  const lastRequestedPageRef = useRef<number>(1)
+  const categoryOptions = useMemo(() => [
+    { value: 'all', label: 'All Categories' },
+    ...categories.map(c => ({ value: c, label: c }))
+  ], [categories])
+
+  const tagOptions = useMemo(() => [
+    { value: 'all', label: 'All Tags' },
+    ...allTags.map(t => ({ value: t, label: `#${t}` }))
+  ], [allTags])
+
+  // Handle like toggle
+  const handleLikeToggle = useCallback((toolId: string, isLiked: boolean) => {
+    // This would typically trigger a mutation to update the server
+    // For now, we'll just update the local state
+    console.log('Like toggled:', toolId, isLiked)
+  }, [])
+
+  // Handle bookmark toggle
+  const handleBookmarkToggle = useCallback((toolId: string, isBookmarked: boolean) => {
+    // This would typically trigger a mutation to update the server
+    // For now, we'll just update the local state
+    console.log('Bookmark toggled:', toolId, isBookmarked)
+  }, [])
+
+  // Infinite scroll setup
   const sentinelRef = useRef<HTMLDivElement | null>(null)
-  // Add visibility state and debounce/throttle refs for reliable infinite scroll
   const [isSentinelVisible, setIsSentinelVisible] = useState(false)
   const debounceTimerRef = useRef<number | null>(null)
   const intersectingRef = useRef<boolean>(false)
 
   useEffect(() => {
-    lastRequestedPageRef.current = 1
-  }, [searchTerm, selectedCategory, selectedTag, showLikedOnly, showSavedOnly])
-
-  const loadMoreTools = useCallback(async () => {
-    if (isLoadingMore || !hasMore) return
-    const nextPage = currentPage + 1
-    if (lastRequestedPageRef.current === nextPage) return
-    lastRequestedPageRef.current = nextPage
-
-    setIsLoadingMore(true)
-    try {
-      const params = new URLSearchParams()
-      params.set('limit', String(ITEMS_PER_PAGE))
-      params.set('page', String(nextPage))
-      if (searchTerm) params.set('search', searchTerm)
-      if (selectedCategory !== 'all') params.set('category', selectedCategory)
-      if (selectedTag !== 'all') params.set('tags', selectedTag)
-
-      const response = await fetch(`/api/tools?${params.toString()}`)
-      const data: ApiResponse = await response.json()
-      if (data.success && data.data.length > 0) {
-        setRawTools(prev => [...prev, ...data.data])
-        setCurrentPage(nextPage)
-        setHasMore(data.pagination.hasMore)
-      } else {
-        setHasMore(false)
-      }
-    } catch (error) {
-      console.error('Error loading more tools:', error)
-      setHasMore(false)
-    } finally {
-      setIsLoadingMore(false)
-    }
-  }, [currentPage, isLoadingMore, hasMore, searchTerm, selectedCategory, selectedTag, showLikedOnly, showSavedOnly])
-
-  useEffect(() => {
     const node = sentinelRef.current
     if (!node) return
+    
     const observer = new IntersectionObserver(
       entries => {
         const entry = entries[0]
         setIsSentinelVisible(entry.isIntersecting)
         intersectingRef.current = entry.isIntersecting
-        // Do not call loadMoreTools here directly; rely on debounced effect below
       },
       { root: null, rootMargin: '800px', threshold: 0 }
     )
+    
     observer.observe(node)
     return () => {
       observer.disconnect()
       intersectingRef.current = false
     }
-  }, [displayedTools.length, hasMore, isLoading])
+  }, [displayedTools.length, hasNextPage, isLoading])
   
   // Debounced trigger when sentinel becomes visible
   useEffect(() => {
-    if (!isSentinelVisible || isLoadingMore || !hasMore) return
+    if (!isSentinelVisible || isFetchingNextPage || !hasNextPage) return
   
     // Debounce 1.2s to prevent rapid multiple requests
     if (debounceTimerRef.current) {
       window.clearTimeout(debounceTimerRef.current)
     }
+    
     debounceTimerRef.current = window.setTimeout(() => {
-      // Safety re-check to avoid duplicate or skipped pages
-      if (intersectingRef.current && !isLoadingMore && hasMore) {
-        loadMoreTools()
+      if (intersectingRef.current && !isFetchingNextPage && hasNextPage) {
+        fetchNextPage()
       }
     }, 1200)
   
@@ -292,165 +147,240 @@ export default function ToolsPage() {
         window.clearTimeout(debounceTimerRef.current)
       }
     }
-  }, [isSentinelVisible, isLoadingMore, hasMore, loadMoreTools])
+  }, [isSentinelVisible, isFetchingNextPage, hasNextPage, fetchNextPage])
+
+  // Reset filters
+  const resetFilters = () => {
+    setRawSearchTerm('')
+    setSelectedCategory('all')
+    setSelectedTag('all')
+    setShowLikedOnly(false)
+    setShowSavedOnly(false)
+  }
+
+  if (isError) {
+    return (
+      <MainLayout>
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-red-600 mb-4">Error Loading Tools</h2>
+            <p className="text-gray-600 mb-4">
+              {error?.message || 'Failed to load tools. Please try again.'}
+            </p>
+            <Button onClick={() => window.location.reload()}>
+              Retry
+            </Button>
+          </div>
+        </div>
+      </MainLayout>
+    )
+  }
+
   return (
     <MainLayout>
-      <div>
-        {/* Tools Count */}
-        <div className="mb-6">
-          <p className="text-sm text-muted-foreground">
-            Showing {displayedTools.length} of {totalCount} tools
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            AI Tools Discovery
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-300">
+            Discover and explore the latest AI tools and technologies
           </p>
         </div>
 
-        {/* Search and Filters in One Row */}
+        {/* Tools Count */}
         <div className="mb-6">
-          <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {isLoading ? (
+                'Loading tools...'
+              ) : (
+                <>
+                  Showing {displayedTools.length} of {totalCount} tools
+                  {(debouncedSearchTerm || selectedCategory !== 'all' || selectedTag !== 'all') && (
+                    <Button
+                      variant="link"
+                      size="sm"
+                      onClick={resetFilters}
+                      className="ml-2 p-0 h-auto text-blue-600 hover:text-blue-800"
+                    >
+                      Clear filters
+                    </Button>
+                  )}
+                </>
+              )}
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant={viewMode === 'grid' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('grid')}
+              >
+                <Grid className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === 'list' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('list')}
+              >
+                <List className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Search and Filters - Single Row Layout */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 min-w-0 overflow-x-auto pb-2">
             {/* Search Bar */}
-            <div className="relative flex-1 min-w-0">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <div className="relative flex-shrink-0" style={{ width: '280px' }}>
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
-                placeholder="Search tools by name, description, or tags..."
+                type="text"
+                placeholder="Search AI tools..."
                 value={rawSearchTerm}
                 onChange={(e) => setRawSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 w-full"
               />
             </div>
 
-            {/* Filters */}
-            <div className="flex flex-wrap gap-3 items-center">
-              {/* Category Filter */}
-              <div className="flex items-center gap-2">
-                <Filter className="h-4 w-4 text-muted-foreground" />
+            {/* Category Filter */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <Filter className="h-4 w-4 text-gray-500" />
+              <div style={{ width: '140px' }}>
                 <SearchableSelect
-                  value={selectedCategory}
-                  onChange={(v) => setSelectedCategory(v)}
                   options={categoryOptions}
+                  value={selectedCategory}
+                  onChange={setSelectedCategory}
                   placeholder="All Categories"
-                  className="min-w-[140px]"
+                  className="w-full"
                 />
               </div>
+            </div>
 
-              {/* Tag Filter */}
-              <div className="flex items-center gap-2">
-                <SearchableSelect
-                  value={selectedTag}
-                  onChange={(v) => setSelectedTag(v)}
-                  options={tagOptions}
-                  placeholder="All Tags"
-                  className="min-w-[120px]"
-                />
-              </div>
+            {/* Tag Filter */}
+            <div className="flex-shrink-0" style={{ width: '120px' }}>
+              <SearchableSelect
+                options={tagOptions}
+                value={selectedTag}
+                onChange={setSelectedTag}
+                placeholder="All Tags"
+                className="w-full"
+              />
+            </div>
 
-              {/* Liked Filter */}
-              <Button
-                variant={showLikedOnly ? "default" : "outline"}
-                size="sm"
-                onClick={() => {
-                  setShowLikedOnly(!showLikedOnly)
-                  if (!showLikedOnly) setShowSavedOnly(false) // Only one filter at a time
-                }}
-                className="flex items-center gap-2"
-              >
-                <Heart className={`h-4 w-4 ${showLikedOnly ? 'fill-current' : ''}`} />
-                Liked
-              </Button>
-
-              {/* Saved Filter */}
-              <Button
-                variant={showSavedOnly ? "default" : "outline"}
-                size="sm"
-                onClick={() => {
-                  setShowSavedOnly(!showSavedOnly)
-                  if (!showSavedOnly) setShowLikedOnly(false) // Only one filter at a time
-                }}
-                className="flex items-center gap-2"
-              >
-                <Bookmark className={`h-4 w-4 ${showSavedOnly ? 'fill-current' : ''}`} />
-                Saved
-              </Button>
-
-              {/* Clear Filters */}
-              {(searchTerm || selectedCategory !== 'all' || selectedTag !== 'all' || showLikedOnly || showSavedOnly) && (
+            {/* User-specific filters */}
+            {isAuthenticated && (
+              <>
                 <Button
-                  variant="outline"
+                  variant={showLikedOnly ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => {
-                    setSearchTerm('')
-                    setSelectedCategory('all')
-                    setSelectedTag('all')
-                    setShowLikedOnly(false)
+                    setShowLikedOnly(!showLikedOnly)
                     setShowSavedOnly(false)
                   }}
+                  className="flex items-center gap-2 flex-shrink-0 whitespace-nowrap"
                 >
-                  Clear Filters
+                  <Heart className={`h-4 w-4 ${showLikedOnly ? 'fill-current' : ''}`} />
+                  Liked
                 </Button>
-              )}
-            </div>
+                <Button
+                  variant={showSavedOnly ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => {
+                    setShowSavedOnly(!showSavedOnly)
+                    setShowLikedOnly(false)
+                  }}
+                  className="flex items-center gap-2 flex-shrink-0 whitespace-nowrap"
+                >
+                  <Bookmark className={`h-4 w-4 ${showSavedOnly ? 'fill-current' : ''}`} />
+                  Saved
+                </Button>
+              </>
+            )}
+
+            {/* Clear Filters */}
+            {(debouncedSearchTerm || selectedCategory !== 'all' || selectedTag !== 'all' || showLikedOnly || showSavedOnly) && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={resetFilters}
+                className="text-gray-600 hover:text-gray-800 flex-shrink-0 whitespace-nowrap"
+              >
+                Clear All
+              </Button>
+            )}
           </div>
         </div>
 
         {/* Loading State */}
-        {isLoading ? (
+        {isLoading && (
           <div className="flex justify-center items-center py-12">
-            <div className="text-center">
-              <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
-              <p className="text-muted-foreground">Loading tools...</p>
-            </div>
+            <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+            <span className="ml-2 text-gray-600">Loading tools...</span>
           </div>
-        ) : displayedTools.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground mb-4">No tools found matching your criteria.</p>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setSearchTerm('')
-                setSelectedCategory('all')
-                setSelectedTag('all')
-                setShowLikedOnly(false)
-                setShowSavedOnly(false)
-              }}
-            >
-              Clear Filters
-            </Button>
-          </div>
-        ) : (
+        )}
+
+        {/* Tools Grid/List */}
+        {!isLoading && (
           <>
-            {/* Tools Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {displayedTools.map((tool, index) => {
-                const interaction = userInteractions[tool.id] || { isLiked: false, isBookmarked: false }
-                return (
-                  <ToolCard 
-                    key={`${tool.id}-${index}`} 
-                    tool={tool} 
-                    viewMode="grid"
-                    isLiked={interaction.isLiked}
-                    isBookmarked={interaction.isBookmarked}
+            {displayedTools.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-600 dark:text-gray-400 text-lg">
+                  No tools found matching your criteria.
+                </p>
+                {(debouncedSearchTerm || selectedCategory !== 'all' || selectedTag !== 'all') && (
+                  <Button
+                    variant="outline"
+                    onClick={resetFilters}
+                    className="mt-4"
+                  >
+                    Clear filters
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <div className={
+                viewMode === 'grid'
+                  ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
+                  : 'space-y-4'
+              }>
+                {displayedTools.map((tool) => (
+                  <ToolCard
+                    key={tool.id}
+                    tool={tool}
+                    viewMode={viewMode}
+                    isLiked={userInteractions[tool.id]?.isLiked || false}
+                    isBookmarked={userInteractions[tool.id]?.isBookmarked || false}
                     onLikeToggle={handleLikeToggle}
                     onBookmarkToggle={handleBookmarkToggle}
+                    showInteractionButtons={isAuthenticated}
                   />
-                )
-              })}
-            </div>
-
-            {/* Loading More Indicator */}
-            {isLoadingMore && (
-              <div className="flex justify-center items-center py-8">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <span className="ml-2 text-muted-foreground">Loading more tools...</span>
+                ))}
               </div>
             )}
 
-            {/* End of Results */}
-            {!hasMore && !isLoadingMore && (
+            {/* Load More Trigger */}
+            {hasNextPage && (
+              <div ref={sentinelRef} className="flex justify-center py-8">
+                {isFetchingNextPage && (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+                    <span className="text-gray-600">Loading more tools...</span>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* End of results */}
+            {!hasNextPage && displayedTools.length > 0 && (
               <div className="text-center py-8">
-                <p className="text-muted-foreground">You&apos;ve reached the end! All {displayedTools.length} tools loaded.</p>
+                <p className="text-gray-600 dark:text-gray-400">
+                  You've reached the end of the results.
+                </p>
               </div>
             )}
-
-            {/* Sentinel for IntersectionObserver */}
-            <div ref={sentinelRef} className="h-1" />
           </>
         )}
       </div>
