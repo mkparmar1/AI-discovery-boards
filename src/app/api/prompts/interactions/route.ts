@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { connectToDatabase } from '@/lib/mongodb'
+import connectDB from '@/lib/mongodb'
 import UserPromptInteraction from '@/models/UserPromptInteraction'
 
 // GET - Fetch user interactions for specific prompts
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    await connectToDatabase()
+    await connectDB()
 
     const promptIdArray = promptIds.split(',')
     const interactions = await UserPromptInteraction.find({
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    await connectToDatabase()
+    await connectDB()
 
     const updateField = action === 'like' ? 'isLiked' : 'isBookmarked'
     
@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
 // GET_LIKED - Get all liked prompts for a user
 export async function GET_LIKED(userId: string) {
   try {
-    await connectToDatabase()
+    await connectDB()
     
     const likedInteractions = await UserPromptInteraction.find({
       userId,
@@ -136,7 +136,7 @@ export async function GET_LIKED(userId: string) {
 // GET_BOOKMARKED - Get all bookmarked prompts for a user
 export async function GET_BOOKMARKED(userId: string) {
   try {
-    await connectToDatabase()
+    await connectDB()
     
     const bookmarkedInteractions = await UserPromptInteraction.find({
       userId,

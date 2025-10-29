@@ -112,6 +112,8 @@ export default function PromptsPage() {
         if (data.success) {
           setUserInteractions(prev => ({ ...prev, ...data.data }))
         }
+      } else {
+        console.error('Failed to fetch user interactions: HTTP', response.status)
       }
     } catch (error) {
       console.error('Failed to fetch user interactions:', error)
