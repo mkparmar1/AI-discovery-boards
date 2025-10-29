@@ -7,6 +7,45 @@ export async function GET(request: NextRequest) {
   // Extract query params early so we can reuse them in fallback
   const { searchParams } = new URL(request.url)
 
+  // Check if this is a metadata-only request
+  const metaOnly = searchParams.get('metaOnly') === 'true'
+
+  if (metaOnly) {
+    try {
+      await connectDB()
+
+      // Get unique categories and tags from database
+      const [categories, tags] = await Promise.all([
+        Prompt.distinct('category'),
+        Prompt.distinct('tags')
+      ])
+
+      // Flatten tags array and get unique values
+      const flatTags = tags.flat().filter((tag, index, arr) => arr.indexOf(tag) === index)
+
+      return NextResponse.json({
+        success: true,
+        categories: categories.sort(),
+        tags: flatTags.sort(),
+        totalCount: await Prompt.countDocuments()
+      })
+    } catch (error) {
+      console.error('❌ Error fetching metadata (falling back to static):', error)
+      
+      // Fallback to static data
+      const categories = [...new Set(aiPrompts.map(p => p.category))].sort()
+      const tags = [...new Set(aiPrompts.flatMap(p => p.tags))].sort()
+      
+      return NextResponse.json({
+        success: true,
+        categories,
+        tags,
+        totalCount: aiPrompts.length,
+        source: 'static'
+      })
+    }
+  }
+
   // Pagination parameters
   const page = parseInt(searchParams.get('page') || '1')
   const limit = parseInt(searchParams.get('limit') || '20')
