@@ -5,8 +5,11 @@ import { allPosts } from '@/lib/data'
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { ExternalLink, Loader2, Calendar, Clock } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import SearchableSelect from '@/components/ui/searchable-select'
+import { ExternalLink, Loader2, Calendar, Clock, Search, Filter, X, Heart, Bookmark } from 'lucide-react'
 import MainLayout from '@/components/layout/MainLayout'
+import { useAuth } from '@/contexts/AuthContext'
 // Removed Image import as we're using gradient backgrounds instead
 import Link from 'next/link'
 
@@ -23,10 +26,210 @@ const createSlug = (title: string) => {
 const ITEMS_PER_PAGE = 12
 
 const BlogsPage = () => {
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth()
+  
+  const [allFilteredPosts, setAllFilteredPosts] = useState(allPosts)
   const [displayedPosts, setDisplayedPosts] = useState(allPosts.slice(0, ITEMS_PER_PAGE))
   const [currentPage, setCurrentPage] = useState(1)
   const [isLoading, setIsLoading] = useState(false)
   const [hasMore, setHasMore] = useState(allPosts.length > ITEMS_PER_PAGE)
+  
+  // Search and filter states
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedTag, setSelectedTag] = useState<string>('')
+  const [showLikedOnly, setShowLikedOnly] = useState(false)
+  const [showSavedOnly, setShowSavedOnly] = useState(false)
+  
+  // User interaction states
+  const [userInteractions, setUserInteractions] = useState<Record<string, { isLiked: boolean; isBookmarked: boolean }>>({})
+  const [isLoadingInteractions, setIsLoadingInteractions] = useState(false)
+  
+  // Get all unique tags from posts
+  const allTags = Array.from(new Set(allPosts.flatMap(post => post.tags)))
+
+  // Fetch user interactions for displayed posts
+  const fetchUserInteractions = useCallback(async (blogIds: string[]) => {
+    if (!isAuthenticated || blogIds.length === 0) return
+
+    setIsLoadingInteractions(true)
+    try {
+      const response = await fetch(`/api/blogs/interactions?blogIds=${blogIds.join(',')}`)
+      if (response.ok) {
+        const data = await response.json()
+        setUserInteractions(prev => ({ ...prev, ...data.interactions }))
+      }
+    } catch (error) {
+      console.error('Failed to fetch user interactions:', error)
+    } finally {
+      setIsLoadingInteractions(false)
+    }
+  }, [isAuthenticated])
+
+  // Handle like toggle
+  const handleLikeToggle = useCallback(async (blogId: string) => {
+    if (!isAuthenticated || !user) return
+
+    const currentState = userInteractions[blogId]?.isLiked || false
+    const newState = !currentState
+
+    // Optimistically update UI
+    setUserInteractions(prev => ({
+      ...prev,
+      [blogId]: {
+        ...prev[blogId],
+        isLiked: newState,
+        isBookmarked: prev[blogId]?.isBookmarked || false
+      }
+    }))
+
+    try {
+      const response = await fetch('/api/blogs/interactions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          blogId,
+          action: 'like'
+        })
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setUserInteractions(prev => ({
+          ...prev,
+          [blogId]: {
+            ...prev[blogId],
+            isLiked: data.isLiked,
+            isBookmarked: data.isBookmarked
+          }
+        }))
+      } else {
+        // Revert on error
+        setUserInteractions(prev => ({
+          ...prev,
+          [blogId]: {
+            ...prev[blogId],
+            isLiked: currentState
+          }
+        }))
+      }
+    } catch (error) {
+      console.error('Failed to toggle like:', error)
+      // Revert on error
+      setUserInteractions(prev => ({
+        ...prev,
+        [blogId]: {
+          ...prev[blogId],
+          isLiked: currentState
+        }
+      }))
+    }
+  }, [isAuthenticated, user, userInteractions])
+
+  // Handle bookmark toggle
+  const handleBookmarkToggle = useCallback(async (blogId: string) => {
+    if (!isAuthenticated || !user) return
+
+    const currentState = userInteractions[blogId]?.isBookmarked || false
+    const newState = !currentState
+
+    // Optimistically update UI
+    setUserInteractions(prev => ({
+      ...prev,
+      [blogId]: {
+        ...prev[blogId],
+        isLiked: prev[blogId]?.isLiked || false,
+        isBookmarked: newState
+      }
+    }))
+
+    try {
+      const response = await fetch('/api/blogs/interactions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          blogId,
+          action: 'bookmark'
+        })
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setUserInteractions(prev => ({
+          ...prev,
+          [blogId]: {
+            ...prev[blogId],
+            isLiked: data.isLiked,
+            isBookmarked: data.isBookmarked
+          }
+        }))
+      } else {
+        // Revert on error
+        setUserInteractions(prev => ({
+          ...prev,
+          [blogId]: {
+            ...prev[blogId],
+            isBookmarked: currentState
+          }
+        }))
+      }
+    } catch (error) {
+      console.error('Failed to toggle bookmark:', error)
+      // Revert on error
+      setUserInteractions(prev => ({
+        ...prev,
+        [blogId]: {
+          ...prev[blogId],
+          isBookmarked: currentState
+        }
+      }))
+    }
+  }, [isAuthenticated, user, userInteractions])
+
+  // Filter posts based on search term, selected tags, and user interactions
+  const filterPosts = useCallback(() => {
+    let filtered = allPosts
+
+    // Filter by search term
+    if (searchTerm.trim()) {
+      const searchLower = searchTerm.toLowerCase()
+      filtered = filtered.filter(post =>
+        post.title.toLowerCase().includes(searchLower) ||
+        post.excerpt.toLowerCase().includes(searchLower) ||
+        post.content.toLowerCase().includes(searchLower) ||
+        post.tags.some(tag => tag.toLowerCase().includes(searchLower))
+      )
+    }
+
+    // Filter by selected tag
+    if (selectedTag) {
+      filtered = filtered.filter(post =>
+        post.tags.includes(selectedTag)
+      )
+    }
+
+    // Filter by liked posts only
+    if (showLikedOnly && isAuthenticated) {
+      filtered = filtered.filter(post =>
+        userInteractions[post.id]?.isLiked === true
+      )
+    }
+
+    // Filter by saved posts only
+    if (showSavedOnly && isAuthenticated) {
+      filtered = filtered.filter(post =>
+        userInteractions[post.id]?.isBookmarked === true
+      )
+    }
+
+    setAllFilteredPosts(filtered)
+    setDisplayedPosts(filtered.slice(0, ITEMS_PER_PAGE))
+    setCurrentPage(1)
+    setHasMore(filtered.length > ITEMS_PER_PAGE)
+  }, [searchTerm, selectedTag, showLikedOnly, showSavedOnly, userInteractions, isAuthenticated])
 
   const loadMorePosts = useCallback(() => {
     if (isLoading || !hasMore) return
@@ -38,19 +241,19 @@ const BlogsPage = () => {
       const nextPage = currentPage + 1
       const startIndex = (nextPage - 1) * ITEMS_PER_PAGE
       const endIndex = startIndex + ITEMS_PER_PAGE
-      const newPosts = allPosts.slice(startIndex, endIndex)
+      const newPosts = allFilteredPosts.slice(startIndex, endIndex)
       
       if (newPosts.length > 0) {
         setDisplayedPosts(prev => [...prev, ...newPosts])
         setCurrentPage(nextPage)
-        setHasMore(endIndex < allPosts.length)
+        setHasMore(endIndex < allFilteredPosts.length)
       } else {
         setHasMore(false)
       }
       
       setIsLoading(false)
     }, 800)
-  }, [currentPage, isLoading, hasMore])
+  }, [currentPage, isLoading, hasMore, allFilteredPosts])
 
   const handleScroll = useCallback(() => {
     if (isLoading || !hasMore) return
@@ -68,6 +271,19 @@ const BlogsPage = () => {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [handleScroll])
+
+  // Filter posts when search term or tags change
+  useEffect(() => {
+    filterPosts()
+  }, [filterPosts])
+
+  // Fetch user interactions when displayed posts change
+  useEffect(() => {
+    if (displayedPosts.length > 0 && !authLoading) {
+      const blogIds = displayedPosts.map(post => post.id)
+      fetchUserInteractions(blogIds)
+    }
+  }, [displayedPosts, fetchUserInteractions, authLoading])
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -87,12 +303,91 @@ const BlogsPage = () => {
   return (
     <MainLayout>
       <div>
+        {/* Search and Filter Section */}
+        <div className="mb-6 space-y-4">
+          {/* Search Bar and Filters Row */}
+          <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center">
+            {/* Search Bar */}
+            <div className="relative flex-1 min-w-0">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search blogs by title, content, or tags..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 pr-10"
+              />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
 
+            {/* Tag Filter */}
+            <div className="flex items-center gap-2 lg:min-w-[250px]">
+              <Filter className="h-4 w-4 text-muted-foreground" />
+              <SearchableSelect
+                options={[{ value: '', label: 'All tags' }, ...allTags.map(tag => ({ value: tag, label: tag }))]}
+                value={selectedTag}
+                onChange={setSelectedTag}
+                placeholder="Select a tag..."
+              />
+            </div>
+
+            {/* Save/Like Filters */}
+            {isAuthenticated && (
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={showLikedOnly ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setShowLikedOnly(!showLikedOnly)}
+                  className="flex items-center gap-1"
+                >
+                  <Heart className={`h-4 w-4 ${showLikedOnly ? 'fill-current' : ''}`} />
+                  Liked
+                </Button>
+                <Button
+                  variant={showSavedOnly ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setShowSavedOnly(!showSavedOnly)}
+                  className="flex items-center gap-1"
+                >
+                  <Bookmark className={`h-4 w-4 ${showSavedOnly ? 'fill-current' : ''}`} />
+                  Saved
+                </Button>
+              </div>
+            )}
+
+            {/* Clear Filters */}
+            {(selectedTag || showLikedOnly || showSavedOnly) && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setSelectedTag('')
+                  setShowLikedOnly(false)
+                  setShowSavedOnly(false)
+                }}
+                className="text-xs whitespace-nowrap"
+              >
+                Clear all filters
+              </Button>
+            )}
+          </div>
+        </div>
 
         {/* Posts Count */}
         <div className="mb-6">
           <p className="text-sm text-muted-foreground">
-            Showing {Math.min(displayedPosts.length, allPosts.length)} of {allPosts.length} posts
+            Showing {Math.min(displayedPosts.length, allFilteredPosts.length)} of {allFilteredPosts.length} posts
+            {(searchTerm || selectedTag || showLikedOnly || showSavedOnly) && (
+              <span className="ml-1">
+                (filtered from {allPosts.length} total)
+              </span>
+            )}
           </p>
         </div>
 
@@ -146,15 +441,61 @@ const BlogsPage = () => {
               
               <CardContent className="flex-1 flex flex-col p-4 pt-0">
                 {/* Meta Information */}
-                <div className="flex items-center gap-4 text-xs text-muted-foreground mb-4">
-                  <div className="flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    <span>{formatDate(post.date)}</span>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      <span>{formatDate(post.date)}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      <span>{calculateReadTime(post.content)} min read</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
-                    <span>{calculateReadTime(post.content)} min read</span>
-                  </div>
+                  
+                  {/* Like and Bookmark buttons */}
+                  {isAuthenticated && (
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          handleLikeToggle(post.id)
+                        }}
+                        className={`p-1 rounded-full transition-colors ${
+                          userInteractions[post.id]?.isLiked
+                            ? 'text-red-500 hover:text-red-600'
+                            : 'text-muted-foreground hover:text-red-500'
+                        }`}
+                        title={userInteractions[post.id]?.isLiked ? 'Unlike' : 'Like'}
+                      >
+                        <Heart 
+                          className={`h-4 w-4 ${
+                            userInteractions[post.id]?.isLiked ? 'fill-current' : ''
+                          }`} 
+                        />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          handleBookmarkToggle(post.id)
+                        }}
+                        className={`p-1 rounded-full transition-colors ${
+                          userInteractions[post.id]?.isBookmarked
+                            ? 'text-blue-500 hover:text-blue-600'
+                            : 'text-muted-foreground hover:text-blue-500'
+                        }`}
+                        title={userInteractions[post.id]?.isBookmarked ? 'Remove bookmark' : 'Bookmark'}
+                      >
+                        <Bookmark 
+                          className={`h-4 w-4 ${
+                            userInteractions[post.id]?.isBookmarked ? 'fill-current' : ''
+                          }`} 
+                        />
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Read More Button */}
