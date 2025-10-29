@@ -1,8 +1,8 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Zap, Users, Star, ExternalLink, Calendar, FileText, Mail, Github, Globe } from 'lucide-react'
+import { ArrowRight, Zap, Users, Star, ExternalLink, Calendar, FileText, Mail, Github, Globe, Copy, Check } from 'lucide-react'
 import MainLayout from '@/components/layout/MainLayout'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -14,9 +14,23 @@ import { aiPrompts } from '@/lib/data'
 export default function Home() {
   const featuredTools = aiTools.slice(0, 3)
   const featuredPapers = researchPapers.slice(0, 3)
-
-
   const latestPrompts = aiPrompts.slice(0, 3)
+
+  // State for tracking copied prompts
+  const [copiedStates, setCopiedStates] = useState<{ [key: string]: boolean }>({})
+
+  // Copy to clipboard function
+  const copyToClipboard = async (text: string, promptId: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopiedStates(prev => ({ ...prev, [promptId]: true }))
+      setTimeout(() => {
+        setCopiedStates(prev => ({ ...prev, [promptId]: false }))
+      }, 2000)
+    } catch (err) {
+      console.error('Failed to copy text: ', err)
+    }
+  }
 
   return (
     <MainLayout>
@@ -140,14 +154,21 @@ export default function Home() {
                 </div>
                 
                 <Button 
+                  onClick={() => copyToClipboard(prompt.prompt, prompt.id)}
                   variant="outline"
-                  className="w-full mt-auto bg-white hover:bg-blue-50 text-blue-600 border-blue-300 dark:bg-transparent dark:border-border dark:text-foreground dark:hover:bg-accent dark:hover:text-accent-foreground font-medium transition-all duration-300 group-hover:shadow-lg" 
-                  asChild
+                  className="w-full mt-auto bg-white hover:bg-blue-50 text-blue-600 border-blue-300 dark:bg-transparent dark:border-border dark:text-foreground dark:hover:bg-accent dark:hover:text-accent-foreground font-medium transition-all duration-300 group-hover:shadow-lg"
                 >
-                  <Link href={`/prompts#${prompt.id}`}>
-                    Use Prompt
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
+                  {copiedStates[prompt.id] ? (
+                    <>
+                      <Check className="h-4 w-4 mr-2" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copy Prompt
+                    </>
+                  )}
                 </Button>
               </CardContent>
             </Card>
