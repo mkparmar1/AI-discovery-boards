@@ -1,13 +1,6 @@
-import type {NextConfig} from 'next';
+import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   images: {
     remotePatterns: [
       {
@@ -16,20 +9,13 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
-      {
-        protocol: 'https',
-        hostname: 'www.commitcraft.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'openai.com',
-        port: '',
-        pathname: '/**',
-      },
     ],
   },
-};
+  eslint: {
+    // Temporarily ignore ESLint errors during production builds to allow compiling
+    // We will re-enable once lint issues are resolved in code
+    ignoreDuringBuilds: true,
+  },
+}
 
-export default nextConfig;
+export default nextConfig

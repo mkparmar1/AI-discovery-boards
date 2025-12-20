@@ -1,15 +1,4 @@
 
-export type Tool = {
-  id: string
-  title: string
-  description: string
-  tags: string[]
-  image: string
-  clickCount: number
-  category: 'Chat' | 'Image' | 'Devtools' | 'Other'
-  website: string
-}
-
 export type Post = {
   id: string
   title: string
@@ -390,16 +379,7 @@ export type Tool = {
   clickCount: number
   category: 'Chat' | 'Image' | 'Devtools' | 'Other'
   website: string
-}
-
-export type Post = {
-  id: string
-  title: string
-  excerpt: string
-  date: string
-  content: string
-  image: string
-  tags: string[]
+  isTrending?: boolean
 }
 
 export const allTools: Tool[] = [
@@ -410,7 +390,7 @@ export const allTools: Tool[] = [
     "tags": ["conversational-ai", "writing", "productivity"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 40000000,
-    "category": "Conversational AI",
+    "category": "Chat",
     "website": "https://chat.openai.com"
   },
   {
@@ -420,7 +400,7 @@ export const allTools: Tool[] = [
     "tags": ["conversational-ai", "real-time", "social-media"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 5000000,
-    "category": "Conversational AI",
+    "category": "Chat",
     "website": "https://grok.x.ai"
   },
   {
@@ -430,7 +410,7 @@ export const allTools: Tool[] = [
     "tags": ["conversational-ai", "ethics", "writing"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 450000,
-    "category": "Conversational AI",
+    "category": "Chat",
     "website": "https://www.anthropic.com"
   },
   {
@@ -440,7 +420,7 @@ export const allTools: Tool[] = [
     "tags": ["conversational-ai", "multimodal", "productivity"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 2340000,
-    "category": "Conversational AI",
+    "category": "Chat",
     "website": "https://gemini.google.com"
   },
   {
@@ -480,7 +460,7 @@ export const allTools: Tool[] = [
     "tags": ["design", "creativity", "graphic-design"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 22000000,
-    "category": "Design",
+    "category": "Image",
     "website": "https://www.canva.com"
   },
   {
@@ -490,7 +470,7 @@ export const allTools: Tool[] = [
     "tags": ["writing", "productivity", "grammar"],
     "image": "https://static.grammarly.com/assets/logo-dark.svg",
     "clickCount": 3000000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://www.grammarly.com"
   },
   {
@@ -500,7 +480,7 @@ export const allTools: Tool[] = [
     "tags": ["image-generation", "creativity", "art"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 720000,
-    "category": "Creativity",
+    "category": "Image",
     "website": "https://www.midjourney.com"
   },
   {
@@ -510,7 +490,7 @@ export const allTools: Tool[] = [
     "tags": ["productivity", "notes", "collaboration"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 1000000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://www.notion.so"
   },
   {
@@ -520,7 +500,7 @@ export const allTools: Tool[] = [
     "tags": ["video", "content-creation", "ai-avatars"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 600000,
-    "category": "Video",
+    "category": "Other",
     "website": "https://www.synthesia.io"
   },
   {
@@ -530,7 +510,7 @@ export const allTools: Tool[] = [
     "tags": ["automation", "productivity", "integrations"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 310000,
-    "category": "Automation",
+    "category": "Devtools",
     "website": "https://zapier.com"
   },
   {
@@ -540,7 +520,7 @@ export const allTools: Tool[] = [
     "tags": ["video-editing", "creativity", "ai-tools"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 510000,
-    "category": "Creativity",
+    "category": "Image",
     "website": "https://runwayml.com"
   },
   {
@@ -550,7 +530,7 @@ export const allTools: Tool[] = [
     "tags": ["content", "marketing", "writing"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 650000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://www.jasper.ai"
   },
   {
@@ -560,7 +540,7 @@ export const allTools: Tool[] = [
     "tags": ["meetings", "transcription", "productivity"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 520000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://fathom.video"
   },
   {
@@ -570,7 +550,7 @@ export const allTools: Tool[] = [
     "tags": ["voice", "audio", "content-creation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 130000,
-    "category": "Audio",
+    "category": "Other",
     "website": "https://murf.ai"
   },
   {
@@ -580,7 +560,7 @@ export const allTools: Tool[] = [
     "tags": ["image-generation", "creativity", "art"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 800000,
-    "category": "Creativity",
+    "category": "Image",
     "website": "https://openai.com/dall-e"
   },
   {
@@ -590,7 +570,7 @@ export const allTools: Tool[] = [
     "tags": ["video-editing", "audio", "content-creation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 300000,
-    "category": "Video",
+    "category": "Other",
     "website": "https://www.descript.com"
   },
   {
@@ -600,7 +580,7 @@ export const allTools: Tool[] = [
     "tags": ["transcription", "productivity", "meetings"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 250000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://otter.ai"
   },
   {
@@ -610,7 +590,7 @@ export const allTools: Tool[] = [
     "tags": ["content", "marketing", "writing"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 200000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://www.copy.ai"
   },
   {
@@ -620,7 +600,7 @@ export const allTools: Tool[] = [
     "tags": ["content", "marketing", "seo"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 180000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://writesonic.com"
   },
   {
@@ -630,7 +610,7 @@ export const allTools: Tool[] = [
     "tags": ["voice", "audio", "content-creation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 150000,
-    "category": "Audio",
+    "category": "Other",
     "website": "https://elevenlabs.io"
   },
   {
@@ -640,7 +620,7 @@ export const allTools: Tool[] = [
     "tags": ["design", "creativity", "video"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 400000,
-    "category": "Creativity",
+    "category": "Image",
     "website": "https://www.adobe.com/firefly"
   },
   {
@@ -650,7 +630,7 @@ export const allTools: Tool[] = [
     "tags": ["video", "content-creation", "marketing"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 120000,
-    "category": "Video",
+    "category": "Other",
     "website": "https://lumen5.com"
   },
   {
@@ -660,7 +640,7 @@ export const allTools: Tool[] = [
     "tags": ["translation", "language", "productivity"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 600000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://www.deepl.com"
   },
   {
@@ -670,7 +650,7 @@ export const allTools: Tool[] = [
     "tags": ["research", "productivity", "search"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 350000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://www.perplexity.ai"
   },
   {
@@ -680,7 +660,7 @@ export const allTools: Tool[] = [
     "tags": ["data", "analytics", "business-intelligence"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 200000,
-    "category": "Analytics",
+    "category": "Other",
     "website": "https://www.tableau.com"
   },
   {
@@ -700,7 +680,7 @@ export const allTools: Tool[] = [
     "tags": ["image-generation", "creativity", "open-source"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 300000,
-    "category": "Creativity",
+    "category": "Image",
     "website": "https://stability.ai"
   },
   {
@@ -710,7 +690,7 @@ export const allTools: Tool[] = [
     "tags": ["writing", "education", "grammar"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 180000,
-    "category": "Education",
+    "category": "Other",
     "website": "https://quillbot.com"
   },
   {
@@ -720,7 +700,7 @@ export const allTools: Tool[] = [
     "tags": ["seo", "marketing", "analytics"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 400000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://www.semrush.com"
   },
   {
@@ -730,7 +710,7 @@ export const allTools: Tool[] = [
     "tags": ["chatbot", "customer-support", "ecommerce"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 100000,
-    "category": "Customer Support",
+    "category": "Other",
     "website": "https://www.tidio.com"
   },
   {
@@ -740,7 +720,7 @@ export const allTools: Tool[] = [
     "tags": ["customer-support", "chatbot", "ecommerce"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 80000,
-    "category": "Customer Support",
+    "category": "Other",
     "website": "https://www.liveperson.com"
   },
   {
@@ -750,7 +730,7 @@ export const allTools: Tool[] = [
     "tags": ["image-generation", "creativity", "gaming"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 200000,
-    "category": "Creativity",
+    "category": "Image",
     "website": "https://leonardo.ai"
   },
   {
@@ -760,7 +740,7 @@ export const allTools: Tool[] = [
     "tags": ["video", "content-creation", "marketing"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 90000,
-    "category": "Video",
+    "category": "Other",
     "website": "https://pictory.ai"
   },
   {
@@ -770,7 +750,7 @@ export const allTools: Tool[] = [
     "tags": ["presentations", "design", "productivity"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 70000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://www.beautiful.ai"
   },
   {
@@ -780,7 +760,7 @@ export const allTools: Tool[] = [
     "tags": ["writing", "productivity", "automation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://www.compose.ai"
   },
   {
@@ -790,7 +770,7 @@ export const allTools: Tool[] = [
     "tags": ["music", "creativity", "audio"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Audio",
+    "category": "Other",
     "website": "https://www.aiva.ai"
   },
   {
@@ -800,7 +780,7 @@ export const allTools: Tool[] = [
     "tags": ["seo", "marketing", "content"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 110000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://surferseo.com"
   },
   {
@@ -810,7 +790,7 @@ export const allTools: Tool[] = [
     "tags": ["seo", "content", "marketing"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 80000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://www.frase.io"
   },
   {
@@ -820,7 +800,7 @@ export const allTools: Tool[] = [
     "tags": ["business", "analytics", "automation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 150000,
-    "category": "Business",
+    "category": "Other",
     "website": "https://www.zoho.com"
   },
   {
@@ -830,7 +810,7 @@ export const allTools: Tool[] = [
     "tags": ["photo-editing", "creativity", "mobile"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 120000,
-    "category": "Creativity",
+    "category": "Image",
     "website": "https://www.faceapp.com"
   },
   {
@@ -840,7 +820,7 @@ export const allTools: Tool[] = [
     "tags": ["translation", "language", "productivity"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 500000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://translate.google.com"
   },
   {
@@ -850,7 +830,7 @@ export const allTools: Tool[] = [
     "tags": ["analytics", "data", "business-intelligence"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 200000,
-    "category": "Analytics",
+    "category": "Other",
     "website": "https://powerbi.microsoft.com"
   },
   {
@@ -860,7 +840,7 @@ export const allTools: Tool[] = [
     "tags": ["chatbot", "ecommerce", "conversational-ai"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 90000,
-    "category": "Conversational AI",
+    "category": "Chat",
     "website": "https://cloud.google.com/dialogflow"
   },
   {
@@ -870,7 +850,7 @@ export const allTools: Tool[] = [
     "tags": ["social-media", "analytics", "marketing"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 70000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://www.brandwatch.com"
   },
   {
@@ -880,7 +860,7 @@ export const allTools: Tool[] = [
     "tags": ["chatbot", "sales", "ecommerce"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Customer Support",
+    "category": "Other",
     "website": "https://manychat.com"
   },
   {
@@ -890,7 +870,7 @@ export const allTools: Tool[] = [
     "tags": ["analytics", "crm", "business"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 80000,
-    "category": "Analytics",
+    "category": "Other",
     "website": "https://www.salesforce.com/products/einstein"
   },
   {
@@ -900,7 +880,7 @@ export const allTools: Tool[] = [
     "tags": ["voice", "audio", "content-creation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Audio",
+    "category": "Other",
     "website": "https://www.lovo.ai"
   },
   {
@@ -910,7 +890,7 @@ export const allTools: Tool[] = [
     "tags": ["education", "learning", "productivity"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 150000,
-    "category": "Education",
+    "category": "Other",
     "website": "https://www.coursera.org"
   },
   {
@@ -920,7 +900,7 @@ export const allTools: Tool[] = [
     "tags": ["research", "education", "ai-tools"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 70000,
-    "category": "Education",
+    "category": "Other",
     "website": "https://www.semanticscholar.org"
   },
   {
@@ -930,7 +910,7 @@ export const allTools: Tool[] = [
     "tags": ["marketing", "chatbot", "sales"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://www.drift.com"
   },
   {
@@ -940,7 +920,7 @@ export const allTools: Tool[] = [
     "tags": ["research", "business", "ai-tools"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 100000,
-    "category": "Business",
+    "category": "Other",
     "website": "https://www.ibm.com/watson"
   },
   {
@@ -950,7 +930,7 @@ export const allTools: Tool[] = [
     "tags": ["ecommerce", "chatbot", "customer-support"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 80000,
-    "category": "Customer Support",
+    "category": "Other",
     "website": "https://www.shopify.com"
   },
   {
@@ -970,7 +950,7 @@ export const allTools: Tool[] = [
     "tags": ["project-management", "productivity", "automation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 90000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://monday.com"
   },
   {
@@ -980,7 +960,7 @@ export const allTools: Tool[] = [
     "tags": ["marketing", "advertising", "automation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://www.adext.com"
   },
   {
@@ -990,7 +970,7 @@ export const allTools: Tool[] = [
     "tags": ["video", "marketing", "content-creation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Video",
+    "category": "Other",
     "website": "https://animoto.com"
   },
   {
@@ -1010,7 +990,7 @@ export const allTools: Tool[] = [
     "tags": ["image-generation", "creativity", "art"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Creativity",
+    "category": "Image",
     "website": "https://deepart.io"
   },
   {
@@ -1020,7 +1000,7 @@ export const allTools: Tool[] = [
     "tags": ["analytics", "business-intelligence", "data"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Analytics",
+    "category": "Other",
     "website": "https://www.sisense.com"
   },
   {
@@ -1030,7 +1010,7 @@ export const allTools: Tool[] = [
     "tags": ["audio", "productivity", "education"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 70000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://speechify.com"
   },
   {
@@ -1040,7 +1020,7 @@ export const allTools: Tool[] = [
     "tags": ["customer-support", "automation", "business"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 80000,
-    "category": "Customer Support",
+    "category": "Other",
     "website": "https://www.zoho.com/desk"
   },
   {
@@ -1057,9 +1037,10 @@ export const allTools: Tool[] = [
     "id": "164",
     "title": "InVideo",
     "description": "AI-powered video creation for marketing and social media.",
-    "tags": ["video", "content-creation", "marketing支0"],
+    "tags": ["video", "content-creation", "marketing"],
+    "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Video",
+    "category": "Other",
     "website": "https://invideo.io"
   },
   {
@@ -1069,7 +1050,7 @@ export const allTools: Tool[] = [
     "tags": ["transcription", "meetings", "productivity"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 70000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://www.fireflies.ai"
   },
   {
@@ -1079,7 +1060,7 @@ export const allTools: Tool[] = [
     "tags": ["automation", "monitoring", "productivity"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://www.visualping.io"
   },
   {
@@ -1089,7 +1070,7 @@ export const allTools: Tool[] = [
     "tags": ["chatbot", "customer-support", "automation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Customer Support",
+    "category": "Other",
     "website": "https://www.ada.cx"
   },
   {
@@ -1099,7 +1080,7 @@ export const allTools: Tool[] = [
     "tags": ["chatbot", "conversational-ai", "entertainment"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 40000,
-    "category": "Conversational AI",
+    "category": "Chat",
     "website": "https://www.pandorabots.com"
   },
   {
@@ -1109,7 +1090,7 @@ export const allTools: Tool[] = [
     "tags": ["content", "seo", "marketing"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://www.marketmuse.com"
   },
   {
@@ -1119,7 +1100,7 @@ export const allTools: Tool[] = [
     "tags": ["marketing", "content", "advertising"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://anyword.com"
   },
   {
@@ -1129,7 +1110,7 @@ export const allTools: Tool[] = [
     "tags": ["writing", "hr", "productivity"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 40000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://textio.com"
   },
   {
@@ -1139,7 +1120,7 @@ export const allTools: Tool[] = [
     "tags": ["machine-learning", "analytics", "data"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Analytics",
+    "category": "Other",
     "website": "https://www.bigml.com"
   },
   {
@@ -1149,7 +1130,7 @@ export const allTools: Tool[] = [
     "tags": ["image-generation", "creativity", "art"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Creativity",
+    "category": "Image",
     "website": "https://www.artbreeder.com"
   },
   {
@@ -1159,7 +1140,7 @@ export const allTools: Tool[] = [
     "tags": ["marketing", "sales", "business"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 40000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://www.leadgenius.com"
   },
   {
@@ -1169,7 +1150,7 @@ export const allTools: Tool[] = [
     "tags": ["video", "content-creation", "marketing"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 70000,
-    "category": "Video",
+    "category": "Other",
     "website": "https://www.kapwing.com"
   },
   {
@@ -1179,7 +1160,7 @@ export const allTools: Tool[] = [
     "tags": ["analytics", "machine-learning", "data"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Analytics",
+    "category": "Other",
     "website": "https://www.datarobot.com"
   },
   {
@@ -1189,7 +1170,7 @@ export const allTools: Tool[] = [
     "tags": ["voice", "audio", "content-creation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Audio",
+    "category": "Other",
     "website": "https://synthesys.io"
   },
   {
@@ -1199,7 +1180,7 @@ export const allTools: Tool[] = [
     "tags": ["writing", "productivity", "content"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 70000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://www.wordtune.com"
   },
   {
@@ -1209,7 +1190,7 @@ export const allTools: Tool[] = [
     "tags": ["productivity", "documents", "collaboration"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://coda.io"
   },
   {
@@ -1219,7 +1200,7 @@ export const allTools: Tool[] = [
     "tags": ["marketing", "automation", "ecommerce"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://www.emarsys.com"
   },
   {
@@ -1229,7 +1210,7 @@ export const allTools: Tool[] = [
     "tags": ["education", "language", "learning"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 200000,
-    "category": "Education",
+    "category": "Other",
     "website": "https://www.duolingo.com"
   },
   {
@@ -1239,7 +1220,7 @@ export const allTools: Tool[] = [
     "tags": ["photo-editing", "creativity", "image-generation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Creativity",
+    "category": "Image",
     "website": "https://www.lucidpic.com"
   },
   {
@@ -1249,7 +1230,7 @@ export const allTools: Tool[] = [
     "tags": ["healthcare", "diagnostics", "ai-tools"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Healthcare",
+    "category": "Other",
     "website": "https://www.babylonhealth.com"
   },
   {
@@ -1259,7 +1240,7 @@ export const allTools: Tool[] = [
     "tags": ["productivity", "documentation", "automation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 40000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://www.scribehow.com"
   },
   {
@@ -1279,7 +1260,7 @@ export const allTools: Tool[] = [
     "tags": ["video", "content-creation", "marketing"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Video",
+    "category": "Other",
     "website": "https://www.magisto.com"
   },
   {
@@ -1289,7 +1270,7 @@ export const allTools: Tool[] = [
     "tags": ["cybersecurity", "ai-tools", "security"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 70000,
-    "category": "Security",
+    "category": "Other",
     "website": "https://www.darktrace.com"
   },
   {
@@ -1299,7 +1280,7 @@ export const allTools: Tool[] = [
     "tags": ["content", "seo", "marketing"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://www.scalenut.com"
   },
   {
@@ -1309,7 +1290,7 @@ export const allTools: Tool[] = [
     "tags": ["seo", "content", "marketing"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 40000,
-    "category": "Marketing",
+    "category": "Other",
     "website": "https://www.clearscope.io"
   },
   {
@@ -1319,7 +1300,7 @@ export const allTools: Tool[] = [
     "tags": ["video", "content-creation", "marketing"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Video",
+    "category": "Other",
     "website": "https://www.rephrase.ai"
   },
   {
@@ -1329,7 +1310,7 @@ export const allTools: Tool[] = [
     "tags": ["healthcare", "diagnostics", "ai-tools"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Healthcare",
+    "category": "Other",
     "website": "https://www.pathai.com"
   },
   {
@@ -1339,7 +1320,7 @@ export const allTools: Tool[] = [
     "tags": ["analytics", "customer-data", "business"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 40000,
-    "category": "Analytics",
+    "category": "Other",
     "website": "https://www.funnelai.com"
   },
   {
@@ -1349,7 +1330,7 @@ export const allTools: Tool[] = [
     "tags": ["automation", "workplace", "productivity"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Productivity",
+    "category": "Other",
     "website": "https://www.moveworks.com"
   },
   {
@@ -1359,7 +1340,7 @@ export const allTools: Tool[] = [
     "tags": ["video", "ai-avatars", "content-creation"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Video",
+    "category": "Other",
     "website": "https://www.deepbrain.io"
   },
   {
@@ -1369,7 +1350,7 @@ export const allTools: Tool[] = [
     "tags": ["image-recognition", "ai-tools", "analytics"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Analytics",
+    "category": "Other",
     "website": "https://www.deepvision.ai"
   },
   {
@@ -1379,7 +1360,7 @@ export const allTools: Tool[] = [
     "tags": ["analytics", "customer-support", "ai-tools"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 40000,
-    "category": "Customer Support",
+    "category": "Other",
     "website": "https://www.observe.ai"
   },
   {
@@ -1389,7 +1370,7 @@ export const allTools: Tool[] = [
     "tags": ["healthcare", "diagnostics", "ai-tools"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 50000,
-    "category": "Healthcare",
+    "category": "Other",
     "website": "https://www.viz.ai"
   },
   {
@@ -1399,7 +1380,7 @@ export const allTools: Tool[] = [
     "tags": ["data-science", "analytics", "ai-tools"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 60000,
-    "category": "Analytics",
+    "category": "Other",
     "website": "https://www.rapidminer.com"
   },
   {
@@ -1409,7 +1390,7 @@ export const allTools: Tool[] = [
     "tags": ["analytics", "business-intelligence", "data"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 70000,
-    "category": "Analytics",
+    "category": "Other",
     "website": "https://www.qlik.com"
   },
   {
@@ -1419,7 +1400,7 @@ export const allTools: Tool[] = [
     "tags": ["audio", "content-creation", "productivity"],
     "image": "https://placehold.co/32x32/png",
     "clickCount": 40000,
-    "category": "Audio",
+    "category": "Other",
     "website": "https://auphonic.com"
   },
   {
@@ -2656,4 +2637,349 @@ export const allPosts: Post[] = [
 ];
 
 export const latestPosts = allPosts.slice(0, 3);
+
+export interface AIPrompt {
+  id: string;
+  title: string;
+  prompt: string;
+  category: string;
+  tags: string[];
+  description: string;
+  useCase: string;
+  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  createdAt: string;
+}
+
+export const aiPrompts: AIPrompt[] = [
+  {
+    id: '1',
+    title: 'Creative Writing Assistant',
+    prompt: 'You are a creative writing assistant. Help me write a compelling story about [TOPIC]. Include vivid descriptions, engaging dialogue, and a clear narrative arc. Make it approximately [LENGTH] words.',
+    category: 'Creative Writing',
+    tags: ['storytelling', 'fiction', 'narrative'],
+    description: 'Generate creative stories with rich descriptions and engaging plots',
+    useCase: 'Content creation, creative writing, storytelling',
+    difficulty: 'Beginner',
+    createdAt: '2024-01-15'
+  },
+  {
+    id: '2',
+    title: 'Code Review Expert',
+    prompt: 'Act as a senior software engineer conducting a code review. Analyze the following code for: 1) Bugs and potential issues 2) Performance optimizations 3) Code quality and best practices 4) Security vulnerabilities 5) Suggestions for improvement. Provide specific, actionable feedback:\n\n[CODE]',
+    category: 'Programming',
+    tags: ['code review', 'debugging', 'optimization'],
+    description: 'Comprehensive code analysis and improvement suggestions',
+    useCase: 'Software development, code quality assurance',
+    difficulty: 'Intermediate',
+    createdAt: '2024-01-16'
+  },
+  {
+    id: '3',
+    title: 'Business Strategy Consultant',
+    prompt: 'You are a strategic business consultant with 20+ years of experience. Analyze my business idea: [BUSINESS_IDEA]. Provide insights on: 1) Market opportunity and size 2) Competitive landscape 3) Revenue model suggestions 4) Key risks and mitigation strategies 5) Go-to-market strategy 6) Success metrics to track',
+    category: 'Business',
+    tags: ['strategy', 'consulting', 'analysis'],
+    description: 'Strategic business analysis and planning assistance',
+    useCase: 'Business planning, strategy development, market analysis',
+    difficulty: 'Advanced',
+    createdAt: '2024-01-17'
+  },
+  {
+    id: '4',
+    title: 'Learning Path Creator',
+    prompt: 'Create a comprehensive learning path for [SKILL/TOPIC]. Structure it as: 1) Prerequisites and foundational knowledge 2) Core concepts (beginner to advanced) 3) Practical projects and exercises 4) Recommended resources (books, courses, tools) 5) Timeline and milestones 6) Assessment methods. Make it actionable and progressive.',
+    category: 'Education',
+    tags: ['learning', 'curriculum', 'skill development'],
+    description: 'Design structured learning paths for any skill or topic',
+    useCase: 'Education planning, skill development, training programs',
+    difficulty: 'Intermediate',
+    createdAt: '2024-01-18'
+  },
+  {
+    id: '5',
+    title: 'Data Analysis Expert',
+    prompt: 'You are a data scientist analyzing [DATASET/PROBLEM]. Provide: 1) Data exploration insights 2) Key patterns and trends 3) Statistical analysis recommendations 4) Visualization suggestions 5) Predictive modeling approaches 6) Business implications and actionable insights. Use clear explanations for non-technical stakeholders.',
+    category: 'Data Science',
+    tags: ['data analysis', 'statistics', 'insights'],
+    description: 'Comprehensive data analysis and interpretation',
+    useCase: 'Business intelligence, research, decision making',
+    difficulty: 'Advanced',
+    createdAt: '2024-01-19'
+  },
+  {
+    id: '6',
+    title: 'Email Marketing Optimizer',
+    prompt: 'Create a high-converting email marketing campaign for [PRODUCT/SERVICE]. Include: 1) Compelling subject lines (5 variations) 2) Email body with persuasive copy 3) Clear call-to-action 4) Personalization strategies 5) A/B testing recommendations 6) Follow-up sequence ideas. Target audience: [AUDIENCE]',
+    category: 'Marketing',
+    tags: ['email marketing', 'conversion', 'copywriting'],
+    description: 'Design effective email marketing campaigns with high conversion rates',
+    useCase: 'Digital marketing, lead nurturing, sales',
+    difficulty: 'Intermediate',
+    createdAt: '2024-01-20'
+  },
+  {
+    id: '7',
+    title: 'Resume Enhancement Specialist',
+    prompt: 'Optimize this resume for [JOB_TITLE] position. Improve: 1) Professional summary 2) Skills section relevance 3) Work experience descriptions with quantified achievements 4) Keywords for ATS optimization 5) Overall formatting and structure 6) Industry-specific terminology. Resume: [RESUME_CONTENT]',
+    category: 'Career',
+    tags: ['resume', 'job search', 'career development'],
+    description: 'Professional resume optimization for better job prospects',
+    useCase: 'Job applications, career advancement, recruitment',
+    difficulty: 'Beginner',
+    createdAt: '2024-01-21'
+  },
+  {
+    id: '8',
+    title: 'Social Media Content Planner',
+    prompt: 'Create a 30-day social media content calendar for [BRAND/BUSINESS]. Include: 1) Platform-specific content (Instagram, Twitter, LinkedIn, TikTok) 2) Content themes and pillars 3) Engaging captions with hashtags 4) Visual content ideas 5) Posting schedule optimization 6) Community engagement strategies',
+    category: 'Social Media',
+    tags: ['content planning', 'social media', 'engagement'],
+    description: 'Comprehensive social media content strategy and planning',
+    useCase: 'Brand marketing, social media management, content creation',
+    difficulty: 'Intermediate',
+    createdAt: '2024-01-22'
+  },
+  {
+    id: '9',
+    title: 'Technical Documentation Writer',
+    prompt: 'Create comprehensive technical documentation for [SOFTWARE/API/SYSTEM]. Include: 1) Clear overview and purpose 2) Installation/setup instructions 3) API endpoints with examples 4) Code samples in multiple languages 5) Troubleshooting guide 6) FAQ section. Make it beginner-friendly yet thorough.',
+    category: 'Technical Writing',
+    tags: ['documentation', 'API', 'technical writing'],
+    description: 'Professional technical documentation creation',
+    useCase: 'Software development, API documentation, user guides',
+    difficulty: 'Advanced',
+    createdAt: '2024-01-23'
+  },
+  {
+    id: '10',
+    title: 'Investment Research Analyst',
+    prompt: 'Analyze [COMPANY/STOCK] as an investment opportunity. Provide: 1) Financial health assessment 2) Competitive position analysis 3) Growth prospects and risks 4) Valuation metrics comparison 5) Industry trends impact 6) Investment recommendation with rationale. Use recent data and market conditions.',
+    category: 'Finance',
+    tags: ['investment', 'financial analysis', 'stocks'],
+    description: 'Comprehensive investment research and analysis',
+    useCase: 'Investment decisions, financial planning, portfolio management',
+    difficulty: 'Advanced',
+    createdAt: '2024-01-24'
+  },
+  {
+    id: '11',
+    title: 'UX/UI Design Consultant',
+    prompt: 'Review this [APP/WEBSITE] design and provide UX/UI recommendations. Analyze: 1) User flow and navigation 2) Visual hierarchy and layout 3) Accessibility compliance 4) Mobile responsiveness 5) Conversion optimization opportunities 6) User experience pain points. Provide specific, actionable improvements.',
+    category: 'Design',
+    tags: ['UX', 'UI', 'design review', 'user experience'],
+    description: 'Professional UX/UI design analysis and recommendations',
+    useCase: 'Product design, website optimization, app development',
+    difficulty: 'Intermediate',
+    createdAt: '2024-01-25'
+  },
+  {
+    id: '12',
+    title: 'SEO Content Optimizer',
+    prompt: 'Optimize this content for SEO targeting keyword: [KEYWORD]. Improve: 1) Title tag and meta description 2) Header structure (H1-H6) 3) Keyword density and placement 4) Internal linking opportunities 5) Content readability 6) Featured snippet optimization. Content: [CONTENT]',
+    category: 'SEO',
+    tags: ['SEO', 'content optimization', 'keywords'],
+    description: 'Comprehensive SEO content optimization',
+    useCase: 'Content marketing, search engine optimization, organic traffic',
+    difficulty: 'Intermediate',
+    createdAt: '2024-01-26'
+  },
+  {
+    id: '13',
+    title: 'Customer Support Chatbot',
+    prompt: 'You are a helpful customer support representative for [COMPANY]. Answer customer inquiries about: 1) Product features and benefits 2) Pricing and billing 3) Technical support issues 4) Return/refund policies 5) Account management. Be friendly, professional, and solution-oriented. If you cannot help, escalate appropriately.',
+    category: 'Customer Service',
+    tags: ['customer support', 'chatbot', 'service'],
+    description: 'AI-powered customer support assistant',
+    useCase: 'Customer service automation, support ticket reduction',
+    difficulty: 'Beginner',
+    createdAt: '2024-01-27'
+  },
+  {
+    id: '14',
+    title: 'Language Learning Tutor',
+    prompt: 'Act as a [LANGUAGE] tutor for [SKILL_LEVEL] learners. Create a lesson on [TOPIC] including: 1) Key vocabulary with pronunciation 2) Grammar explanations with examples 3) Practice exercises 4) Cultural context 5) Common mistakes to avoid 6) Homework assignments. Make it engaging and interactive.',
+    category: 'Education',
+    tags: ['language learning', 'tutoring', 'education'],
+    description: 'Personalized language learning assistance',
+    useCase: 'Language education, skill development, tutoring',
+    difficulty: 'Intermediate',
+    createdAt: '2024-01-28'
+  },
+  {
+    id: '15',
+    title: 'Product Launch Strategist',
+    prompt: 'Develop a comprehensive product launch strategy for [PRODUCT]. Include: 1) Pre-launch marketing timeline 2) Target audience segmentation 3) Channel strategy (digital, PR, partnerships) 4) Launch event planning 5) Success metrics and KPIs 6) Post-launch optimization plan. Budget: [BUDGET]',
+    category: 'Product Management',
+    tags: ['product launch', 'marketing strategy', 'planning'],
+    description: 'Complete product launch strategy development',
+    useCase: 'Product management, marketing campaigns, business growth',
+    difficulty: 'Advanced',
+    createdAt: '2024-01-29'
+  },
+  {
+    id: '16',
+    title: 'Fitness & Nutrition Coach',
+    prompt: 'Create a personalized fitness and nutrition plan for [GOALS] (weight loss/muscle gain/endurance). Include: 1) Weekly workout schedule 2) Meal plans with macros 3) Supplement recommendations 4) Progress tracking methods 5) Motivation strategies 6) Injury prevention tips. Consider: Age [AGE], fitness level [LEVEL], dietary restrictions [RESTRICTIONS].',
+    category: 'Health & Fitness',
+    tags: ['fitness', 'nutrition', 'health', 'workout'],
+    description: 'Personalized fitness and nutrition planning',
+    useCase: 'Health coaching, fitness planning, wellness programs',
+    difficulty: 'Intermediate',
+    createdAt: '2024-01-30'
+  },
+  {
+    id: '17',
+    title: 'Legal Document Analyzer',
+    prompt: 'Review this [CONTRACT/AGREEMENT] and provide analysis: 1) Key terms and obligations 2) Potential risks and liabilities 3) Missing clauses or protections 4) Negotiation points 5) Compliance requirements 6) Plain English summary. Document: [DOCUMENT]. Note: This is for informational purposes only, not legal advice.',
+    category: 'Legal',
+    tags: ['legal analysis', 'contracts', 'compliance'],
+    description: 'Legal document review and analysis',
+    useCase: 'Contract review, legal research, compliance checking',
+    difficulty: 'Advanced',
+    createdAt: '2024-01-31'
+  },
+  {
+    id: '18',
+    title: 'Travel Itinerary Planner',
+    prompt: 'Plan a [DURATION] trip to [DESTINATION] for [TRAVELERS]. Include: 1) Daily itinerary with attractions 2) Accommodation recommendations 3) Transportation options 4) Local cuisine suggestions 5) Budget breakdown 6) Cultural tips and etiquette 7) Packing checklist. Budget: [BUDGET], Interests: [INTERESTS].',
+    category: 'Travel',
+    tags: ['travel planning', 'itinerary', 'vacation'],
+    description: 'Comprehensive travel planning and itinerary creation',
+    useCase: 'Travel planning, vacation organization, tourism',
+    difficulty: 'Beginner',
+    createdAt: '2024-02-01'
+  },
+  {
+    id: '19',
+    title: 'Grant Writing Specialist',
+    prompt: 'Write a compelling grant proposal for [PROJECT/ORGANIZATION]. Include: 1) Executive summary 2) Problem statement with data 3) Project description and methodology 4) Budget justification 5) Timeline and milestones 6) Evaluation metrics 7) Sustainability plan. Grant type: [GRANT_TYPE], Amount: [AMOUNT].',
+    category: 'Non-Profit',
+    tags: ['grant writing', 'fundraising', 'non-profit'],
+    description: 'Professional grant proposal writing',
+    useCase: 'Non-profit fundraising, research funding, project grants',
+    difficulty: 'Advanced',
+    createdAt: '2024-02-02'
+  },
+  {
+    id: '20',
+    title: 'Cybersecurity Audit Consultant',
+    prompt: 'Conduct a cybersecurity assessment for [ORGANIZATION/SYSTEM]. Evaluate: 1) Network security vulnerabilities 2) Data protection measures 3) Access control systems 4) Incident response procedures 5) Compliance with regulations 6) Employee security awareness 7) Recommendations for improvement.',
+    category: 'Cybersecurity',
+    tags: ['cybersecurity', 'audit', 'security assessment'],
+    description: 'Comprehensive cybersecurity evaluation and recommendations',
+    useCase: 'Security audits, compliance checking, risk assessment',
+    difficulty: 'Advanced',
+    createdAt: '2024-02-03'
+  },
+  {
+    id: '21',
+    title: 'Mental Health Support Assistant',
+    prompt: 'Provide supportive guidance for [MENTAL_HEALTH_CONCERN]. Offer: 1) Validation and empathy 2) Coping strategies and techniques 3) Self-care recommendations 4) Professional resource suggestions 5) Crisis support information 6) Mindfulness exercises. Always encourage professional help when needed.',
+    category: 'Mental Health',
+    tags: ['mental health', 'support', 'wellness', 'coping'],
+    description: 'Compassionate mental health support and guidance',
+    useCase: 'Mental health support, wellness coaching, crisis intervention',
+    difficulty: 'Intermediate',
+    createdAt: '2024-02-04'
+  },
+  {
+    id: '22',
+    title: 'Recipe Creator & Nutritionist',
+    prompt: 'Create a healthy recipe for [MEAL_TYPE] with these ingredients: [INGREDIENTS]. Include: 1) Step-by-step cooking instructions 2) Nutritional information per serving 3) Preparation and cooking time 4) Serving suggestions 5) Ingredient substitutions 6) Storage tips. Dietary requirements: [DIETARY_NEEDS].',
+    category: 'Cooking',
+    tags: ['recipes', 'nutrition', 'cooking', 'healthy eating'],
+    description: 'Healthy recipe creation with nutritional analysis',
+    useCase: 'Meal planning, healthy cooking, nutrition education',
+    difficulty: 'Beginner',
+    createdAt: '2024-02-05'
+  },
+  {
+    id: '23',
+    title: 'Brand Identity Designer',
+    prompt: 'Develop a comprehensive brand identity for [BUSINESS/PRODUCT]. Create: 1) Brand positioning statement 2) Visual identity guidelines 3) Color palette with psychology 4) Typography recommendations 5) Logo concept descriptions 6) Brand voice and tone 7) Application examples. Target audience: [AUDIENCE].',
+    category: 'Branding',
+    tags: ['branding', 'identity', 'design', 'marketing'],
+    description: 'Complete brand identity development and guidelines',
+    useCase: 'Brand development, marketing strategy, business identity',
+    difficulty: 'Advanced',
+    createdAt: '2024-02-06'
+  },
+  {
+    id: '24',
+    title: 'Podcast Content Strategist',
+    prompt: 'Develop a podcast strategy for [TOPIC/NICHE]. Include: 1) Show format and structure 2) Episode topics for first 10 episodes 3) Target audience analysis 4) Guest outreach strategy 5) Monetization options 6) Promotion and marketing plan 7) Equipment and software recommendations.',
+    category: 'Content Creation',
+    tags: ['podcast', 'content strategy', 'audio', 'media'],
+    description: 'Comprehensive podcast planning and strategy',
+    useCase: 'Podcast creation, content marketing, media production',
+    difficulty: 'Intermediate',
+    createdAt: '2024-02-07'
+  },
+  {
+    id: '25',
+    title: 'Personal Finance Advisor',
+    prompt: 'Create a personal finance plan for [FINANCIAL_SITUATION]. Include: 1) Budget optimization 2) Debt reduction strategy 3) Emergency fund planning 4) Investment recommendations 5) Retirement planning 6) Insurance needs 7) Tax optimization tips. Goals: [FINANCIAL_GOALS].',
+    category: 'Finance',
+    tags: ['personal finance', 'budgeting', 'investment', 'planning'],
+    description: 'Comprehensive personal financial planning',
+    useCase: 'Financial planning, wealth management, budgeting',
+    difficulty: 'Intermediate',
+    createdAt: '2024-02-08'
+  },
+  {
+    id: '26',
+    title: 'Video Script Writer',
+    prompt: 'Write an engaging video script for [VIDEO_TYPE] about [TOPIC]. Include: 1) Hook opening (first 15 seconds) 2) Clear structure with transitions 3) Call-to-action 4) Visual cues and directions 5) Engaging storytelling elements 6) Target length: [DURATION]. Audience: [TARGET_AUDIENCE].',
+    category: 'Video Production',
+    tags: ['video script', 'storytelling', 'content creation'],
+    description: 'Professional video script writing for various formats',
+    useCase: 'Video marketing, content creation, storytelling',
+    difficulty: 'Intermediate',
+    createdAt: '2024-02-09'
+  },
+  {
+    id: '27',
+    title: 'API Documentation Generator',
+    prompt: 'Create comprehensive API documentation for [API_NAME]. Include: 1) Overview and authentication 2) Endpoint descriptions with parameters 3) Request/response examples 4) Error codes and handling 5) Rate limiting information 6) SDK examples in multiple languages 7) Getting started guide.',
+    category: 'Technical Writing',
+    tags: ['API', 'documentation', 'technical writing'],
+    description: 'Complete API documentation creation',
+    useCase: 'Software development, API design, developer resources',
+    difficulty: 'Advanced',
+    createdAt: '2024-02-10'
+  },
+  {
+    id: '28',
+    title: 'Crisis Communication Manager',
+    prompt: 'Develop a crisis communication strategy for [CRISIS_SITUATION]. Create: 1) Initial response statement 2) Stakeholder communication plan 3) Media talking points 4) Internal team messaging 5) Social media response strategy 6) Timeline for updates 7) Recovery messaging plan.',
+    category: 'Public Relations',
+    tags: ['crisis management', 'communication', 'PR'],
+    description: 'Strategic crisis communication planning',
+    useCase: 'Public relations, crisis management, corporate communication',
+    difficulty: 'Advanced',
+    createdAt: '2024-02-11'
+  },
+  {
+    id: '29',
+    title: 'E-commerce Product Optimizer',
+    prompt: 'Optimize this e-commerce product listing: [PRODUCT_DETAILS]. Improve: 1) Product title with keywords 2) Compelling product description 3) Feature highlights and benefits 4) SEO optimization 5) Pricing strategy recommendations 6) Cross-selling suggestions 7) Customer review analysis.',
+    category: 'E-commerce',
+    tags: ['e-commerce', 'product optimization', 'SEO'],
+    description: 'Complete e-commerce product listing optimization',
+    useCase: 'Online retail, product marketing, conversion optimization',
+    difficulty: 'Intermediate',
+    createdAt: '2024-02-12'
+  },
+  {
+    id: '30',
+    title: 'Startup Pitch Deck Creator',
+    prompt: 'Create a compelling pitch deck for [STARTUP_IDEA]. Include slides for: 1) Problem and solution 2) Market opportunity and size 3) Business model and revenue 4) Competitive analysis 5) Team and expertise 6) Financial projections 7) Funding requirements and use of funds.',
+    category: 'Entrepreneurship',
+    tags: ['startup', 'pitch deck', 'fundraising'],
+    description: 'Professional startup pitch deck development',
+    useCase: 'Startup fundraising, investor presentations, business planning',
+    difficulty: 'Advanced',
+    createdAt: '2024-02-13'
+  }
+]
 

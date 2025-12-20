@@ -1,28 +1,40 @@
-# AIDiscoveryBoard - Your Curated Guide to the World of AI
+# AI Discovery Boards
 
-Welcome to AIDiscoveryBoard, a web application built with Next.js and Firebase Studio designed to be your central hub for exploring the latest in Artificial Intelligence. This platform allows users to discover AI tools, read insightful blog posts, and explore seminal research papers that have shaped the field.
+Your comprehensive discovery platform for AI tools, research papers, learning resources, career guidance, and community discussions.
 
-## Features Implemented
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-This project has been iteratively developed to include a rich set of features:
+## Getting Started
 
-*   **AI Tools Directory:** A comprehensive, filterable directory of over 100 AI tools across various categories like Chat, Image Generation, and Developer Tools. Each tool has a dedicated card with a description, tags, and a direct link to its official website.
-*   **Curated Blog:** A blog featuring over 25 articles on various AI topics, from generative models to ethical considerations. Each blog post is displayed with an image and tags, and users can click to read the full article on a dedicated details page.
-*   **Research Paper Collection:** A curated list of over 30 influential AI research papers. This section provides a quick reference to foundational works in the field, complete with titles, authors, publication dates, and direct links to the papers.
-*   **Dynamic Homepage:** The homepage serves as a dashboard, featuring a selection of top AI tools, the latest blog posts, and a list of trending AI prompts to inspire users.
-*   **Modern & Responsive UI:** The application features a modern, dark-themed user interface built with ShadCN UI components and Tailwind CSS. It includes a collapsible sidebar for easy navigation that remains fixed while content scrolls, ensuring a seamless user experience on both desktop and mobile devices.
+First, run the development server:
 
-## Development Process
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-This application was built collaboratively using an AI coding partner. The development process involved a series of conversational prompts to incrementally build and refine the application. For example, a request to build out the research papers feature would be handled with the following approach:
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-**User Prompt:** *"add miimum latest 30 research paper and proper links icon and title proper"*
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-**AI Action Plan:**
-1.  **Understand the Goal:** The user wants to replace the placeholder "Research" page with a rich, functional directory of at least 30 important AI research papers.
-2.  **Data Modeling:** Define a data structure (`ResearchPaper`) in `src/lib/data.ts` to hold the necessary information: id, title, authors, publication date, excerpt, a URL to the paper, and relevant tags.
-3.  **Data Population:** Populate the data file with a comprehensive list of over 30 seminal AI research papers, ensuring all data fields are filled with accurate information.
-4.  **UI/Component Design:** Redesign the `src/app/research/page.tsx` component to map over the new data and render it. This involves using ShadCN `Card` components to create a clean, organized list. Each card will display the paper's title, authors, publication date, and a brief summary.
-5.  **Functionality:** Add a button with an `ExternalLink` icon to each card that links directly to the paper's URL, allowing users to access the source material easily.
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-This iterative, prompt-driven process was used to build every feature of the application, from initial setup to fixing UI bugs and implementing new data-driven pages.
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
