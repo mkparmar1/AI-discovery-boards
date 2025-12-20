@@ -93,8 +93,8 @@ const ResearchPage = () => {
               </p>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <Button asChild className="h-11 bg-white text-slate-900 hover:bg-white/90">
-                  <Link href="/research/latest">
-                    View latest papers
+                  <Link href="/research">
+                    Explore research
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>

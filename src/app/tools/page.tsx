@@ -238,8 +238,8 @@ export default function ToolsPage() {
                   />
                 </div>
                 <Button asChild className="h-11 bg-white text-slate-900 hover:bg-white/90">
-                  <Link href="/tools/categories">
-                    Browse categories
+                  <Link href="/tools">
+                    Explore tools
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>

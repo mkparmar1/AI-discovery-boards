@@ -146,14 +146,7 @@ export default function LearnAIPage() {
               <p className="mt-4 max-w-xl text-sm text-white/70 md:text-base">
                 Handpicked YouTube content covering AI fundamentals, Python, automation, and real-world projects.
               </p>
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                <Button asChild className="h-11 bg-white text-slate-900 hover:bg-white/90">
-                  <Link href="/learn/courses">
-                    Explore structured courses
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row" />
               <div className="mt-8 grid gap-4 sm:grid-cols-3">
                 <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
                   <p className="text-xs uppercase tracking-widest text-white/60">Videos</p>
