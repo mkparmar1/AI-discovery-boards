@@ -422,6 +422,7 @@ export default function ProfilePage() {
         </Card>
 
         {isAdmin ? (
+          <>
             <Card>
               <CardHeader>
                 <CardTitle>Admin: Add Tools</CardTitle>
@@ -572,7 +573,7 @@ export default function ProfilePage() {
               </form>
             </CardContent>
           </Card>
-          <Card>
+            <Card>
             <CardHeader>
               <CardTitle>Admin: Manage Prompts</CardTitle>
               <CardDescription>Add, update, or delete prompts in bulk.</CardDescription>
@@ -697,7 +698,8 @@ export default function ProfilePage() {
                 )}
               </form>
             </CardContent>
-          </Card>
+            </Card>
+          </>
         ) : (
           <Card>
             <CardHeader>

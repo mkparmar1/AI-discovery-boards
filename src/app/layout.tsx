@@ -1,18 +1,13 @@
 import type { Metadata } from "next";
-import { Manrope, Space_Grotesk } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import QueryProvider from "@/contexts/QueryProvider";
 
-const manrope = Manrope({
+const inter = Inter({ 
   subsets: ["latin"],
   variable: "--font-sans",
-});
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-display",
 });
 
 export const metadata: Metadata = {
@@ -79,7 +74,7 @@ export default function RootLayout({
         <link rel="manifest" href="/site.webmanifest" />
         <meta name="theme-color" content="#3b82f6" />
       </head>
-      <body className={`${manrope.variable} ${spaceGrotesk.variable} font-sans antialiased min-h-screen bg-background`} suppressHydrationWarning>
+      <body className={`${inter.variable} font-sans antialiased min-h-screen bg-background`} suppressHydrationWarning>
         <QueryProvider>
           <ThemeProvider>
             <AuthProvider>
