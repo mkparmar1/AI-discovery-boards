@@ -2,12 +2,13 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Zap, Users, Star, ExternalLink, Calendar, FileText, Mail, Github, Globe, Copy, Check } from 'lucide-react'
+import { ArrowRight, Zap, Users, Star, ExternalLink, Calendar, FileText, Mail, Github, Globe, Copy, Check, Search, Sparkles } from 'lucide-react'
 import MainLayout from '@/components/layout/MainLayout'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { aiTools, researchPapers } from '@/data/data'
 import { aiPrompts } from '@/lib/data'
 
@@ -15,6 +16,11 @@ export default function Home() {
   const featuredTools = aiTools.slice(0, 3)
   const featuredPapers = researchPapers.slice(0, 3)
   const latestPrompts = aiPrompts.slice(0, 3)
+  const pricingLabels: Record<string, string> = {
+    free: 'Free',
+    paid: 'Paid',
+    freemium: 'Freemium'
+  }
 
   // State for tracking copied prompts
   const [copiedStates, setCopiedStates] = useState<{ [key: string]: boolean }>({})
@@ -34,59 +40,165 @@ export default function Home() {
 
   return (
     <MainLayout>
-
-
+      {/* Hero Section */}
+      <section className="relative overflow-hidden rounded-3xl border bg-slate-950 text-white">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-24 right-0 h-72 w-72 rounded-full bg-indigo-500/30 blur-3xl" />
+          <div className="absolute -bottom-24 left-0 h-72 w-72 rounded-full bg-sky-500/30 blur-3xl" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.12),_transparent_55%)]" />
+        </div>
+        <div className="relative grid gap-10 px-6 py-12 lg:grid-cols-[1.2fr_0.8fr] lg:px-12">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/70">
+              <Sparkles className="h-3.5 w-3.5" />
+              AI Discovery Boards
+            </div>
+            <h1 className="mt-4 font-display text-4xl font-semibold tracking-tight md:text-5xl">
+              Find the right AI tools, prompts, and research in minutes.
+            </h1>
+            <p className="mt-4 max-w-xl text-sm text-white/70 md:text-base">
+              A curated discovery hub that helps you compare, evaluate, and save the AI resources that actually move your projects forward.
+            </p>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <div className="relative flex-1">
+                <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-white/60" />
+                <Input
+                  placeholder="Search tools, prompts, or research"
+                  className="h-11 border-white/10 bg-white/10 pl-10 text-white placeholder:text-white/60 focus-visible:ring-white/40"
+                />
+              </div>
+              <Button asChild className="h-11 bg-white text-slate-900 hover:bg-white/90">
+                <Link href="/tools">
+                  Start exploring
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+            <div className="mt-6 flex flex-wrap gap-3 text-xs text-white/70">
+              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">Verified sources</span>
+              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">Daily updates</span>
+              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">Curated categories</span>
+            </div>
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+              <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                <p className="text-xs uppercase tracking-widest text-white/60">Tools tracked</p>
+                <p className="mt-1 text-2xl font-semibold">{aiTools.length}+</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                <p className="text-xs uppercase tracking-widest text-white/60">Prompt packs</p>
+                <p className="mt-1 text-2xl font-semibold">{aiPrompts.length}+</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                <p className="text-xs uppercase tracking-widest text-white/60">Research papers</p>
+                <p className="mt-1 text-2xl font-semibold">{researchPapers.length}+</p>
+              </div>
+            </div>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-semibold">Discovery board</p>
+              <span className="text-xs text-white/60">This week</span>
+            </div>
+            <div className="mt-5 space-y-4">
+              {featuredTools.map((tool, index) => (
+                <div key={tool.id} className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 text-sm font-semibold">
+                    {tool.name.slice(0, 2).toUpperCase()}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">{tool.name}</p>
+                    <p className="text-xs text-white/60 line-clamp-2">{tool.description}</p>
+                  </div>
+                  <span className="text-xs text-white/50">0{index + 1}</span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-6 flex flex-col gap-3">
+              <Button asChild className="bg-white text-slate-900 hover:bg-white/90">
+                <Link href="/tools">Explore AI tools</Link>
+              </Button>
+              <Button variant="ghost" asChild className="border border-white/15 text-white hover:bg-white/10">
+                <Link href="/prompts">Browse prompt library</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Featured Tools Section */}
-      <section className="py-10">
-        <div className="flex items-center justify-between mb-8">
+      <section className="py-12">
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <h2 className="text-3xl font-bold text-foreground">🔥 Trending AI Tools 2025</h2>
-            <p className="text-muted-foreground mt-2">Discover the hottest AI tools dominating 2025 - from ChatGPT alternatives to cutting-edge GenAI</p>
+            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted px-3 py-1 text-xs text-muted-foreground">
+              Curated picks
+            </div>
+            <h2 className="mt-3 text-3xl font-semibold text-foreground">Featured AI tools for real work</h2>
+            <p className="mt-2 max-w-2xl text-muted-foreground">
+              Compare the most useful AI platforms and jump directly into the ones that match your workflow.
+            </p>
           </div>
           <Button variant="outline" asChild>
             <Link href="/tools">
-              View All Tools
+              View all tools
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
         </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {featuredTools.map((tool) => (
-            <Card key={tool.id} className="group hover:shadow-lg transition-all duration-300 border border-border bg-card flex flex-col h-full">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <Badge variant="secondary" className="text-xs">
-                    {tool.category}
-                  </Badge>
+            <Card key={tool.id} className="group relative overflow-hidden rounded-2xl border border-border bg-card/80 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+              <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                <div className="absolute -right-12 top-0 h-32 w-32 rounded-full bg-primary/10 blur-2xl" />
+              </div>
+              <CardHeader className="relative pb-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-sm font-semibold text-primary">
+                      {tool.name.slice(0, 2).toUpperCase()}
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+                        {tool.name}
+                      </CardTitle>
+                      <CardDescription className="text-xs text-muted-foreground">
+                        {tool.category}
+                      </CardDescription>
+                    </div>
+                  </div>
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
                     <span>{tool.rating}</span>
                   </div>
                 </div>
-                
-                <CardTitle className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                  {tool.name}
-                </CardTitle>
               </CardHeader>
-              
-              <CardContent className="flex-1 flex flex-col">
-                <p className="text-sm text-muted-foreground mb-4 line-clamp-3 flex-1">
+              <CardContent className="relative flex flex-1 flex-col">
+                <p className="text-sm text-muted-foreground line-clamp-3">
                   {tool.description}
                 </p>
-                
-                <div className="flex items-center justify-between text-sm mb-4">
-                  <span className="font-medium text-primary">{tool.pricing}</span>
-                  <Zap className="h-4 w-4 text-muted-foreground" />
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <Badge variant="secondary" className="text-xs">
+                    {pricingLabels[tool.pricing] ?? tool.pricing}
+                  </Badge>
+                  {tool.tags.slice(0, 2).map((tag) => (
+                    <Badge key={tag} variant="outline" className="text-xs">
+                      {tag}
+                    </Badge>
+                  ))}
                 </div>
-                
-                <Button 
+                <div className="mt-5 flex items-center justify-between text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <Zap className="h-3 w-3" />
+                    <span>{tool.reviewCount.toLocaleString()} reviews</span>
+                  </div>
+                  <span className="font-medium text-primary">{tool.priceRange ?? pricingLabels[tool.pricing]}</span>
+                </div>
+                <Button
                   variant="outline"
-                  className="w-full mt-auto bg-white hover:bg-blue-50 text-blue-600 border-blue-300 dark:bg-transparent dark:border-border dark:text-foreground dark:hover:bg-accent dark:hover:text-accent-foreground font-medium transition-all duration-300 group-hover:shadow-lg" 
+                  className="mt-5 w-full border-primary/30 bg-primary/5 text-primary hover:bg-primary/10"
                   asChild
                 >
                   <a href={tool.website} target="_blank" rel="noopener noreferrer">
-                    Try Tool
+                    Try tool
                     <ExternalLink className="ml-2 h-4 w-4" />
                   </a>
                 </Button>
@@ -100,7 +212,7 @@ export default function Home() {
       <section className="py-10">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-foreground">💡 Latest AI Prompts</h2>
+            <h2 className="text-3xl font-bold text-foreground">Latest AI Prompts</h2>
             <p className="text-muted-foreground mt-2">Ready-to-use prompts for ChatGPT, Claude, and other AI models</p>
           </div>
           <Button variant="outline" asChild>
@@ -180,7 +292,7 @@ export default function Home() {
       <section className="py-10">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-foreground">🚀 Breakthrough Research 2025</h2>
+            <h2 className="text-3xl font-bold text-foreground">Breakthrough Research 2025</h2>
             <p className="text-muted-foreground mt-2">Explore groundbreaking AI papers shaping the future - AGI, multimodal AI, and beyond</p>
           </div>
           <Button variant="outline" asChild>
@@ -251,8 +363,8 @@ export default function Home() {
       {/* Contact Section */}
       <section className="py-12" id="contact">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-foreground">📫 Get in Touch</h2>
-          <p className="text-muted-foreground mt-2">Questions, feedback, or partnerships? We’d love to hear from you.</p>
+          <h2 className="text-3xl font-bold text-foreground">Get in Touch</h2>
+          <p className="text-muted-foreground mt-2">Questions, feedback, or partnerships? We would love to hear from you.</p>
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
           <Card className="border border-border bg-card">

@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import SearchableSelect from '@/components/ui/searchable-select'
-import { ExternalLink, Loader2, Calendar, Clock, Search, Filter, X, Heart, Bookmark } from 'lucide-react'
+import { ExternalLink, Loader2, Calendar, Clock, Search, Filter, X, Heart, Bookmark, ArrowRight, Sparkles } from 'lucide-react'
 import MainLayout from '@/components/layout/MainLayout'
 import { useAuth } from '@/contexts/AuthContext'
 // Removed Image import as we're using gradient backgrounds instead
@@ -49,6 +49,15 @@ const BlogsPage = () => {
   
   // Get all unique tags from posts
   const allTags = Array.from(new Set(allPosts.flatMap(post => post.tags)))
+  const totalPostsLabel = allPosts.length.toLocaleString()
+  const tagCountLabel = allTags.length.toLocaleString()
+  const resultsLabel = `${allFilteredPosts.length.toLocaleString()} results`
+  const resetFilters = () => {
+    setSearchTerm('')
+    setSelectedTag('')
+    setShowLikedOnly(false)
+    setShowSavedOnly(false)
+  }
 
   // Fetch user interactions for displayed posts
   const fetchUserInteractions = useCallback(async (blogIds: string[]) => {
@@ -313,32 +322,111 @@ const BlogsPage = () => {
 
   return (
     <MainLayout>
-      <div>
-        {/* Search and Filter Section */}
-        <div className="mb-6 space-y-4">
-          {/* Search Bar and Filters Row */}
-          <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center">
-            {/* Search Bar */}
-            <div className="relative flex-1 min-w-0">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search blogs by title, content, or tags..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-10"
-              />
-              {searchTerm && (
-                <button
-                  onClick={() => setSearchTerm('')}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
+      <div className="space-y-10">
+        {/* Hero */}
+        <section className="relative overflow-hidden rounded-3xl border bg-slate-950 text-white">
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute -top-24 right-0 h-72 w-72 rounded-full bg-indigo-500/30 blur-3xl" />
+            <div className="absolute -bottom-24 left-0 h-72 w-72 rounded-full bg-sky-500/30 blur-3xl" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.12),_transparent_55%)]" />
+          </div>
+          <div className="relative grid gap-10 px-6 py-12 lg:grid-cols-[1.2fr_0.8fr] lg:px-12">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/70">
+                <Sparkles className="h-3.5 w-3.5" />
+                AI Blogs
+              </div>
+              <h1 className="mt-4 font-display text-4xl font-semibold tracking-tight md:text-5xl">
+                Ideas, playbooks, and AI field notes.
+              </h1>
+              <p className="mt-4 max-w-xl text-sm text-white/70 md:text-base">
+                Browse expert breakdowns, workflow guides, and product perspectives from across the AI ecosystem.
+              </p>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                <div className="relative flex-1">
+                  <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-white/60" />
+                  <Input
+                    placeholder="Search blogs by title, content, or tags..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="h-11 border-white/10 bg-white/10 pl-10 pr-10 text-white placeholder:text-white/60 focus-visible:ring-white/40"
+                  />
+                  {searchTerm && (
+                    <button
+                      onClick={() => setSearchTerm('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+                <Button asChild className="h-11 bg-white text-slate-900 hover:bg-white/90">
+                  <Link href="/learn-ai">
+                    Explore learning paths
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+              <div className="mt-8 grid gap-4 sm:grid-cols-3">
+                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <p className="text-xs uppercase tracking-widest text-white/60">Posts</p>
+                  <p className="mt-1 text-2xl font-semibold">{totalPostsLabel}</p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <p className="text-xs uppercase tracking-widest text-white/60">Topics</p>
+                  <p className="mt-1 text-2xl font-semibold">{tagCountLabel}</p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <p className="text-xs uppercase tracking-widest text-white/60">Results</p>
+                  <p className="mt-1 text-2xl font-semibold">{resultsLabel}</p>
+                </div>
+              </div>
             </div>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-semibold">Trending topics</p>
+                <span className="text-xs text-white/60">Pick a focus</span>
+              </div>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {allTags.slice(0, 8).map(tag => (
+                  <Button
+                    key={tag}
+                    variant="ghost"
+                    className="h-8 rounded-full border border-white/10 bg-white/5 px-4 text-xs text-white hover:bg-white/10"
+                    onClick={() => setSelectedTag(tag)}
+                  >
+                    #{tag}
+                  </Button>
+                ))}
+              </div>
+              <div className="mt-6 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+                <p className="text-xs text-white/60">Filters applied</p>
+                <p className="mt-1 text-sm font-medium">{resultsLabel}</p>
+              </div>
+            </div>
+          </div>
+        </section>
 
-            {/* Tag Filter */}
-            <div className="flex items-center gap-2 lg:min-w-[250px]">
+        {/* Filters */}
+        <section className="rounded-2xl border bg-card p-6 shadow-sm">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-foreground">Filter posts</h2>
+              <p className="text-sm text-muted-foreground">
+                Showing {Math.min(displayedPosts.length, allFilteredPosts.length)} of {allFilteredPosts.length} posts
+                {(searchTerm || selectedTag || showLikedOnly || showSavedOnly) && (
+                  <span className="ml-1">(filtered from {totalPostsLabel} total)</span>
+                )}
+              </p>
+            </div>
+            {(searchTerm || selectedTag || showLikedOnly || showSavedOnly) && (
+              <Button variant="link" size="sm" onClick={resetFilters} className="h-auto p-0 text-primary">
+                Clear filters
+              </Button>
+            )}
+          </div>
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2 min-w-[220px]">
               <Filter className="h-4 w-4 text-muted-foreground" />
               <SearchableSelect
                 options={[{ value: '', label: 'All tags' }, ...allTags.map(tag => ({ value: tag, label: tag }))]}
@@ -347,8 +435,6 @@ const BlogsPage = () => {
                 placeholder="Select a tag..."
               />
             </div>
-
-            {/* Save/Like Filters */}
             {isAuthenticated && (
               <div className="flex items-center gap-2">
                 <Button
@@ -371,39 +457,37 @@ const BlogsPage = () => {
                 </Button>
               </div>
             )}
-
-            {/* Clear Filters */}
-            {(selectedTag || showLikedOnly || showSavedOnly) && (
+            {(selectedTag || showLikedOnly || showSavedOnly || searchTerm) && (
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  setSelectedTag('')
-                  setShowLikedOnly(false)
-                  setShowSavedOnly(false)
-                }}
+                onClick={resetFilters}
                 className="text-xs whitespace-nowrap"
               >
                 Clear all filters
               </Button>
             )}
           </div>
-        </div>
-
-        {/* Posts Count */}
-        <div className="mb-6">
-          <p className="text-sm text-muted-foreground">
-            Showing {Math.min(displayedPosts.length, allFilteredPosts.length)} of {allFilteredPosts.length} posts
-            {(searchTerm || selectedTag || showLikedOnly || showSavedOnly) && (
-              <span className="ml-1">
-                (filtered from {allPosts.length} total)
-              </span>
-            )}
-          </p>
-        </div>
+          {(searchTerm || selectedTag || showLikedOnly || showSavedOnly) && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {searchTerm && (
+                <Badge variant="secondary">Search: {searchTerm}</Badge>
+              )}
+              {selectedTag && (
+                <Badge variant="secondary">Tag: {selectedTag}</Badge>
+              )}
+              {showLikedOnly && (
+                <Badge variant="secondary">Liked posts</Badge>
+              )}
+              {showSavedOnly && (
+                <Badge variant="secondary">Saved posts</Badge>
+              )}
+            </div>
+          )}
+        </section>
 
         {/* Posts Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <section className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {displayedPosts.map((post, index) => (
             <Card key={`${post.id}-${index}`} className="group relative overflow-hidden bg-card border border-border/50 hover:border-primary/30 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
               {/* Post Header with Abstract Pattern */}
@@ -521,7 +605,7 @@ const BlogsPage = () => {
               </CardContent>
             </Card>
           ))}
-        </div>
+        </section>
 
         {/* Loading Indicator */}
         {isLoading && (
@@ -534,7 +618,7 @@ const BlogsPage = () => {
         {/* End of Results */}
         {!hasMore && displayedPosts.length > 0 && (
           <div className="text-center py-8">
-            <p className="text-muted-foreground">You&apos;ve reached the end! {allPosts.length} posts loaded.</p>
+            <p className="text-muted-foreground">You have reached the end. {totalPostsLabel} posts loaded.</p>
           </div>
         )}
       </div>

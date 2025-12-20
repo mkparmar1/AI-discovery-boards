@@ -37,6 +37,30 @@ const emptyTool = (): ToolForm => ({
   trendingState: 'unchanged'
 })
 
+type PromptForm = {
+  id: string
+  title: string
+  prompt: string
+  category: string
+  tags: string
+  description: string
+  useCase: string
+  difficulty: '' | 'Beginner' | 'Intermediate' | 'Advanced'
+  mode: 'create' | 'update' | 'delete'
+}
+
+const emptyPrompt = (): PromptForm => ({
+  id: '',
+  title: '',
+  prompt: '',
+  category: '',
+  tags: '',
+  description: '',
+  useCase: '',
+  difficulty: '',
+  mode: 'create'
+})
+
 export default function ProfilePage() {
   const { user, isAuthenticated, isLoading } = useAuth()
   const [tools, setTools] = useState<ToolForm[]>([emptyTool()])
@@ -45,6 +69,9 @@ export default function ProfilePage() {
   const [results, setResults] = useState<string[]>([])
   const [toolOptions, setToolOptions] = useState<SelectOption[]>([])
   const [isLoadingTools, setIsLoadingTools] = useState(false)
+  const [prompts, setPrompts] = useState<PromptForm[]>([emptyPrompt()])
+  const [promptOptions, setPromptOptions] = useState<SelectOption[]>([])
+  const [isLoadingPrompts, setIsLoadingPrompts] = useState(false)
 
   const isAdmin = useMemo(() => user?.role === 'admin', [user?.role])
 
@@ -57,9 +84,22 @@ export default function ProfilePage() {
   }
 
   const addTool = () => setTools(prev => [...prev, emptyTool()])
+  const addPrompt = () => setPrompts(prev => [...prev, emptyPrompt()])
 
   const removeTool = (index: number) => {
     setTools(prev => prev.length > 1 ? prev.filter((_, i) => i !== index) : prev)
+  }
+
+  const updatePrompt = (index: number, field: keyof PromptForm, value: string) => {
+    setPrompts(prev => {
+      const next = [...prev]
+      next[index] = { ...next[index], [field]: value }
+      return next
+    })
+  }
+
+  const removePrompt = (index: number) => {
+    setPrompts(prev => prev.length > 1 ? prev.filter((_, i) => i !== index) : prev)
   }
 
   const generateId = (index: number) => {
@@ -83,6 +123,25 @@ export default function ProfilePage() {
       // no-op, fallback to empty list
     } finally {
       setIsLoadingTools(false)
+    }
+  }
+
+  const loadPromptOptions = async () => {
+    setIsLoadingPrompts(true)
+    try {
+      const response = await fetch('/api/prompts?lookup=true')
+      const data = await response.json()
+      if (response.ok && data.success) {
+        const options = (data.data || []).map((prompt: { id: string; title: string }) => ({
+          value: prompt.id,
+          label: prompt.title
+        }))
+        setPromptOptions(options)
+      }
+    } catch {
+      // no-op
+    } finally {
+      setIsLoadingPrompts(false)
     }
   }
 
@@ -115,13 +174,42 @@ export default function ProfilePage() {
     }
   }
 
+  const loadPromptDetails = async (promptId: string, index: number) => {
+    if (!promptId) return
+    try {
+      const response = await fetch(`/api/prompts?promptId=${encodeURIComponent(promptId)}`)
+      const data = await response.json()
+      if (response.ok && data.success) {
+        const prompt = data.data
+        setPrompts(prev => {
+          const next = [...prev]
+          next[index] = {
+            id: prompt.id || '',
+            title: prompt.title || '',
+            prompt: prompt.prompt || '',
+            category: prompt.category || '',
+            tags: Array.isArray(prompt.tags) ? prompt.tags.join(', ') : '',
+            description: prompt.description || '',
+            useCase: prompt.useCase || '',
+            difficulty: prompt.difficulty || '',
+            mode: 'update'
+          }
+          return next
+        })
+      }
+    } catch {
+      // no-op
+    }
+  }
+
   useEffect(() => {
     if (isAdmin) {
       loadToolOptions()
+      loadPromptOptions()
     }
   }, [isAdmin])
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  const handleToolsSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
     setError('')
     setResults([])
@@ -202,6 +290,93 @@ export default function ProfilePage() {
     }
   }
 
+  const handlePromptsSubmit = async (event: React.FormEvent) => {
+    event.preventDefault()
+    setError('')
+    setResults([])
+
+    const invalidIndex = prompts.findIndex(prompt => {
+      if (!prompt.id) return true
+
+      if (prompt.mode === 'delete') return false
+
+      if (prompt.mode === 'create') {
+        const tags = prompt.tags.split(',').map(t => t.trim()).filter(Boolean)
+        return !prompt.title || !prompt.prompt || !prompt.category || !prompt.description || !prompt.useCase || !prompt.difficulty || tags.length === 0
+      }
+
+      const hasAnyField = Boolean(
+        prompt.title ||
+        prompt.prompt ||
+        prompt.category ||
+        prompt.tags.trim() ||
+        prompt.description ||
+        prompt.useCase ||
+        prompt.difficulty
+      )
+      return !hasAnyField
+    })
+
+    if (invalidIndex !== -1) {
+      setError(`Please complete required fields for prompt #${invalidIndex + 1}.`)
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      const responses = await Promise.all(prompts.map(async (prompt, index) => {
+        if (prompt.mode === 'delete') {
+          const response = await fetch(`/api/prompts?promptId=${encodeURIComponent(prompt.id)}`, {
+            method: 'DELETE'
+          })
+          const data = await response.json()
+          if (!response.ok || !data.success) {
+            const message = data?.error || `Failed to delete prompt #${index + 1}`
+            throw new Error(message)
+          }
+          return `Deleted "${prompt.id}"`
+        }
+
+        const tags = prompt.tags.split(',').map(t => t.trim()).filter(Boolean)
+        const payload: Record<string, unknown> = {
+          id: prompt.id
+        }
+
+        if (prompt.title) payload.title = prompt.title
+        if (prompt.prompt) payload.prompt = prompt.prompt
+        if (prompt.category) payload.category = prompt.category
+        if (tags.length > 0) payload.tags = tags
+        if (prompt.description) payload.description = prompt.description
+        if (prompt.useCase) payload.useCase = prompt.useCase
+        if (prompt.difficulty) payload.difficulty = prompt.difficulty
+
+        const response = await fetch('/api/prompts', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        })
+
+        const data = await response.json()
+        if (!response.ok || !data.success) {
+          const message = data?.error || `Failed to save prompt #${index + 1}`
+          throw new Error(message)
+        }
+
+        const label = prompt.title || prompt.id
+        return `${prompt.mode === 'create' ? 'Created' : 'Updated'} "${label}"`
+      }))
+
+      setResults(responses)
+      setPrompts([emptyPrompt()])
+    } catch (submitError: any) {
+      setError(submitError?.message || 'Failed to save prompts.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   if (isLoading) {
     return (
       <MainLayout>
@@ -247,13 +422,13 @@ export default function ProfilePage() {
         </Card>
 
         {isAdmin ? (
-          <Card>
-            <CardHeader>
-              <CardTitle>Admin: Add Tools</CardTitle>
-              <CardDescription>Add or update tools one by one or multiple at a time.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Admin: Add Tools</CardTitle>
+                <CardDescription>Add or update tools one by one or multiple at a time.</CardDescription>
+              </CardHeader>
+              <CardContent>
+              <form onSubmit={handleToolsSubmit} className="space-y-6">
                 {tools.map((tool, index) => (
                   <div key={`tool-form-${index}`} className="rounded-lg border border-border/50 p-4 space-y-4">
                     <div className="flex items-center justify-between">
@@ -391,6 +566,132 @@ export default function ProfilePage() {
                   <div className="text-sm text-green-600 space-y-1">
                     {results.map((message, idx) => (
                       <p key={`result-${idx}`}>{message}</p>
+                    ))}
+                  </div>
+                )}
+              </form>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Admin: Manage Prompts</CardTitle>
+              <CardDescription>Add, update, or delete prompts in bulk.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handlePromptsSubmit} className="space-y-6">
+                {prompts.map((prompt, index) => (
+                  <div key={`prompt-form-${index}`} className="rounded-lg border border-border/50 p-4 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-semibold">Prompt #{index + 1}</h3>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removePrompt(index)}
+                        disabled={prompts.length === 1}
+                      >
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        Remove
+                      </Button>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="flex flex-col gap-2">
+                        <label className="text-sm font-medium">Mode</label>
+                        <select
+                          className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+                          value={prompt.mode}
+                          onChange={(e) => updatePrompt(index, 'mode', e.target.value as PromptForm['mode'])}
+                        >
+                          <option value="create">Create new prompt</option>
+                          <option value="update">Update existing prompt</option>
+                          <option value="delete">Delete prompt</option>
+                        </select>
+                      </div>
+                      {prompt.mode !== 'create' && (
+                        <div className="flex flex-col gap-2">
+                          <label className="text-sm font-medium">Find prompt</label>
+                          <SearchableSelect
+                            options={promptOptions}
+                            value={prompt.id}
+                            onChange={(value) => {
+                              updatePrompt(index, 'id', value)
+                              if (prompt.mode !== 'delete') {
+                                loadPromptDetails(value, index)
+                              }
+                            }}
+                            placeholder={isLoadingPrompts ? 'Loading prompts...' : 'Search prompts...'}
+                          />
+                        </div>
+                      )}
+                      <Input
+                        placeholder="Prompt ID"
+                        value={prompt.id}
+                        onChange={(e) => updatePrompt(index, 'id', e.target.value)}
+                        required
+                      />
+                      <Input
+                        placeholder="Title"
+                        value={prompt.title}
+                        onChange={(e) => updatePrompt(index, 'title', e.target.value)}
+                      />
+                      <Input
+                        placeholder="Category"
+                        value={prompt.category}
+                        onChange={(e) => updatePrompt(index, 'category', e.target.value)}
+                      />
+                      <Input
+                        placeholder="Tags (comma separated)"
+                        value={prompt.tags}
+                        onChange={(e) => updatePrompt(index, 'tags', e.target.value)}
+                      />
+                      <Input
+                        placeholder="Use case"
+                        value={prompt.useCase}
+                        onChange={(e) => updatePrompt(index, 'useCase', e.target.value)}
+                      />
+                      <select
+                        className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+                        value={prompt.difficulty}
+                        onChange={(e) => updatePrompt(index, 'difficulty', e.target.value)}
+                      >
+                        <option value="">Select difficulty</option>
+                        <option value="Beginner">Beginner</option>
+                        <option value="Intermediate">Intermediate</option>
+                        <option value="Advanced">Advanced</option>
+                      </select>
+                      <textarea
+                        className="min-h-[90px] rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        placeholder="Short description"
+                        value={prompt.description}
+                        onChange={(e) => updatePrompt(index, 'description', e.target.value)}
+                      />
+                      <textarea
+                        className="min-h-[90px] rounded-md border border-input bg-background px-3 py-2 text-sm md:col-span-2"
+                        placeholder="Prompt text"
+                        value={prompt.prompt}
+                        onChange={(e) => updatePrompt(index, 'prompt', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                ))}
+
+                <div className="flex flex-wrap items-center gap-3">
+                  <Button type="button" variant="outline" onClick={addPrompt}>
+                    <Plus className="h-4 w-4 mr-1" />
+                    Add another prompt
+                  </Button>
+                  <Button type="submit" disabled={isSubmitting}>
+                    <Save className="h-4 w-4 mr-1" />
+                    {isSubmitting ? 'Saving...' : 'Save prompts'}
+                  </Button>
+                </div>
+
+                {error && <p className="text-sm text-red-600">{error}</p>}
+                {results.length > 0 && (
+                  <div className="text-sm text-green-600 space-y-1">
+                    {results.map((message, idx) => (
+                      <p key={`result-prompt-${idx}`}>{message}</p>
                     ))}
                   </div>
                 )}

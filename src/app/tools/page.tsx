@@ -3,10 +3,11 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { Tool } from '@/lib/data'
 import ToolCard from '@/components/ToolCard'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Search, Filter, Grid, List, Loader2, Heart, Bookmark } from 'lucide-react'
+import { Search, Filter, Grid, List, Loader2, Heart, Bookmark, ArrowRight, Sparkles } from 'lucide-react'
 import MainLayout from '@/components/layout/MainLayout'
 import SearchableSelect from '@/components/ui/searchable-select'
 import { useAuth } from '@/contexts/AuthContext'
@@ -79,6 +80,10 @@ export default function ToolsPage() {
   // Get metadata
   const categories = metadataQuery.data?.categories || []
   const allTags = metadataQuery.data?.tags || []
+  const totalCountLabel = isLoading || typeof totalCount !== 'number' ? '...' : totalCount.toLocaleString()
+  const categoryCountLabel = metadataQuery.isLoading ? '...' : categories.length.toLocaleString()
+  const tagCountLabel = metadataQuery.isLoading ? '...' : allTags.length.toLocaleString()
+  const resultsLabel = isLoading ? 'Loading tools...' : `Showing ${displayedTools.length} of ${totalCountLabel} tools`
 
   const categoryOptions = useMemo(() => [
     { value: 'all', label: 'All Categories' },
@@ -184,10 +189,10 @@ export default function ToolsPage() {
   if (isError) {
     return (
       <MainLayout>
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-red-600 mb-4">Error Loading Tools</h2>
-            <p className="text-gray-600 mb-4">
+        <div className="py-12">
+          <div className="rounded-2xl border bg-card p-8 text-center shadow-sm">
+            <h2 className="text-2xl font-semibold text-foreground mb-4">Error Loading Tools</h2>
+            <p className="text-muted-foreground mb-4">
               {error?.message || 'Failed to load tools. Please try again.'}
             </p>
             <Button onClick={() => window.location.reload()}>
@@ -201,39 +206,108 @@ export default function ToolsPage() {
 
   return (
     <MainLayout>
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            AI Tools Discovery
-          </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
-            Discover and explore the latest AI tools and technologies
-          </p>
-        </div>
+      <div className="space-y-10">
+        {/* Hero */}
+        <section className="relative overflow-hidden rounded-3xl border bg-slate-950 text-white">
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute -top-24 right-0 h-72 w-72 rounded-full bg-indigo-500/30 blur-3xl" />
+            <div className="absolute -bottom-24 left-0 h-72 w-72 rounded-full bg-sky-500/30 blur-3xl" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.12),_transparent_55%)]" />
+          </div>
+          <div className="relative grid gap-10 px-6 py-12 lg:grid-cols-[1.2fr_0.8fr] lg:px-12">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/70">
+                <Sparkles className="h-3.5 w-3.5" />
+                AI Tools
+              </div>
+              <h1 className="mt-4 font-display text-4xl font-semibold tracking-tight md:text-5xl">
+                Find the AI tools that fit your stack.
+              </h1>
+              <p className="mt-4 max-w-xl text-sm text-white/70 md:text-base">
+                Filter by category, tags, and community favorites to uncover the tools worth trying this week.
+              </p>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                <div className="relative flex-1">
+                  <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-white/60" />
+                  <Input
+                    type="text"
+                    placeholder="Search AI tools..."
+                    value={rawSearchTerm}
+                    onChange={(e) => setRawSearchTerm(e.target.value)}
+                    className="h-11 border-white/10 bg-white/10 pl-10 text-white placeholder:text-white/60 focus-visible:ring-white/40"
+                  />
+                </div>
+                <Button asChild className="h-11 bg-white text-slate-900 hover:bg-white/90">
+                  <Link href="/tools/categories">
+                    Browse categories
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+              <div className="mt-8 grid gap-4 sm:grid-cols-3">
+                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <p className="text-xs uppercase tracking-widest text-white/60">Tools tracked</p>
+                  <p className="mt-1 text-2xl font-semibold">{totalCountLabel}</p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <p className="text-xs uppercase tracking-widest text-white/60">Categories</p>
+                  <p className="mt-1 text-2xl font-semibold">{categoryCountLabel}</p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <p className="text-xs uppercase tracking-widest text-white/60">Tags</p>
+                  <p className="mt-1 text-2xl font-semibold">{tagCountLabel}</p>
+                </div>
+              </div>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-semibold">Quick filters</p>
+                <span className="text-xs text-white/60">Refine results</span>
+              </div>
+              <div className="mt-5 space-y-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.2em] text-white/60">Trending tags</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {allTags.slice(0, 6).map(tag => (
+                      <Button
+                        key={tag}
+                        variant="ghost"
+                        className="h-8 rounded-full border border-white/10 bg-white/5 px-4 text-xs text-white hover:bg-white/10"
+                        onClick={() => setSelectedTag(tag)}
+                      >
+                        #{tag}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+                  <p className="text-xs text-white/60">Filters applied</p>
+                  <p className="mt-1 text-sm font-medium">{resultsLabel}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-        {/* Tools Count */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {isLoading ? (
-                'Loading tools...'
-              ) : (
-                <>
-                  Showing {displayedTools.length} of {totalCount} tools
-                  {(debouncedSearchTerm || selectedCategory !== 'all' || selectedTag !== 'all') && (
-                    <Button
-                      variant="link"
-                      size="sm"
-                      onClick={resetFilters}
-                      className="ml-2 p-0 h-auto text-blue-600 hover:text-blue-800"
-                    >
-                      Clear filters
-                    </Button>
-                  )}
-                </>
-              )}
-            </p>
+        {/* Filters */}
+        <section className="rounded-2xl border bg-card p-6 shadow-sm">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-foreground">Filter tools</h2>
+              <p className="text-sm text-muted-foreground">
+                {resultsLabel}
+                {(debouncedSearchTerm || selectedCategory !== 'all' || selectedTag !== 'all' || showLikedOnly || showSavedOnly) && (
+                  <Button
+                    variant="link"
+                    size="sm"
+                    onClick={resetFilters}
+                    className="ml-2 h-auto p-0 text-primary"
+                  >
+                    Clear filters
+                  </Button>
+                )}
+              </p>
+            </div>
             <div className="flex items-center gap-2">
               <Button
                 variant={viewMode === 'grid' ? 'default' : 'outline'}
@@ -251,27 +325,20 @@ export default function ToolsPage() {
               </Button>
             </div>
           </div>
-        </div>
-
-        {/* Search and Filters - Single Row Layout */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 min-w-0 overflow-x-auto pb-2">
-            {/* Search Bar */}
-            <div className="relative flex-shrink-0" style={{ width: '280px' }}>
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <div className="relative w-full sm:w-72">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder="Search AI tools..."
                 value={rawSearchTerm}
                 onChange={(e) => setRawSearchTerm(e.target.value)}
-                className="pl-10 w-full"
+                className="pl-10"
               />
             </div>
-
-            {/* Category Filter */}
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <Filter className="h-4 w-4 text-gray-500" />
-              <div style={{ width: '140px' }}>
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-muted-foreground" />
+              <div className="min-w-[180px]">
                 <SearchableSelect
                   options={categoryOptions}
                   value={selectedCategory}
@@ -281,9 +348,7 @@ export default function ToolsPage() {
                 />
               </div>
             </div>
-
-            {/* Tag Filter */}
-            <div className="flex-shrink-0" style={{ width: '120px' }}>
+            <div className="min-w-[160px]">
               <SearchableSelect
                 options={tagOptions}
                 value={selectedTag}
@@ -292,8 +357,6 @@ export default function ToolsPage() {
                 className="w-full"
               />
             </div>
-
-            {/* User-specific filters */}
             {isAuthenticated && (
               <>
                 <Button
@@ -303,7 +366,7 @@ export default function ToolsPage() {
                     setShowLikedOnly(!showLikedOnly)
                     setShowSavedOnly(false)
                   }}
-                  className="flex items-center gap-2 flex-shrink-0 whitespace-nowrap"
+                  className="flex items-center gap-2 whitespace-nowrap"
                 >
                   <Heart className={`h-4 w-4 ${showLikedOnly ? 'fill-current' : ''}`} />
                   Liked
@@ -315,33 +378,50 @@ export default function ToolsPage() {
                     setShowSavedOnly(!showSavedOnly)
                     setShowLikedOnly(false)
                   }}
-                  className="flex items-center gap-2 flex-shrink-0 whitespace-nowrap"
+                  className="flex items-center gap-2 whitespace-nowrap"
                 >
                   <Bookmark className={`h-4 w-4 ${showSavedOnly ? 'fill-current' : ''}`} />
                   Saved
                 </Button>
               </>
             )}
-
-            {/* Clear Filters */}
             {(debouncedSearchTerm || selectedCategory !== 'all' || selectedTag !== 'all' || showLikedOnly || showSavedOnly) && (
               <Button
                 variant="outline"
                 size="sm"
                 onClick={resetFilters}
-                className="text-gray-600 hover:text-gray-800 flex-shrink-0 whitespace-nowrap"
+                className="whitespace-nowrap"
               >
-                Clear All
+                Clear all
               </Button>
             )}
           </div>
-        </div>
+          {(debouncedSearchTerm || selectedCategory !== 'all' || selectedTag !== 'all' || showLikedOnly || showSavedOnly) && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {debouncedSearchTerm && (
+                <Badge variant="secondary">Search: {debouncedSearchTerm}</Badge>
+              )}
+              {selectedCategory !== 'all' && (
+                <Badge variant="secondary">Category: {selectedCategory}</Badge>
+              )}
+              {selectedTag !== 'all' && (
+                <Badge variant="secondary">Tag: {selectedTag}</Badge>
+              )}
+              {showLikedOnly && (
+                <Badge variant="secondary">Liked tools</Badge>
+              )}
+              {showSavedOnly && (
+                <Badge variant="secondary">Saved tools</Badge>
+              )}
+            </div>
+          )}
+        </section>
 
         {/* Loading State */}
         {isLoading && (
           <div className="flex justify-center items-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-            <span className="ml-2 text-gray-600">Loading tools...</span>
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <span className="ml-2 text-muted-foreground">Loading tools...</span>
           </div>
         )}
 
@@ -350,7 +430,7 @@ export default function ToolsPage() {
           <>
             {displayedTools.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-gray-600 dark:text-gray-400 text-lg">
+                <p className="text-muted-foreground text-lg">
                   No tools found matching your criteria.
                 </p>
                 {(debouncedSearchTerm || selectedCategory !== 'all' || selectedTag !== 'all') && (
@@ -389,8 +469,8 @@ export default function ToolsPage() {
               <div ref={sentinelRef} className="flex justify-center py-8">
                 {isFetchingNextPage && (
                   <div className="flex items-center gap-2">
-                    <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
-                    <span className="text-gray-600">Loading more tools...</span>
+                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                    <span className="text-muted-foreground">Loading more tools...</span>
                   </div>
                 )}
               </div>
@@ -399,8 +479,8 @@ export default function ToolsPage() {
             {/* End of results */}
             {!hasNextPage && displayedTools.length > 0 && (
               <div className="text-center py-8">
-                <p className="text-gray-600 dark:text-gray-400">
-                  You've reached the end of the results.
+                <p className="text-muted-foreground">
+                  You have reached the end of the results.
                 </p>
               </div>
             )}

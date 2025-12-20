@@ -6,14 +6,61 @@ import { aiPrompts } from '@/lib/data'
 export async function GET(request: NextRequest) {
   // Extract query params early so we can reuse them in fallback
   const { searchParams } = new URL(request.url)
+  const promptId = searchParams.get('promptId')
+  const lookup = searchParams.get('lookup') === 'true'
 
   // Check if this is a metadata-only request
   const metaOnly = searchParams.get('metaOnly') === 'true'
 
-  if (metaOnly) {
+  if (promptId || lookup || metaOnly) {
     try {
       await connectDB()
 
+      if (promptId) {
+        const prompt = await Prompt.findOne({ id: promptId })
+        if (!prompt) {
+          return NextResponse.json(
+            { success: false, error: 'Prompt not found' },
+            { status: 404 }
+          )
+        }
+
+        return NextResponse.json({
+          success: true,
+          data: {
+            id: prompt.id,
+            title: prompt.title,
+            prompt: prompt.prompt,
+            category: prompt.category,
+            tags: prompt.tags,
+            description: prompt.description,
+            useCase: prompt.useCase,
+            difficulty: prompt.difficulty,
+            createdAt: prompt.createdAt ? prompt.createdAt.toISOString().split('T')[0] : ''
+          }
+        })
+      }
+
+      if (lookup) {
+        const prompts = await Prompt.find({})
+          .sort({ title: 1 })
+          .select({ id: 1, title: 1, _id: 0 })
+        return NextResponse.json({
+          success: true,
+          data: prompts
+        })
+      }
+    } catch (error) {
+      console.error('ƒ?O Error fetching prompt lookup/details:', error)
+      return NextResponse.json(
+        { success: false, error: 'Failed to fetch prompt info' },
+        { status: 500 }
+      )
+    }
+  }
+
+  if (metaOnly) {
+    try {
       // Get unique categories and tags from database
       const [categories, tags] = await Promise.all([
         Prompt.distinct('category'),
@@ -174,9 +221,43 @@ export async function POST(request: NextRequest) {
     await connectDB()
 
     const body = await request.json()
-    const { title, prompt, category, tags, description, useCase, difficulty } = body
+    const { id, title, prompt, category, tags, description, useCase, difficulty } = body
 
-    // Validate required fields
+    if (id) {
+      const existingPrompt = await Prompt.findOne({ id })
+
+      if (existingPrompt) {
+        const updateFields: Record<string, unknown> = {}
+        if (title) updateFields.title = title
+        if (prompt) updateFields.prompt = prompt
+        if (category) updateFields.category = category
+        if (Array.isArray(tags) && tags.length > 0) updateFields.tags = tags
+        if (description) updateFields.description = description
+        if (useCase) updateFields.useCase = useCase
+        if (difficulty) updateFields.difficulty = difficulty
+
+        if (Object.keys(updateFields).length === 0) {
+          return NextResponse.json(
+            { success: false, error: 'No fields provided to update' },
+            { status: 400 }
+          )
+        }
+
+        const updatedPrompt = await Prompt.findOneAndUpdate(
+          { id },
+          { $set: updateFields },
+          { new: true, runValidators: true }
+        )
+
+        return NextResponse.json({
+          success: true,
+          message: 'Prompt updated successfully',
+          data: updatedPrompt
+        })
+      }
+    }
+
+    // Validate required fields for create
     if (!title || !prompt || !category || !description || !useCase || !difficulty) {
       return NextResponse.json(
         { success: false, error: 'Missing required fields' },
@@ -184,11 +265,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Generate unique ID
-    const lastPrompt = await Prompt.findOne().sort({ id: -1 }).lean()
-    const nextId = lastPrompt && !Array.isArray(lastPrompt) && (lastPrompt as any).id 
-      ? (parseInt((lastPrompt as any).id) + 1).toString() 
-      : '1';
+    let nextId = id
+    if (!nextId) {
+      const lastPrompt = await Prompt.findOne().sort({ id: -1 }).lean()
+      nextId = lastPrompt && !Array.isArray(lastPrompt) && (lastPrompt as any).id 
+        ? (parseInt((lastPrompt as any).id) + 1).toString() 
+        : '1'
+    }
 
     // Create new prompt
     const newPrompt = new Prompt({
@@ -228,6 +311,41 @@ export async function POST(request: NextRequest) {
         error: 'Failed to create prompt',
         details: error instanceof Error ? error.message : 'Unknown error'
       },
+      { status: 500 }
+    )
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    await connectDB()
+
+    const { searchParams } = new URL(request.url)
+    const promptId = searchParams.get('promptId')
+
+    if (!promptId) {
+      return NextResponse.json(
+        { success: false, error: 'Prompt ID is required' },
+        { status: 400 }
+      )
+    }
+
+    const result = await Prompt.deleteOne({ id: promptId })
+    if (result.deletedCount === 0) {
+      return NextResponse.json(
+        { success: false, error: 'Prompt not found' },
+        { status: 404 }
+      )
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'Prompt deleted successfully'
+    })
+  } catch (error) {
+    console.error('ƒ?O Error deleting prompt:', error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to delete prompt' },
       { status: 500 }
     )
   }

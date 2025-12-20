@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useEffect, useState, useCallback, useRef } from 'react'
+import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react'
+import Link from 'next/link'
 import MainLayout from '@/components/layout/MainLayout'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Loader2, ExternalLink } from 'lucide-react'
+import { Loader2, ExternalLink, ArrowRight, Sparkles } from 'lucide-react'
 
 interface LearnAIVideo {
   _id: string
@@ -39,6 +40,9 @@ export default function LearnAIPage() {
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [hasMore, setHasMore] = useState(false)
   const [totalCount, setTotalCount] = useState(0)
+  const topics = useMemo(() => {
+    return Array.from(new Set(videos.map(video => video.topic).filter(Boolean)))
+  }, [videos])
 
   // IntersectionObserver
   const sentinelRef = useRef<HTMLDivElement | null>(null)
@@ -122,15 +126,71 @@ export default function LearnAIPage() {
 
   return (
     <MainLayout>
-      <div>
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold">Learn AI – Explore the Best Free AI Learning Videos</h1>
-          <p className="text-sm text-muted-foreground">Handpicked YouTube resources to master AI, Python, and automation tools.</p>
-          <p className="text-xs text-muted-foreground mt-1">Showing {videos.length} of {totalCount} videos</p>
-        </div>
+      <div className="space-y-10">
+        {/* Hero */}
+        <section className="relative overflow-hidden rounded-3xl border bg-slate-950 text-white">
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute -top-24 right-0 h-72 w-72 rounded-full bg-indigo-500/30 blur-3xl" />
+            <div className="absolute -bottom-24 left-0 h-72 w-72 rounded-full bg-sky-500/30 blur-3xl" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.12),_transparent_55%)]" />
+          </div>
+          <div className="relative grid gap-10 px-6 py-12 lg:grid-cols-[1.2fr_0.8fr] lg:px-12">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/70">
+                <Sparkles className="h-3.5 w-3.5" />
+                Learn AI
+              </div>
+              <h1 className="mt-4 font-display text-4xl font-semibold tracking-tight md:text-5xl">
+                Learn AI faster with curated video lessons.
+              </h1>
+              <p className="mt-4 max-w-xl text-sm text-white/70 md:text-base">
+                Handpicked YouTube content covering AI fundamentals, Python, automation, and real-world projects.
+              </p>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                <Button asChild className="h-11 bg-white text-slate-900 hover:bg-white/90">
+                  <Link href="/learn/courses">
+                    Explore structured courses
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+              <div className="mt-8 grid gap-4 sm:grid-cols-3">
+                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <p className="text-xs uppercase tracking-widest text-white/60">Videos</p>
+                  <p className="mt-1 text-2xl font-semibold">{totalCount.toLocaleString()}</p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <p className="text-xs uppercase tracking-widest text-white/60">Topics</p>
+                  <p className="mt-1 text-2xl font-semibold">{topics.length.toLocaleString()}</p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <p className="text-xs uppercase tracking-widest text-white/60">Showing</p>
+                  <p className="mt-1 text-2xl font-semibold">{videos.length.toLocaleString()}</p>
+                </div>
+              </div>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-semibold">Popular topics</p>
+                <span className="text-xs text-white/60">Pick a track</span>
+              </div>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {topics.slice(0, 8).map(topic => (
+                  <Badge key={topic} variant="secondary" className="bg-white/10 text-white/80">
+                    {topic}
+                  </Badge>
+                ))}
+              </div>
+              <div className="mt-6 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+                <p className="text-xs text-white/60">Now streaming</p>
+                <p className="mt-1 text-sm font-medium">{videos.length.toLocaleString()} videos ready</p>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <section className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {videos.map((v) => (
             <Card key={v._id || v.youtubeUrl} className="group overflow-hidden bg-card border border-border/50 hover:border-primary/30 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
               <CardHeader className="p-0">
@@ -160,7 +220,7 @@ export default function LearnAIPage() {
               </CardContent>
             </Card>
           ))}
-        </div>
+        </section>
 
         {isLoading && (
           <div className="flex justify-center items-center py-8">
@@ -175,7 +235,7 @@ export default function LearnAIPage() {
 
         {!hasMore && !isLoading && (
           <div className="text-center py-8">
-            <p className="text-muted-foreground">You&apos;ve reached the end! All {totalCount} videos loaded.</p>
+            <p className="text-muted-foreground">You have reached the end. All {totalCount.toLocaleString()} videos loaded.</p>
           </div>
         )}
       </div>

@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
-import { Copy, Check, Star, Zap, Loader2, Search, Filter, Heart, Bookmark, X } from 'lucide-react'
+import Link from 'next/link'
+import { Copy, Check, Star, Zap, Loader2, Search, Filter, Heart, Bookmark, X, ArrowRight, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
@@ -463,48 +464,133 @@ export default function PromptsPage() {
 
   // Check if any filters are active
   const hasActiveFilters = searchTerm || selectedCategory !== 'all' || selectedTag !== 'all' || selectedDifficulty !== 'all' || showLikedOnly || showSavedOnly
+  const totalCountLabel = totalCount.toLocaleString()
+  const categoryCountLabel = categories.length.toLocaleString()
+  const tagCountLabel = allTags.length.toLocaleString()
 
   return (
     <MainLayout>
-      <div>
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2">AI Prompts</h1>
-          <p className="text-muted-foreground">Discover and use powerful AI prompts for various tasks</p>
-        </div>
+      <div className="space-y-10">
+        {/* Hero */}
+        <section className="relative overflow-hidden rounded-3xl border bg-slate-950 text-white">
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute -top-24 right-0 h-72 w-72 rounded-full bg-indigo-500/30 blur-3xl" />
+            <div className="absolute -bottom-24 left-0 h-72 w-72 rounded-full bg-sky-500/30 blur-3xl" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.12),_transparent_55%)]" />
+          </div>
+          <div className="relative grid gap-10 px-6 py-12 lg:grid-cols-[1.2fr_0.8fr] lg:px-12">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/70">
+                <Sparkles className="h-3.5 w-3.5" />
+                AI Prompts
+              </div>
+              <h1 className="mt-4 font-display text-4xl font-semibold tracking-tight md:text-5xl">
+                Copy-ready prompts for faster AI workflows.
+              </h1>
+              <p className="mt-4 max-w-xl text-sm text-white/70 md:text-base">
+                Save time with curated prompts for writing, strategy, coding, and research. Filter by category, tag, and difficulty.
+              </p>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                <div className="relative flex-1">
+                  <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-white/60" />
+                  <Input
+                    type="text"
+                    placeholder="Search prompts..."
+                    value={rawSearchTerm}
+                    onChange={(e) => setRawSearchTerm(e.target.value)}
+                    className="h-11 border-white/10 bg-white/10 pl-10 pr-4 text-white placeholder:text-white/60 focus-visible:ring-white/40"
+                  />
+                </div>
+                <Button asChild className="h-11 bg-white text-slate-900 hover:bg-white/90">
+                  <Link href="/prompts">
+                    Browse prompt packs
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+              <div className="mt-8 grid gap-4 sm:grid-cols-3">
+                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <p className="text-xs uppercase tracking-widest text-white/60">Prompts</p>
+                  <p className="mt-1 text-2xl font-semibold">{totalCountLabel}</p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <p className="text-xs uppercase tracking-widest text-white/60">Categories</p>
+                  <p className="mt-1 text-2xl font-semibold">{categoryCountLabel}</p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <p className="text-xs uppercase tracking-widest text-white/60">Tags</p>
+                  <p className="mt-1 text-2xl font-semibold">{tagCountLabel}</p>
+                </div>
+              </div>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-semibold">Quick filters</p>
+                <span className="text-xs text-white/60">Pick a focus</span>
+              </div>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {allTags.slice(0, 8).map(tag => (
+                  <Button
+                    key={tag}
+                    variant="ghost"
+                    className="h-8 rounded-full border border-white/10 bg-white/5 px-4 text-xs text-white hover:bg-white/10"
+                    onClick={() => setSelectedTag(tag)}
+                  >
+                    #{tag}
+                  </Button>
+                ))}
+              </div>
+              <div className="mt-6 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+                <p className="text-xs text-white/60">Active results</p>
+                <p className="mt-1 text-sm font-medium">
+                  {isLoading && displayedPrompts.length === 0
+                    ? 'Loading prompts...'
+                    : `Showing ${displayedPrompts.length} of ${totalCountLabel}`}
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
 
-        {/* Search and Filters */}
-        <div className="mb-6">
-          {/* Search and Filter Controls in Same Row */}
-          <div className="flex flex-wrap gap-4 items-center">
-            {/* Search Bar */}
-            <div className="relative flex-1 min-w-[300px]">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+        {/* Filters */}
+        <section className="rounded-2xl border bg-card p-6 shadow-sm">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-foreground">Filter prompts</h2>
+              <p className="text-sm text-muted-foreground">
+                {isLoading && displayedPrompts.length === 0
+                  ? 'Loading prompts...'
+                  : `Showing ${displayedPrompts.length} of ${totalCountLabel} AI prompts`}
+              </p>
+            </div>
+            {hasActiveFilters && (
+              <Button variant="link" size="sm" onClick={clearFilters} className="h-auto p-0 text-primary">
+                Clear filters
+              </Button>
+            )}
+          </div>
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <div className="relative w-full sm:w-72">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
                 type="text"
                 placeholder="Search prompts..."
                 value={rawSearchTerm}
                 onChange={(e) => setRawSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 w-full"
+                className="pl-10 pr-4 w-full"
               />
             </div>
-
-            {/* Filter Label */}
             <div className="flex items-center gap-2">
               <Filter className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium text-muted-foreground">Filters:</span>
+              <span className="text-sm font-medium text-muted-foreground">Filters</span>
             </div>
-
-            {/* Category Filter */}
             <SearchableSelect
               options={categoryOptions}
               value={selectedCategory}
               onChange={setSelectedCategory}
               placeholder="Category"
-              className="w-40"
+              className="w-44"
             />
-
-            {/* Tag Filter */}
             <SearchableSelect
               options={tagOptions}
               value={selectedTag}
@@ -512,17 +598,13 @@ export default function PromptsPage() {
               placeholder="Tag"
               className="w-40"
             />
-
-            {/* Difficulty Filter */}
             <SearchableSelect
               options={difficultyOptions}
               value={selectedDifficulty}
               onChange={setSelectedDifficulty}
               placeholder="Difficulty"
-              className="w-40"
+              className="w-44"
             />
-
-            {/* Like Filter */}
             {isAuthenticated && (
               <Button
                 variant={showLikedOnly ? "default" : "outline"}
@@ -537,8 +619,6 @@ export default function PromptsPage() {
                 Liked
               </Button>
             )}
-
-            {/* Save Filter */}
             {isAuthenticated && (
               <Button
                 variant={showSavedOnly ? "default" : "outline"}
@@ -553,36 +633,45 @@ export default function PromptsPage() {
                 Saved
               </Button>
             )}
-
-            {/* Clear Filters */}
             {hasActiveFilters && (
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={clearFilters}
-                className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+                className="flex items-center gap-2"
               >
                 <X className="h-4 w-4" />
                 Clear
               </Button>
             )}
           </div>
-        </div>
-
-        {/* Prompts Count */}
-        <div className="mb-6">
-          <p className="text-sm text-muted-foreground">
-            {isLoading && displayedPrompts.length === 0 ? (
-              'Loading prompts...'
-            ) : (
-              `Showing ${displayedPrompts.length} of ${totalCount} AI prompts`
-            )}
-          </p>
-        </div>
+          {hasActiveFilters && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {searchTerm && (
+                <Badge variant="secondary">Search: {searchTerm}</Badge>
+              )}
+              {selectedCategory !== 'all' && (
+                <Badge variant="secondary">Category: {selectedCategory}</Badge>
+              )}
+              {selectedTag !== 'all' && (
+                <Badge variant="secondary">Tag: {selectedTag}</Badge>
+              )}
+              {selectedDifficulty !== 'all' && (
+                <Badge variant="secondary">Difficulty: {selectedDifficulty}</Badge>
+              )}
+              {showLikedOnly && (
+                <Badge variant="secondary">Liked prompts</Badge>
+              )}
+              {showSavedOnly && (
+                <Badge variant="secondary">Saved prompts</Badge>
+              )}
+            </div>
+          )}
+        </section>
 
         {/* No Results Message */}
         {!isLoading && displayedPrompts.length === 0 && hasActiveFilters && (
-          <div className="text-center py-12">
+          <section className="text-center py-12">
             <div className="mb-4">
               <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-foreground mb-2">No prompts found</h3>
@@ -594,11 +683,11 @@ export default function PromptsPage() {
                 Clear Filters
               </Button>
             </div>
-          </div>
+          </section>
         )}
 
         {/* Prompts Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <section className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {displayedPrompts.map((prompt) => (
             <Card key={prompt.id} className="group relative overflow-hidden bg-card border border-border/50 hover:border-primary/30 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
               <CardHeader className="pb-3">
@@ -695,44 +784,44 @@ export default function PromptsPage() {
                   onClick={() => copyToClipboard(prompt.prompt, prompt.id)}
                   className="w-full mt-auto bg-white hover:bg-blue-50 text-blue-600 border-blue-300 dark:bg-transparent dark:border-border dark:text-foreground dark:hover:bg-accent dark:hover:text-accent-foreground font-medium transition-all duration-300 group-hover:shadow-lg"
                   variant="outline"
-                  >
-                     {copiedStates[prompt.id] ? (
-                       <>
-                         <Check className="h-4 w-4 mr-2" />
-                         Copied!
-                       </>
-                     ) : (
-                       <>
-                         <Copy className="h-4 w-4 mr-2" />
-                         Copy
-                       </>
-                     )}
-                   </Button>
-               </CardContent>
-              </Card>
-            ))}
-          </div>
+                >
+                  {copiedStates[prompt.id] ? (
+                    <>
+                      <Check className="h-4 w-4 mr-2" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copy
+                    </>
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </section>
 
           {/* Loading Indicator */}
-          {isLoading && (
-            <div className="flex justify-center items-center py-8">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <span className="ml-2 text-muted-foreground">Loading more prompts...</span>
-            </div>
-          )}
+        {isLoading && (
+          <div className="flex justify-center items-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <span className="ml-2 text-muted-foreground">Loading more prompts...</span>
+          </div>
+        )}
 
           {/* Sentinel for infinite scroll */}
-          {hasMore && !isLoading && (
-            <div ref={sentinelRef} className="h-10 w-full" aria-hidden="true" />
-          )}
+        {hasMore && !isLoading && (
+          <div ref={sentinelRef} className="h-10 w-full" aria-hidden="true" />
+        )}
 
           {/* End of Results */}
-          {!hasMore && !isLoading && (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">You&apos;ve reached the end! All {totalCount} prompts loaded.</p>
-            </div>
-          )}
-        </div>
+        {!hasMore && !isLoading && (
+          <div className="text-center py-8">
+            <p className="text-muted-foreground">You have reached the end. All {totalCountLabel} prompts loaded.</p>
+          </div>
+        )}
+      </div>
       </MainLayout>
     )
   }
