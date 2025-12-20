@@ -59,9 +59,18 @@ export async function GET(request: NextRequest) {
 
 // POST - Toggle like or bookmark for a prompt
 export async function POST(request: NextRequest) {
+  // Ensure variables are accessible in the catch block for retry logic
+  let userId: string | undefined
+  let promptId: string | undefined
+  let action: 'like' | 'bookmark' | undefined
+  let value: boolean | undefined
+
   try {
     const body = await request.json()
-    const { userId, promptId, action, value } = body
+    userId = body?.userId
+    promptId = body?.promptId
+    action = body?.action
+    value = body?.value
 
     if (!userId || !promptId || !action || typeof value !== 'boolean') {
       return NextResponse.json(
@@ -110,7 +119,7 @@ export async function POST(request: NextRequest) {
       }
     })
   } catch (error: any) {
-    if (error?.code === 11000) {
+    if (error?.code === 11000 && action && userId && promptId !== undefined && typeof value === 'boolean') {
       try {
         const updateField = action === 'like' ? 'isLiked' : 'isBookmarked'
         const interaction = await UserPromptInteraction.findOneAndUpdate(

@@ -14,6 +14,7 @@ interface ToolCardProps {
   isBookmarked?: boolean
   onLikeToggle?: (toolId: string, isLiked: boolean) => void
   onBookmarkToggle?: (toolId: string, isBookmarked: boolean) => void
+  showInteractionButtons?: boolean
 }
 
 export default function ToolCard({ 
@@ -22,7 +23,8 @@ export default function ToolCard({
   isLiked = false, 
   isBookmarked = false, 
   onLikeToggle, 
-  onBookmarkToggle 
+  onBookmarkToggle,
+  showInteractionButtons = true
 }: ToolCardProps) {
   const { user, isAuthenticated } = useAuth()
   const [isLiking, setIsLiking] = useState(false)
@@ -146,7 +148,7 @@ export default function ToolCard({
     return (
       <Card className="group relative overflow-hidden bg-card border border-border/50 hover:border-primary/30 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300">
         {/* Like and Save Icons - Top Right */}
-        {true && (
+        {showInteractionButtons && (
           <div className="absolute top-3 right-3 flex items-center gap-1 z-10">
             {/* Like Button */}
             <Button
@@ -252,7 +254,7 @@ export default function ToolCard({
   return (
     <Card className="group relative overflow-hidden bg-card border border-border/50 hover:border-primary/30 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
       {/* Like and Save Icons - Top Right */}
-      {true && (
+      {showInteractionButtons && (
         <div className="absolute top-3 right-3 flex items-center gap-1 z-10">
           {/* Like Button */}
           <Button
