@@ -12,11 +12,13 @@ import SearchableSelect from '@/components/ui/searchable-select'
 import { useAuth } from '@/contexts/AuthContext'
 import { useInfiniteTools, useToolsMetadata, useAllToolsFromInfinite, useUserInteractions } from '@/hooks/useTools'
 import { useDebounce } from '@/hooks/useDebounce'
+import { useQueryClient } from '@tanstack/react-query'
 
 const ITEMS_PER_PAGE = 20
 
 export default function ToolsPage() {
   const { user, isAuthenticated } = useAuth()
+  const queryClient = useQueryClient()
   
   // Filter states
   const [rawSearchTerm, setRawSearchTerm] = useState('')
@@ -51,7 +53,8 @@ export default function ToolsPage() {
   
   // Get user interactions for displayed tools
   const toolIds = rawTools.map(tool => tool.id)
-  const userInteractionsQuery = useUserInteractions(user?.id, toolIds)
+  const sortedToolIds = useMemo(() => [...toolIds].sort(), [toolIds])
+  const userInteractionsQuery = useUserInteractions(user?.id, sortedToolIds)
   const userInteractions = userInteractionsQuery.data || {}
   
   // Client-side filtering for liked/saved tools
@@ -89,17 +92,37 @@ export default function ToolsPage() {
 
   // Handle like toggle
   const handleLikeToggle = useCallback((toolId: string, isLiked: boolean) => {
-    // This would typically trigger a mutation to update the server
-    // For now, we'll just update the local state
-    console.log('Like toggled:', toolId, isLiked)
-  }, [])
+    if (!user?.id) {
+      window.location.href = '/login'
+      return
+    }
+
+    const cacheKey = ['userInteractions', user.id, sortedToolIds]
+    queryClient.setQueryData(cacheKey, (prev: Record<string, { isLiked: boolean; isBookmarked: boolean }> = {}) => ({
+      ...prev,
+      [toolId]: {
+        isLiked,
+        isBookmarked: prev[toolId]?.isBookmarked ?? false
+      }
+    }))
+  }, [queryClient, sortedToolIds, user?.id])
 
   // Handle bookmark toggle
   const handleBookmarkToggle = useCallback((toolId: string, isBookmarked: boolean) => {
-    // This would typically trigger a mutation to update the server
-    // For now, we'll just update the local state
-    console.log('Bookmark toggled:', toolId, isBookmarked)
-  }, [])
+    if (!user?.id) {
+      window.location.href = '/login'
+      return
+    }
+
+    const cacheKey = ['userInteractions', user.id, sortedToolIds]
+    queryClient.setQueryData(cacheKey, (prev: Record<string, { isLiked: boolean; isBookmarked: boolean }> = {}) => ({
+      ...prev,
+      [toolId]: {
+        isLiked: prev[toolId]?.isLiked ?? false,
+        isBookmarked
+      }
+    }))
+  }, [queryClient, sortedToolIds, user?.id])
 
   // Infinite scroll setup
   const sentinelRef = useRef<HTMLDivElement | null>(null)

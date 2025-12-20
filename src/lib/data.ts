@@ -379,6 +379,7 @@ export type Tool = {
   clickCount: number
   category: 'Chat' | 'Image' | 'Devtools' | 'Other'
   website: string
+  isTrending?: boolean
 }
 
 export const allTools: Tool[] = [

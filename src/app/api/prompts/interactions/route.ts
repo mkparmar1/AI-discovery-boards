@@ -80,17 +80,15 @@ export async function POST(request: NextRequest) {
     await connectDB()
 
     const updateField = action === 'like' ? 'isLiked' : 'isBookmarked'
+    const setOnInsert = action === 'like'
+      ? { userId, promptId, isBookmarked: false }
+      : { userId, promptId, isLiked: false }
     
-    const interaction = await UserPromptInteraction.findOneAndUpdate(
+    let interaction = await UserPromptInteraction.findOneAndUpdate(
       { userId, promptId },
       { 
         $set: { [updateField]: value },
-        $setOnInsert: { 
-          userId, 
-          promptId,
-          isLiked: action === 'like' ? value : false,
-          isBookmarked: action === 'bookmark' ? value : false
-        }
+        $setOnInsert: setOnInsert
       },
       { 
         upsert: true, 
@@ -98,6 +96,10 @@ export async function POST(request: NextRequest) {
         runValidators: true
       }
     )
+
+    if (!interaction) {
+      interaction = await UserPromptInteraction.findOne({ userId, promptId })
+    }
 
     return NextResponse.json({
       success: true,
@@ -107,10 +109,33 @@ export async function POST(request: NextRequest) {
         isBookmarked: interaction.isBookmarked
       }
     })
-  } catch (error) {
+  } catch (error: any) {
+    if (error?.code === 11000) {
+      try {
+        const updateField = action === 'like' ? 'isLiked' : 'isBookmarked'
+        const interaction = await UserPromptInteraction.findOneAndUpdate(
+          { userId, promptId },
+          { $set: { [updateField]: value } },
+          { new: true, runValidators: true }
+        )
+        if (interaction) {
+          return NextResponse.json({
+            success: true,
+            data: {
+              promptId: interaction.promptId,
+              isLiked: interaction.isLiked,
+              isBookmarked: interaction.isBookmarked
+            }
+          })
+        }
+      } catch (retryError) {
+        console.error('Error updating prompt interaction after duplicate:', retryError)
+      }
+    }
+
     console.error('Error updating prompt interaction:', error)
     return NextResponse.json(
-      { success: false, error: 'Failed to update interaction' },
+      { success: false, error: 'Failed to update interaction', details: error?.message },
       { status: 500 }
     )
   }

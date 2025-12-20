@@ -4,12 +4,13 @@ import UserBlogInteraction from '@/models/UserBlogInteraction'
 
 export async function GET(request: NextRequest) {
   try {
-    // For now, we'll use a mock user ID since the project uses localStorage-based auth
-    // In production, you would extract the user ID from the JWT token in the Authorization header
-    const mockUserId = 'test-user-123'
-
     const { searchParams } = new URL(request.url)
+    const userId = searchParams.get('userId')
     const blogIds = searchParams.get('blogIds')?.split(',') || []
+
+    if (!userId) {
+      return NextResponse.json({ error: 'User ID is required' }, { status: 400 })
+    }
 
     if (blogIds.length === 0) {
       return NextResponse.json({ interactions: {} })
@@ -18,7 +19,7 @@ export async function GET(request: NextRequest) {
     await connectDB()
 
     const interactions = await UserBlogInteraction.find({
-      userId: mockUserId,
+      userId,
       blogId: { $in: blogIds }
     })
 
@@ -39,19 +40,14 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // For now, we'll use a mock user ID since the project uses localStorage-based auth
-    // In production, you would extract the user ID from the JWT token in the Authorization header
-    const mockUserId = 'test-user-123'
+    const { userId, blogId, action } = await request.json()
 
-    const { blogId, action } = await request.json()
-
-    if (!blogId || !action || !['like', 'bookmark'].includes(action)) {
+    if (!userId || !blogId || !action || !['like', 'bookmark'].includes(action)) {
       return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
     }
 
     await connectDB()
 
-    const userId = mockUserId
     const updateField = action === 'like' ? 'isLiked' : 'isBookmarked'
 
     // Find existing interaction or create new one

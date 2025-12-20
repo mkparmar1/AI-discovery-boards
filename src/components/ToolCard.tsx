@@ -28,6 +28,10 @@ export default function ToolCard({
   const [isLiking, setIsLiking] = useState(false)
   const [isBookmarking, setIsBookmarking] = useState(false)
 
+  const redirectToLogin = () => {
+    window.location.href = '/login'
+  }
+
   const handleToolClick = async () => {
     try {
       await trackToolClick(
@@ -45,8 +49,11 @@ export default function ToolCard({
     e.preventDefault()
     e.stopPropagation()
     
-    // Allow function to work with mock authentication
-    if ((!isAuthenticated && !user) || isLiking) return
+    if (!isAuthenticated || !user) {
+      redirectToLogin()
+      return
+    }
+    if (isLiking) return
     
     setIsLiking(true)
     try {
@@ -57,7 +64,7 @@ export default function ToolCard({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: user?.id || 'test-user-123',
+          userId: user.id,
           toolId: tool.id,
           action
         })
@@ -91,8 +98,11 @@ export default function ToolCard({
     e.preventDefault()
     e.stopPropagation()
     
-    // Allow function to work with mock authentication
-    if ((!isAuthenticated && !user) || isBookmarking) return
+    if (!isAuthenticated || !user) {
+      redirectToLogin()
+      return
+    }
+    if (isBookmarking) return
     
     setIsBookmarking(true)
     try {
@@ -103,7 +113,7 @@ export default function ToolCard({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: user?.id || 'test-user-123',
+          userId: user.id,
           toolId: tool.id,
           action
         })
@@ -136,7 +146,7 @@ export default function ToolCard({
     return (
       <Card className="group relative overflow-hidden bg-card border border-border/50 hover:border-primary/30 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300">
         {/* Like and Save Icons - Top Right */}
-        {(isAuthenticated || true) && (
+        {true && (
           <div className="absolute top-3 right-3 flex items-center gap-1 z-10">
             {/* Like Button */}
             <Button
@@ -182,6 +192,14 @@ export default function ToolCard({
               >
                 {tool.category}
               </Badge>
+              {tool.isTrending && (
+                <Badge 
+                  variant="secondary"
+                  className="text-xs font-medium bg-orange-500/90 text-white border-0 flex-shrink-0"
+                >
+                  Trending
+                </Badge>
+              )}
             </div>
             
             <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
@@ -234,7 +252,7 @@ export default function ToolCard({
   return (
     <Card className="group relative overflow-hidden bg-card border border-border/50 hover:border-primary/30 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
       {/* Like and Save Icons - Top Right */}
-      {(isAuthenticated || true) && (
+      {true && (
         <div className="absolute top-3 right-3 flex items-center gap-1 z-10">
           {/* Like Button */}
           <Button
@@ -261,13 +279,21 @@ export default function ToolCard({
       )}
 
       <CardHeader className="pb-3">
-        <div className="flex items-start justify-start mb-3">
+        <div className="flex items-start justify-start gap-2 mb-3">
           <Badge 
             variant="outline" 
             className="text-xs font-medium bg-primary/5 text-primary border-primary/20"
           >
             {tool.category}
           </Badge>
+          {tool.isTrending && (
+            <Badge 
+              variant="secondary"
+              className="text-xs font-medium bg-orange-500/90 text-white border-0"
+            >
+              Trending
+            </Badge>
+          )}
         </div>
         
         <div className="flex items-center gap-3 mb-2">

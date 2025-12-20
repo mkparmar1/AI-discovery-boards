@@ -47,6 +47,20 @@ interface UserInteractions {
 export default function PromptsPage() {
   // Authentication
   const { user, isAuthenticated } = useAuth()
+  const redirectToLogin = useCallback(() => {
+    window.location.href = '/login'
+  }, [])
+  const getUserId = useCallback(() => {
+    if (user?.id) return user.id
+    try {
+      const storedUser = localStorage.getItem('user')
+      if (!storedUser) return null
+      const parsedUser = JSON.parse(storedUser)
+      return parsedUser?.id || parsedUser?._id || null
+    } catch {
+      return null
+    }
+  }, [user])
 
   // Data states
   const [rawPrompts, setRawPrompts] = useState<AIPrompt[]>([])
@@ -102,11 +116,12 @@ export default function PromptsPage() {
 
   // Fetch user interactions for displayed prompts
   const fetchUserInteractions = useCallback(async (promptIds: string[]) => {
-    if (!isAuthenticated || !user || promptIds.length === 0) return
+    const userId = getUserId()
+    if (!userId || promptIds.length === 0) return
 
     setIsLoadingInteractions(true)
     try {
-      const response = await fetch(`/api/prompts/interactions?userId=${user.id}&promptIds=${promptIds.join(',')}`)
+      const response = await fetch(`/api/prompts/interactions?userId=${userId}&promptIds=${promptIds.join(',')}`)
       if (response.ok) {
         const data = await response.json()
         if (data.success) {
@@ -120,11 +135,15 @@ export default function PromptsPage() {
     } finally {
       setIsLoadingInteractions(false)
     }
-  }, [isAuthenticated, user])
+  }, [getUserId])
 
   // Handle like toggle
   const handleLikeToggle = useCallback(async (promptId: string, isLiked: boolean) => {
-    if (!isAuthenticated || !user) return
+    const userId = getUserId()
+    if (!userId) {
+      redirectToLogin()
+      return
+    }
 
     // Optimistically update UI
     setUserInteractions(prev => ({
@@ -142,7 +161,7 @@ export default function PromptsPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: user.id,
+          userId,
           promptId,
           action: 'like',
           value: isLiked
@@ -175,11 +194,15 @@ export default function PromptsPage() {
         }
       }))
     }
-  }, [isAuthenticated, user])
+  }, [getUserId, redirectToLogin])
 
   // Handle bookmark toggle
   const handleBookmarkToggle = useCallback(async (promptId: string, isBookmarked: boolean) => {
-    if (!isAuthenticated || !user) return
+    const userId = getUserId()
+    if (!userId) {
+      redirectToLogin()
+      return
+    }
 
     // Optimistically update UI
     setUserInteractions(prev => ({
@@ -197,7 +220,7 @@ export default function PromptsPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: user.id,
+          userId,
           promptId,
           action: 'bookmark',
           value: isBookmarked
@@ -230,7 +253,7 @@ export default function PromptsPage() {
         }
       }))
     }
-  }, [isAuthenticated, user])
+  }, [getUserId, redirectToLogin])
 
   // Debounce the search input to improve responsiveness
   useEffect(() => {
@@ -332,13 +355,13 @@ export default function PromptsPage() {
     setDisplayedPrompts(filtered)
   }, [rawPrompts, showLikedOnly, showSavedOnly, userInteractions])
 
-  // Fetch user interactions when prompts change or user logs in
+  // Fetch user interactions when prompt data changes or user logs in
   useEffect(() => {
-    if (displayedPrompts.length > 0) {
-      const promptIds = displayedPrompts.map(prompt => prompt.id)
+    if (rawPrompts.length > 0) {
+      const promptIds = rawPrompts.map(prompt => prompt.id)
       fetchUserInteractions(promptIds)
     }
-  }, [displayedPrompts, fetchUserInteractions])
+  }, [rawPrompts, fetchUserInteractions])
 
   // Fetch metadata for filters
   useEffect(() => {
@@ -596,32 +619,30 @@ export default function PromptsPage() {
                     </Badge>
                     
                     {/* Like and Save buttons */}
-                    {isAuthenticated && (
-                      <div className="flex items-center gap-1">
-                        <Button
-                           variant="ghost"
-                           size="sm"
-                           className="h-8 w-8 p-0"
-                           onClick={() => {
-                             const newLikedState = !userInteractions[prompt.id]?.isLiked
-                             handleLikeToggle(prompt.id, newLikedState)
-                           }}
-                         >
-                           <Heart className={`h-4 w-4 ${userInteractions[prompt.id]?.isLiked ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
-                         </Button>
-                         <Button
-                           variant="ghost"
-                           size="sm"
-                           className="h-8 w-8 p-0"
-                           onClick={() => {
-                             const newBookmarkedState = !userInteractions[prompt.id]?.isBookmarked
-                             handleBookmarkToggle(prompt.id, newBookmarkedState)
-                           }}
-                         >
-                           <Bookmark className={`h-4 w-4 ${userInteractions[prompt.id]?.isBookmarked ? 'fill-blue-500 text-blue-500' : 'text-muted-foreground'}`} />
-                         </Button>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-1">
+                      <Button
+                         variant="ghost"
+                         size="sm"
+                         className="h-8 w-8 p-0"
+                         onClick={() => {
+                           const newLikedState = !userInteractions[prompt.id]?.isLiked
+                           handleLikeToggle(prompt.id, newLikedState)
+                         }}
+                       >
+                         <Heart className={`h-4 w-4 ${userInteractions[prompt.id]?.isLiked ? 'fill-red-500 text-red-500' : 'text-muted-foreground'}`} />
+                       </Button>
+                       <Button
+                         variant="ghost"
+                         size="sm"
+                         className="h-8 w-8 p-0"
+                         onClick={() => {
+                           const newBookmarkedState = !userInteractions[prompt.id]?.isBookmarked
+                           handleBookmarkToggle(prompt.id, newBookmarkedState)
+                         }}
+                       >
+                         <Bookmark className={`h-4 w-4 ${userInteractions[prompt.id]?.isBookmarked ? 'fill-blue-500 text-blue-500' : 'text-muted-foreground'}`} />
+                       </Button>
+                    </div>
                   </div>
                 </div>
                 

@@ -137,6 +137,13 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
                     <p className="text-xs text-muted-foreground">{user?.email}</p>
                   </div>
                   <div className="py-1">
+                    <Link
+                      href="/profile"
+                      className="flex w-full items-center px-3 py-2 text-sm hover:bg-accent rounded-sm"
+                    >
+                      <User className="mr-2 h-4 w-4" />
+                      Profile
+                    </Link>
                     <button 
                       onClick={handleLogout}
                       className="flex w-full items-center px-3 py-2 text-sm hover:bg-accent rounded-sm text-red-600"

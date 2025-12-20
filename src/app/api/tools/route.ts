@@ -6,6 +6,33 @@ export async function GET(request: NextRequest) {
   try {
     await connectDB()
     const { searchParams } = new URL(request.url)
+    const toolId = searchParams.get('toolId')
+
+    if (toolId) {
+      const tool = await Tool.findOne({ id: toolId })
+      if (!tool) {
+        return NextResponse.json(
+          { success: false, error: 'Tool not found' },
+          { status: 404 }
+        )
+      }
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          id: tool.id,
+          title: tool.title,
+          description: tool.description,
+          tags: tool.tags,
+          image: tool.image,
+          clickCount: tool.clickCount,
+          category: tool.category,
+          website: tool.website,
+          isTrending: !!tool.isTrending,
+          createdAt: tool.createdAt.toISOString().split('T')[0]
+        }
+      })
+    }
 
     // Meta-only endpoint to avoid heavy fetches for categories and tags
     const metaOnly = searchParams.get('metaOnly') === 'true'
@@ -18,6 +45,17 @@ export async function GET(request: NextRequest) {
         data: [],
         meta: { categories, tags, totalCount },
         pagination: { page: 1, limit: 0, totalCount, totalPages: 1, hasMore: false }
+      })
+    }
+
+    const lookup = searchParams.get('lookup') === 'true'
+    if (lookup) {
+      const tools = await Tool.find({})
+        .sort({ title: 1 })
+        .select({ id: 1, title: 1, _id: 0 })
+      return NextResponse.json({
+        success: true,
+        data: tools
       })
     }
 
@@ -54,7 +92,7 @@ export async function GET(request: NextRequest) {
 
     // Fetch tools with pagination and sorting
     const tools = await Tool.find(query)
-      .sort({ clickCount: -1, createdAt: -1 }) // Sort by popularity then by newest
+      .sort({ isTrending: -1, createdAt: -1 }) // Trending first, then newest
       .skip(skip)
       .limit(limit)
 
@@ -68,6 +106,7 @@ export async function GET(request: NextRequest) {
       clickCount: tool.clickCount,
       category: tool.category,
       website: tool.website,
+      isTrending: !!tool.isTrending,
       createdAt: tool.createdAt.toISOString().split('T')[0] // Format as YYYY-MM-DD
     }))
 
@@ -106,25 +145,65 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     
     // Validate required fields
-    const { id, title, description, tags, image, clickCount, category, website } = body
+    const { id, title, description, tags, image, clickCount, category, website, isTrending } = body
 
-    if (!id || !title || !description || !tags || !image || !category || !website) {
+    if (!id) {
+      return NextResponse.json(
+        { success: false, error: 'Tool ID is required' },
+        { status: 400 }
+      )
+    }
+
+    const existingTool = await Tool.findOne({ id })
+
+    if (existingTool) {
+      const updateFields: Record<string, unknown> = {}
+      if (title) updateFields.title = title
+      if (description) updateFields.description = description
+      if (Array.isArray(tags) && tags.length > 0) updateFields.tags = tags
+      if (image) updateFields.image = image
+      if (category) updateFields.category = category
+      if (website) updateFields.website = website
+      if (typeof clickCount === 'number') updateFields.clickCount = clickCount
+      if (typeof isTrending === 'boolean') updateFields.isTrending = isTrending
+
+      if (Object.keys(updateFields).length === 0) {
+        return NextResponse.json(
+          { success: false, error: 'No fields provided to update' },
+          { status: 400 }
+        )
+      }
+
+      const updatedTool = await Tool.findOneAndUpdate(
+        { id },
+        { $set: updateFields },
+        { new: true, runValidators: true }
+      )
+
+      return NextResponse.json({
+        success: true,
+        data: updatedTool,
+        message: 'Tool updated successfully'
+      }, { status: 200 })
+    }
+
+    if (!title || !description || !tags || !image || !category || !website) {
       return NextResponse.json(
         { success: false, error: 'Missing required fields' },
         { status: 400 }
       )
     }
 
-    // Create new tool
     const newTool = new Tool({
       id,
       title,
       description,
       tags,
       image,
-      clickCount: clickCount || 0,
+      clickCount: typeof clickCount === 'number' ? clickCount : 0,
       category,
-      website
+      website,
+      isTrending: typeof isTrending === 'boolean' ? isTrending : false
     })
 
     const savedTool = await newTool.save()

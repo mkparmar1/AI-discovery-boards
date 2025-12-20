@@ -5,6 +5,7 @@ export interface IUser extends Document {
   name: string
   email: string
   password: string
+  role: 'user' | 'moderator' | 'admin'
   createdAt: Date
   updatedAt: Date
   comparePassword(candidatePassword: string): Promise<boolean>
@@ -34,6 +35,11 @@ const UserSchema: Schema = new Schema({
     type: String,
     required: [true, 'Password is required'],
     minlength: [6, 'Password must be at least 6 characters long']
+  },
+  role: {
+    type: String,
+    enum: ['user', 'moderator', 'admin'],
+    default: 'user'
   },
   knownIps: {
     type: [String],

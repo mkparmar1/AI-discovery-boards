@@ -9,6 +9,7 @@ export interface ITool extends Document {
   clickCount: number
   category: 'Chat' | 'Image' | 'Devtools' | 'Other'
   website: string
+  isTrending: boolean
   createdAt: Date
   updatedAt: Date
 }
@@ -49,6 +50,10 @@ const ToolSchema = new Schema<ITool>({
   website: {
     type: String,
     required: true
+  },
+  isTrending: {
+    type: Boolean,
+    default: false
   }
 }, {
   timestamps: true

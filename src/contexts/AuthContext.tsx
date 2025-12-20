@@ -6,6 +6,7 @@ interface User {
   id: string
   name: string
   email: string
+  role: 'user' | 'moderator' | 'admin'
 }
 
 interface AuthContextType {
@@ -29,16 +30,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const checkAuthStatus = async () => {
     try {
-      // For testing purposes, create a mock user
-      // In production, you would verify the token with the backend
-      const mockUser = {
-        id: 'test-user-123',
-        name: 'Test User',
-        email: 'test@example.com'
+      const storedUser = localStorage.getItem('user')
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser)
+        const userId = parsedUser?.id || parsedUser?._id
+        if (userId) {
+          setUser({
+            id: userId,
+            name: parsedUser.name,
+            email: parsedUser.email,
+            role: parsedUser.role || 'user'
+          })
+        } else {
+          setUser(null)
+        }
+      } else {
+        setUser(null)
       }
-      
-      setUser(mockUser)
-      
+
       /* 
       // Uncomment this when you have proper JWT authentication
       const token = localStorage.getItem('authToken')
@@ -64,6 +73,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error('Auth check failed:', error)
       localStorage.removeItem('authToken')
+      localStorage.removeItem('user')
     } finally {
       setIsLoading(false)
     }
@@ -82,7 +92,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (response.ok) {
         const data = await response.json()
         localStorage.setItem('authToken', data.token)
-        setUser(data.user)
+        setUser({
+          id: data.user?.id || data.user?._id,
+          name: data.user?.name,
+          email: data.user?.email,
+          role: data.user?.role || 'user'
+        })
+        localStorage.setItem('user', JSON.stringify(data.user))
         return true
       }
       return false
@@ -94,6 +110,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem('authToken')
+    localStorage.removeItem('user')
+    localStorage.removeItem('user_id')
+    localStorage.removeItem('user_name')
+    localStorage.removeItem('user_email')
     setUser(null)
   }
 

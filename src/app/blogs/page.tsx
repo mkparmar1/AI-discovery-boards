@@ -27,6 +27,9 @@ const ITEMS_PER_PAGE = 12
 
 const BlogsPage = () => {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth()
+  const redirectToLogin = useCallback(() => {
+    window.location.href = '/login'
+  }, [])
   
   const [allFilteredPosts, setAllFilteredPosts] = useState(allPosts)
   const [displayedPosts, setDisplayedPosts] = useState(allPosts.slice(0, ITEMS_PER_PAGE))
@@ -49,11 +52,11 @@ const BlogsPage = () => {
 
   // Fetch user interactions for displayed posts
   const fetchUserInteractions = useCallback(async (blogIds: string[]) => {
-    if (!isAuthenticated || blogIds.length === 0) return
+    if (!isAuthenticated || !user || blogIds.length === 0) return
 
     setIsLoadingInteractions(true)
     try {
-      const response = await fetch(`/api/blogs/interactions?blogIds=${blogIds.join(',')}`)
+      const response = await fetch(`/api/blogs/interactions?userId=${user.id}&blogIds=${blogIds.join(',')}`)
       if (response.ok) {
         const data = await response.json()
         setUserInteractions(prev => ({ ...prev, ...data.interactions }))
@@ -63,11 +66,14 @@ const BlogsPage = () => {
     } finally {
       setIsLoadingInteractions(false)
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated, user])
 
   // Handle like toggle
   const handleLikeToggle = useCallback(async (blogId: string) => {
-    if (!isAuthenticated) return
+    if (!isAuthenticated || !user) {
+      redirectToLogin()
+      return
+    }
 
     const currentState = userInteractions[blogId]?.isLiked || false
     const newState = !currentState
@@ -89,6 +95,7 @@ const BlogsPage = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          userId: user.id,
           blogId,
           action: 'like'
         })
@@ -125,11 +132,14 @@ const BlogsPage = () => {
         }
       }))
     }
-  }, [isAuthenticated, user, userInteractions])
+  }, [isAuthenticated, redirectToLogin, user, userInteractions])
 
   // Handle bookmark toggle
   const handleBookmarkToggle = useCallback(async (blogId: string) => {
-    if (!isAuthenticated) return
+    if (!isAuthenticated || !user) {
+      redirectToLogin()
+      return
+    }
 
     const currentState = userInteractions[blogId]?.isBookmarked || false
     const newState = !currentState
@@ -151,6 +161,7 @@ const BlogsPage = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          userId: user.id,
           blogId,
           action: 'bookmark'
         })
@@ -187,7 +198,7 @@ const BlogsPage = () => {
         }
       }))
     }
-  }, [isAuthenticated, user, userInteractions])
+  }, [isAuthenticated, redirectToLogin, user, userInteractions])
 
   // Filter posts based on search term, selected tags, and user interactions
   const filterPosts = useCallback(() => {
@@ -454,48 +465,46 @@ const BlogsPage = () => {
                   </div>
                   
                   {/* Like and Bookmark buttons */}
-                  {isAuthenticated && (
-                    <div className="flex items-center gap-1">
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          handleLikeToggle(post.id)
-                        }}
-                        className={`p-1 rounded-full transition-colors ${
-                          userInteractions[post.id]?.isLiked
-                            ? 'text-red-500 hover:text-red-600'
-                            : 'text-muted-foreground hover:text-red-500'
-                        }`}
-                        title={userInteractions[post.id]?.isLiked ? 'Unlike' : 'Like'}
-                      >
-                        <Heart 
-                          className={`h-4 w-4 ${
-                            userInteractions[post.id]?.isLiked ? 'fill-current' : ''
-                          }`} 
-                        />
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          handleBookmarkToggle(post.id)
-                        }}
-                        className={`p-1 rounded-full transition-colors ${
-                          userInteractions[post.id]?.isBookmarked
-                            ? 'text-blue-500 hover:text-blue-600'
-                            : 'text-muted-foreground hover:text-blue-500'
-                        }`}
-                        title={userInteractions[post.id]?.isBookmarked ? 'Remove bookmark' : 'Bookmark'}
-                      >
-                        <Bookmark 
-                          className={`h-4 w-4 ${
-                            userInteractions[post.id]?.isBookmarked ? 'fill-current' : ''
-                          }`} 
-                        />
-                      </button>
-                    </div>
-                  )}
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        handleLikeToggle(post.id)
+                      }}
+                      className={`p-1 rounded-full transition-colors ${
+                        userInteractions[post.id]?.isLiked
+                          ? 'text-red-500 hover:text-red-600'
+                          : 'text-muted-foreground hover:text-red-500'
+                      }`}
+                      title={userInteractions[post.id]?.isLiked ? 'Unlike' : 'Like'}
+                    >
+                      <Heart 
+                        className={`h-4 w-4 ${
+                          userInteractions[post.id]?.isLiked ? 'fill-current' : ''
+                        }`} 
+                      />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        handleBookmarkToggle(post.id)
+                      }}
+                      className={`p-1 rounded-full transition-colors ${
+                        userInteractions[post.id]?.isBookmarked
+                          ? 'text-blue-500 hover:text-blue-600'
+                          : 'text-muted-foreground hover:text-blue-500'
+                      }`}
+                      title={userInteractions[post.id]?.isBookmarked ? 'Remove bookmark' : 'Bookmark'}
+                    >
+                      <Bookmark 
+                        className={`h-4 w-4 ${
+                          userInteractions[post.id]?.isBookmarked ? 'fill-current' : ''
+                        }`} 
+                      />
+                    </button>
+                  </div>
                 </div>
 
                 {/* Read More Button */}
