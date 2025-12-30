@@ -28,12 +28,16 @@ export async function GET() {
   try {
     await connectDB()
 
-    const [tools, toolsCount] = await Promise.all([
+    const [featuredTools, toolsCount, recommendedTools] = await Promise.all([
       Tool.find({})
         .sort({ isTrending: -1, createdAt: -1 })
         .limit(3)
         .lean(),
-      Tool.countDocuments({})
+      Tool.countDocuments({}),
+      Tool.find({})
+        .sort({ clickCount: -1, createdAt: -1 })
+        .limit(6)
+        .lean()
     ])
 
     const trendingVideos = await LearnAIVideo.find({ status: 'Active', isTrending: true })
@@ -58,7 +62,8 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       data: {
-        tools,
+        featuredTools,
+        recommendedTools,
         toolsCount,
         videos
       }

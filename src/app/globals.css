@@ -38,6 +38,8 @@
     --kaggle-light-gray: 210 20% 98%;
     --sidebar-bg: 210 20% 98%;
     --sidebar-border: 214.3 31.8% 91.4%;
+
+    --gradient-primary: linear-gradient(120deg, #0b1f54 0%, #4f46e5 55%, #7c3aed 100%);
   }
 
   .dark {
@@ -74,6 +76,8 @@
     --kaggle-light-gray: 217.2 32.6% 17.5%;
     --sidebar-bg: 217.2 32.6% 15.5%;
     --sidebar-border: 217.2 32.6% 20.5%;
+
+    --gradient-primary: linear-gradient(120deg, #0b1f54 0%, #4f46e5 55%, #7c3aed 100%);
   }
 }
 
@@ -186,6 +190,40 @@
 @layer utilities {
   .animate-soft-pulse {
     animation: softPulse 1.8s ease-in-out infinite;
+  }
+
+  .bg-gradient-primary {
+    background-image: var(--gradient-primary);
+  }
+
+  .text-gradient-primary {
+    background-image: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .border-gradient-primary {
+    border-image: var(--gradient-primary) 1;
+  }
+
+  .section-divider {
+    height: 2px;
+    background-image: var(--gradient-primary);
+  }
+
+  .btn-gradient {
+    background-image: var(--gradient-primary);
+    color: white;
+    transition: transform 250ms ease-out, box-shadow 250ms ease-out;
+  }
+
+  .btn-gradient:hover {
+    box-shadow: 0 12px 30px rgba(79, 70, 229, 0.25);
+  }
+
+  .btn-gradient:active {
+    transform: scale(0.98);
   }
 }
 
