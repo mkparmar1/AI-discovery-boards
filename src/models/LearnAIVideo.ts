@@ -7,6 +7,7 @@ export interface ILearnAIVideo extends mongoose.Document {
   thumbnail: string
   description: string
   status: 'Active' | 'Inactive'
+  isTrending: boolean
   createdAt: Date
   updatedAt: Date
 }
@@ -18,11 +19,13 @@ const LearnAIVideoSchema = new mongoose.Schema<ILearnAIVideo>({
   thumbnail: { type: String, required: true, trim: true },
   description: { type: String, required: true, trim: true },
   status: { type: String, enum: ['Active', 'Inactive'], default: 'Active', required: true },
+  isTrending: { type: Boolean, default: false },
 }, { timestamps: true })
 
 // Indexes for efficient querying
 LearnAIVideoSchema.index({ topic: 1 })
 LearnAIVideoSchema.index({ status: 1 })
 LearnAIVideoSchema.index({ createdAt: -1 })
+LearnAIVideoSchema.index({ isTrending: 1, createdAt: -1 })
 
 export default mongoose.models.LearnAIVideo || mongoose.model<ILearnAIVideo>('LearnAIVideo', LearnAIVideoSchema)

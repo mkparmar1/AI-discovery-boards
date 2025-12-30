@@ -1,29 +1,66 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Zap, Users, Star, ExternalLink, Calendar, FileText, Mail, Github, Globe, Copy, Check, Search, Sparkles } from 'lucide-react'
+import { ArrowRight, Zap, Users, ExternalLink, Calendar, FileText, Mail, Github, Globe, Copy, Check, Search, Sparkles } from 'lucide-react'
 import MainLayout from '@/components/layout/MainLayout'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { aiTools, researchPapers } from '@/data/data'
-import { aiPrompts } from '@/lib/data'
+import { researchPapers } from '@/data/data'
+import { aiPrompts, Tool } from '@/lib/data'
+
+type HomeVideo = {
+  _id: string
+  title: string
+  topic: string
+  youtubeUrl: string
+  thumbnail: string
+  description: string
+  isTrending?: boolean
+}
 
 export default function Home() {
-  const featuredTools = aiTools.slice(0, 3)
+  const [featuredTools, setFeaturedTools] = useState<Tool[]>([])
+  const [toolsCount, setToolsCount] = useState(0)
+  const [learningVideos, setLearningVideos] = useState<HomeVideo[]>([])
+  const [toolsLoading, setToolsLoading] = useState(true)
+
   const featuredPapers = researchPapers.slice(0, 3)
   const latestPrompts = aiPrompts.slice(0, 3)
-  const pricingLabels: Record<string, string> = {
-    free: 'Free',
-    paid: 'Paid',
-    freemium: 'Freemium'
-  }
 
   // State for tracking copied prompts
   const [copiedStates, setCopiedStates] = useState<{ [key: string]: boolean }>({})
+
+  useEffect(() => {
+    const fetchHomeData = async () => {
+      try {
+        const response = await fetch('/api/home')
+        const data = await response.json()
+        if (data?.success) {
+          const homeData = data.data ?? {}
+          setFeaturedTools(Array.isArray(homeData.tools) ? homeData.tools : [])
+          setToolsCount(typeof homeData.toolsCount === 'number' ? homeData.toolsCount : 0)
+          setLearningVideos(Array.isArray(homeData.videos) ? homeData.videos : [])
+        } else {
+          setFeaturedTools([])
+          setToolsCount(0)
+          setLearningVideos([])
+        }
+      } catch (error) {
+        console.error('Failed to fetch home page data:', error)
+        setFeaturedTools([])
+        setToolsCount(0)
+        setLearningVideos([])
+      } finally {
+        setToolsLoading(false)
+      }
+    }
+
+    fetchHomeData()
+  }, [])
 
   // Copy to clipboard function
   const copyToClipboard = async (text: string, promptId: string) => {
@@ -82,7 +119,7 @@ export default function Home() {
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
                 <p className="text-xs uppercase tracking-widest text-white/60">Tools tracked</p>
-                <p className="mt-1 text-2xl font-semibold">{aiTools.length}+</p>
+                <p className="mt-1 text-2xl font-semibold">{toolsLoading ? '...' : `${toolsCount}+`}</p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
                 <p className="text-xs uppercase tracking-widest text-white/60">Prompt packs</p>
@@ -103,15 +140,20 @@ export default function Home() {
               {featuredTools.map((tool, index) => (
                 <div key={tool.id} className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 text-sm font-semibold">
-                    {tool.name.slice(0, 2).toUpperCase()}
+                    {tool.title.slice(0, 2).toUpperCase()}
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium">{tool.name}</p>
+                    <p className="text-sm font-medium">{tool.title}</p>
                     <p className="text-xs text-white/60 line-clamp-2">{tool.description}</p>
                   </div>
                   <span className="text-xs text-white/50">0{index + 1}</span>
                 </div>
               ))}
+              {!toolsLoading && featuredTools.length === 0 && (
+                <div className="rounded-xl border border-white/10 bg-white/5 p-3 text-xs text-white/60">
+                  No tools available yet.
+                </div>
+              )}
             </div>
             <div className="mt-6 flex flex-col gap-3">
               <Button asChild className="bg-white text-slate-900 hover:bg-white/90">
@@ -151,23 +193,23 @@ export default function Home() {
                 <div className="absolute -right-12 top-0 h-32 w-32 rounded-full bg-primary/10 blur-2xl" />
               </div>
               <CardHeader className="relative pb-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-sm font-semibold text-primary">
-                      {tool.name.slice(0, 2).toUpperCase()}
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
-                        {tool.name}
-                      </CardTitle>
-                      <CardDescription className="text-xs text-muted-foreground">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-sm font-semibold text-primary">
+                      {tool.title.slice(0, 2).toUpperCase()}
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+                        {tool.title}
+                        </CardTitle>
+                        <CardDescription className="text-xs text-muted-foreground">
                         {tool.category}
-                      </CardDescription>
+                        </CardDescription>
+                      </div>
                     </div>
-                  </div>
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                    <span>{tool.rating}</span>
+                    <Zap className="h-3 w-3" />
+                    <span>{tool.clickCount.toLocaleString()} clicks</span>
                   </div>
                 </div>
               </CardHeader>
@@ -176,21 +218,11 @@ export default function Home() {
                   {tool.description}
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <Badge variant="secondary" className="text-xs">
-                    {pricingLabels[tool.pricing] ?? tool.pricing}
-                  </Badge>
                   {tool.tags.slice(0, 2).map((tag) => (
                     <Badge key={tag} variant="outline" className="text-xs">
                       {tag}
                     </Badge>
                   ))}
-                </div>
-                <div className="mt-5 flex items-center justify-between text-xs text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <Zap className="h-3 w-3" />
-                    <span>{tool.reviewCount.toLocaleString()} reviews</span>
-                  </div>
-                  <span className="font-medium text-primary">{tool.priceRange ?? pricingLabels[tool.pricing]}</span>
                 </div>
                 <Button
                   variant="outline"
@@ -205,6 +237,76 @@ export default function Home() {
               </CardContent>
             </Card>
           ))}
+        </div>
+      </section>
+
+      {/* Trending Learning Videos */}
+      <section className="py-10">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted px-3 py-1 text-xs text-muted-foreground">
+              Learn AI
+            </div>
+            <h2 className="mt-3 text-3xl font-semibold text-foreground">Trending learning videos</h2>
+            <p className="mt-2 max-w-2xl text-muted-foreground">
+              Watch the latest lessons or featured picks to level up fast.
+            </p>
+          </div>
+          <Button variant="outline" asChild>
+            <Link href="/learn-ai">
+              View all videos
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {learningVideos.map((video) => (
+            <Card key={video._id} className="group overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+              <div className="overflow-hidden">
+                <img
+                  src={video.thumbnail}
+                  alt={video.title}
+                  loading="lazy"
+                  className="h-44 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className="text-xs">
+                    {video.topic}
+                  </Badge>
+                  {video.isTrending && (
+                    <Badge variant="outline" className="text-xs">
+                      Trending
+                    </Badge>
+                  )}
+                </div>
+                <CardTitle className="mt-3 text-lg font-semibold text-foreground line-clamp-2">
+                  {video.title}
+                </CardTitle>
+                <CardDescription className="text-sm text-muted-foreground line-clamp-2">
+                  {video.description}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button
+                  variant="outline"
+                  className="w-full border-primary/30 bg-primary/5 text-primary hover:bg-primary/10"
+                  asChild
+                >
+                  <a href={video.youtubeUrl} target="_blank" rel="noopener noreferrer">
+                    Watch video
+                    <ExternalLink className="ml-2 h-4 w-4" />
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+          {!toolsLoading && learningVideos.length === 0 && (
+            <div className="rounded-2xl border border-border bg-card p-6 text-sm text-muted-foreground">
+              No videos available yet.
+            </div>
+          )}
         </div>
       </section>
 
