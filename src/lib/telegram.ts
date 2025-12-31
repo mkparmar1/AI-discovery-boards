@@ -230,3 +230,23 @@ export async function sendFeedbackNotification(details: { name?: string | null; 
 
   await sendTelegramMessage(lines.join('\n'))
 }
+
+export async function sendNewsletterSubscriptionNotification(email: string, request: NextRequest) {
+  const ctx = getRequestContext(request)
+  const location = await lookupIpLocation(ctx.ipAddress)
+  const title = '📬 <b>New Newsletter Subscription</b>'
+
+  const lines = [
+    title,
+    '━━━━━━━━━━━━━━━━━━━',
+    `📧 Email: <code>${email}</code>`,
+    ctx.ipAddress ? `🌍 IP: ${ctx.ipAddress}` : '',
+    ctx.device ? `💻 Device: ${ctx.device}` : '',
+    `🕒 Time: ${formatTime(new Date())}`,
+    location ? `📍 Location: ${location}` : '',
+    '🔗 Website: <code>https://www.aidiscoveryboards.info</code>',
+    '━━━━━━━━━━━━━━━━━━━'
+  ].filter(Boolean)
+
+  await sendTelegramMessage(lines.join('\n'))
+}

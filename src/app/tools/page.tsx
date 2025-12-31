@@ -458,7 +458,7 @@ export default function ToolsPage() {
                     isBookmarked={userInteractions[tool.id]?.isBookmarked || false}
                     onLikeToggle={handleLikeToggle}
                     onBookmarkToggle={handleBookmarkToggle}
-                    showInteractionButtons={isAuthenticated}
+                    showInteractionButtons
                   />
                 ))}
               </div>

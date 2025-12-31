@@ -58,6 +58,11 @@ export default function Home() {
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [promptsVisible, setPromptsVisible] = useState(false)
   const promptsSectionRef = useRef<HTMLElement | null>(null)
+  
+  // Newsletter subscription state
+  const [newsletterEmail, setNewsletterEmail] = useState('')
+  const [newsletterLoading, setNewsletterLoading] = useState(false)
+  const [newsletterSuccess, setNewsletterSuccess] = useState(false)
 
   const featuredPapers = researchPapers.slice(0, 3)
   const latestPrompts = aiPrompts.slice(0, 3)
@@ -157,108 +162,171 @@ export default function Home() {
     }
   }
 
+  // Newsletter subscription handler
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!newsletterEmail.trim()) {
+      setToastMessage('Please enter your email address')
+      setTimeout(() => setToastMessage(null), 3000)
+      return
+    }
+
+    const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/
+    if (!emailRegex.test(newsletterEmail)) {
+      setToastMessage('Please enter a valid email address')
+      setTimeout(() => setToastMessage(null), 3000)
+      return
+    }
+
+    setNewsletterLoading(true)
+    setNewsletterSuccess(false)
+
+    try {
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: newsletterEmail }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setNewsletterSuccess(true)
+        setNewsletterEmail('')
+        setToastMessage('🎉 Successfully subscribed! You\'ll receive weekly AI highlights.')
+        setTimeout(() => {
+          setToastMessage(null)
+          setNewsletterSuccess(false)
+        }, 5000)
+      } else {
+        setToastMessage(data.error || 'Something went wrong. Please try again.')
+        setTimeout(() => setToastMessage(null), 4000)
+      }
+    } catch (error) {
+      console.error('Newsletter subscription error:', error)
+      setToastMessage('Failed to subscribe. Please try again later.')
+      setTimeout(() => setToastMessage(null), 4000)
+    } finally {
+      setNewsletterLoading(false)
+    }
+  }
+
   const recommendedList = recommendedTools.length > 0 ? recommendedTools : featuredTools
 
   return (
     <MainLayout>
       {/* Hero Section */}
-      <section className="relative overflow-hidden rounded-3xl border bg-slate-950 text-white">
+      <section className="relative overflow-hidden rounded-3xl border border-border/50 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white shadow-2xl">
+        {/* Animated background gradients */}
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-24 right-0 h-72 w-72 rounded-full bg-indigo-500/30 blur-3xl" />
-          <div className="absolute -bottom-24 left-0 h-72 w-72 rounded-full bg-sky-500/30 blur-3xl" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.12),_transparent_55%)]" />
+          <div className="absolute -top-24 -right-24 h-96 w-96 animate-soft-pulse rounded-full bg-indigo-500/20 blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 h-96 w-96 animate-soft-pulse rounded-full bg-sky-500/20 blur-3xl" style={{ animationDelay: '0.5s' }} />
+          <div className="absolute top-1/2 left-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-purple-500/10 blur-3xl" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,_rgba(120,119,198,0.15),_transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,_rgba(59,130,246,0.15),_transparent_50%)]" />
         </div>
-        <div className="relative grid gap-10 px-6 py-12 lg:grid-cols-[1.2fr_0.8fr] lg:px-12">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/70">
-              <Sparkles className="h-3.5 w-3.5" />
+        
+        <div className="relative grid gap-10 px-6 py-16 lg:grid-cols-[1.2fr_0.8fr] lg:px-12 lg:py-20">
+          <div className="space-y-6">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm px-4 py-1.5 text-xs uppercase tracking-[0.2em] text-white/80 shadow-lg">
+              <Sparkles className="h-3.5 w-3.5 animate-pulse" />
               AI Discovery Boards
             </div>
-            <h1 className="mt-4 font-display text-4xl font-semibold tracking-tight md:text-5xl">
-              Find the right AI tools, prompts, and research in minutes.
+            <h1 className="font-display text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
+              Find the right{' '}
+              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                AI tools
+              </span>
+              , prompts, and research in minutes.
             </h1>
-            <p className="mt-4 max-w-xl text-sm text-white/70 md:text-base">
+            <p className="max-w-xl text-base leading-relaxed text-white/80 md:text-lg">
               A curated discovery hub that helps you compare, evaluate, and save the AI resources that actually move your projects forward.
             </p>
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <div className="relative flex-1">
-                <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-white/60" />
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <div className="relative flex-1 group">
+                <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white/60 transition-colors group-focus-within:text-white/90" />
                 <Input
                   placeholder="Search tools, prompts, or research"
-                  className="h-11 border-white/10 bg-white/10 pl-10 text-white placeholder:text-white/60 focus-visible:ring-white/40"
+                  className="h-12 border-white/20 bg-white/10 pl-12 pr-4 text-white placeholder:text-white/60 backdrop-blur-sm transition-all duration-300 focus-visible:border-white/40 focus-visible:bg-white/15 focus-visible:ring-2 focus-visible:ring-white/30"
                 />
               </div>
-              <Button asChild className="h-11 btn-gradient">
-                <Link href="/tools">
+              <Button asChild className="h-12 px-8 btn-gradient shadow-lg hover:shadow-xl">
+                <Link href="/tools" className="flex items-center">
                   Start exploring
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
             </div>
-            <div className="mt-6 flex flex-wrap gap-3 text-xs text-white/70">
-              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">Verified sources</span>
-              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">Daily updates</span>
-              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">Curated categories</span>
+            <div className="flex flex-wrap gap-2 text-xs">
+              <span className="rounded-full border border-white/20 bg-white/10 px-4 py-1.5 backdrop-blur-sm text-white/80 shadow-sm">Verified sources</span>
+              <span className="rounded-full border border-white/20 bg-white/10 px-4 py-1.5 backdrop-blur-sm text-white/80 shadow-sm">Daily updates</span>
+              <span className="rounded-full border border-white/20 bg-white/10 px-4 py-1.5 backdrop-blur-sm text-white/80 shadow-sm">Curated categories</span>
             </div>
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              <div className="group cursor-pointer rounded-2xl border border-white/10 bg-white/10 px-4 py-4 shadow-sm backdrop-blur transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
+            <div className="grid gap-4 pt-4 sm:grid-cols-3">
+              <div className="group cursor-pointer rounded-2xl border border-white/20 bg-white/10 px-5 py-5 backdrop-blur-sm shadow-lg transition-all duration-300 hover:scale-[1.03] hover:border-white/30 hover:bg-white/15 hover:shadow-xl">
                 <div className="flex items-center justify-between">
-                  <p className="text-xs uppercase tracking-widest text-white/60">Tools tracked</p>
-                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 text-white/70">
+                  <p className="text-xs font-medium uppercase tracking-widest text-white/70">Tools tracked</p>
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 text-white/90 shadow-sm">
                     <Wrench className="h-4 w-4" />
                   </div>
                 </div>
-                <p className="mt-3 text-2xl font-semibold">{toolsLoading ? '...' : `${toolsCount}+`}</p>
+                <p className="mt-4 text-3xl font-bold">{toolsLoading ? '...' : `${toolsCount}+`}</p>
               </div>
-              <div className="group cursor-pointer rounded-2xl border border-white/10 bg-white/10 px-4 py-4 shadow-sm backdrop-blur transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
+              <div className="group cursor-pointer rounded-2xl border border-white/20 bg-white/10 px-5 py-5 backdrop-blur-sm shadow-lg transition-all duration-300 hover:scale-[1.03] hover:border-white/30 hover:bg-white/15 hover:shadow-xl">
                 <div className="flex items-center justify-between">
-                  <p className="text-xs uppercase tracking-widest text-white/60">Prompt packs</p>
-                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 text-white/70">
+                  <p className="text-xs font-medium uppercase tracking-widest text-white/70">Prompt packs</p>
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 text-white/90 shadow-sm">
                     <MessageSquare className="h-4 w-4" />
                   </div>
                 </div>
-                <p className="mt-3 text-2xl font-semibold">{aiPrompts.length}+</p>
+                <p className="mt-4 text-3xl font-bold">{aiPrompts.length}+</p>
               </div>
-              <div className="group cursor-pointer rounded-2xl border border-white/10 bg-white/10 px-4 py-4 shadow-sm backdrop-blur transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
+              <div className="group cursor-pointer rounded-2xl border border-white/20 bg-white/10 px-5 py-5 backdrop-blur-sm shadow-lg transition-all duration-300 hover:scale-[1.03] hover:border-white/30 hover:bg-white/15 hover:shadow-xl">
                 <div className="flex items-center justify-between">
-                  <p className="text-xs uppercase tracking-widest text-white/60">Research papers</p>
-                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 text-white/70">
+                  <p className="text-xs font-medium uppercase tracking-widest text-white/70">Research papers</p>
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/20 to-blue-500/20 text-white/90 shadow-sm">
                     <BookOpen className="h-4 w-4" />
                   </div>
                 </div>
-                <p className="mt-3 text-2xl font-semibold">{researchPapers.length}+</p>
+                <p className="mt-4 text-3xl font-bold">{researchPapers.length}+</p>
               </div>
             </div>
           </div>
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+          <div className="rounded-2xl border border-white/20 bg-white/10 p-6 backdrop-blur-sm shadow-xl lg:p-8">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold">Discovery board</p>
-              <span className="text-xs text-white/60">This week</span>
+              <p className="text-sm font-semibold text-white">Discovery board</p>
+              <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">This week</span>
             </div>
-            <div className="mt-5 space-y-4">
+            <div className="mt-6 space-y-3">
               {featuredTools.map((tool, index) => (
-                <div key={tool.id} className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 text-sm font-semibold">
+                <div 
+                  key={tool.id} 
+                  className="group flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-3.5 transition-all duration-300 hover:border-white/20 hover:bg-white/10"
+                >
+                  <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20 text-sm font-semibold text-white shadow-sm">
                     {tool.title.slice(0, 2).toUpperCase()}
                   </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">{tool.title}</p>
-                    <p className="text-xs text-white/60 line-clamp-2">{tool.description}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-white">{tool.title}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-white/60 line-clamp-2">{tool.description}</p>
                   </div>
-                  <span className="text-xs text-white/50">0{index + 1}</span>
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-xs font-medium text-white/70">0{index + 1}</span>
                 </div>
               ))}
               {!toolsLoading && featuredTools.length === 0 && (
-                <div className="rounded-xl border border-white/10 bg-white/5 p-3 text-xs text-white/60">
+                <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-center text-xs text-white/60">
                   No tools available yet.
                 </div>
               )}
             </div>
             <div className="mt-6 flex flex-col gap-3">
-              <Button asChild className="btn-gradient">
+              <Button asChild className="btn-gradient shadow-lg hover:shadow-xl">
                 <Link href="/tools">Explore AI tools</Link>
               </Button>
-              <Button variant="ghost" asChild className="border border-white/15 text-white hover:bg-white/10">
+              <Button variant="ghost" asChild className="border border-white/20 bg-white/5 text-white backdrop-blur-sm hover:bg-white/10 hover:border-white/30">
                 <Link href="/prompts">Browse prompt library</Link>
               </Button>
             </div>
@@ -267,26 +335,27 @@ export default function Home() {
       </section>
 
       {/* Featured Tools Section */}
-      <section className="py-12">
-        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted px-3 py-1 text-xs text-muted-foreground">
+      <section className="py-16">
+        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted px-4 py-1.5 text-xs font-medium text-muted-foreground">
+              <Sparkles className="h-3.5 w-3.5" />
               Curated picks
             </div>
-            <h2 className="mt-3 text-3xl font-semibold text-foreground">Featured AI tools for real work</h2>
-            <div className="section-divider mt-3 w-20 rounded-full" />
-            <p className="mt-2 max-w-2xl text-muted-foreground">
+            <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">Featured AI tools for real work</h2>
+            <div className="section-divider mt-4 w-24 rounded-full" />
+            <p className="mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground">
               Compare the most useful AI platforms and jump directly into the ones that match your workflow.
             </p>
           </div>
-          <Button variant="outline" asChild>
-            <Link href="/tools">
+          <Button variant="outline" asChild className="group">
+            <Link href="/tools" className="flex items-center">
               View all tools
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </Button>
         </div>
-        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {featuredTools.map((tool) => {
             const accent = getAccentColor(tool.title)
             const pricingBadge = getPricingBadge(tool.tags)
@@ -299,44 +368,44 @@ export default function Home() {
                 rel="noopener noreferrer"
                 aria-label={`Open ${tool.title}`}
                 onClick={() => recordToolView(tool)}
-                className="group block cursor-pointer transition-transform duration-300 hover:scale-[1.02]"
+                className="group block cursor-pointer"
               >
-                <Card className="relative h-full overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl">
-                  <div className="absolute inset-x-0 top-0 h-1" style={{ backgroundColor: accent }} />
-                  <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    <div className="absolute -right-10 top-10 h-36 w-36 rounded-full blur-3xl" style={{ backgroundColor: accent, opacity: 0.15 }} />
+                <Card className="relative h-full overflow-hidden rounded-2xl border border-border bg-card shadow-md transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-2xl group-hover:border-primary/30">
+                  <div className="absolute inset-x-0 top-0 h-1.5" style={{ backgroundColor: accent }} />
+                  <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                    <div className="absolute -right-12 top-12 h-40 w-40 rounded-full blur-3xl" style={{ backgroundColor: accent, opacity: 0.2 }} />
                   </div>
-                  <CardHeader className="relative pb-4 pt-6">
+                  <CardHeader className="relative pb-4 pt-7">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-border bg-white text-sm font-semibold text-foreground shadow-sm">
+                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl border-2 border-border bg-gradient-to-br from-white to-muted text-base font-bold text-foreground shadow-sm transition-transform duration-300 group-hover:scale-110">
                           {tool.title.slice(0, 1).toUpperCase()}
                         </div>
-                        <div>
-                          <CardTitle className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+                        <div className="flex-1 min-w-0">
+                          <CardTitle className="text-lg font-bold text-foreground transition-colors group-hover:text-primary">
                             {tool.title}
                           </CardTitle>
-                          <CardDescription className="text-xs text-muted-foreground">
+                          <CardDescription className="mt-1 text-xs font-medium text-muted-foreground">
                             {tool.category}
                           </CardDescription>
                         </div>
                       </div>
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs font-medium shrink-0">
                         {trustSignal}
                       </Badge>
                     </div>
                   </CardHeader>
                   <CardContent className="relative flex flex-1 flex-col gap-4 px-6 pb-6">
                     <div className="flex items-center justify-between">
-                      <Badge className={`border ${pricingBadge.className} text-xs`}>
+                      <Badge className={`border ${pricingBadge.className} text-xs font-medium`}>
                         {pricingBadge.label}
                       </Badge>
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <Zap className="h-3 w-3" />
+                      <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                        <Zap className="h-3.5 w-3.5" />
                         <span>{tool.clickCount.toLocaleString()} clicks</span>
                       </div>
                     </div>
-                    <p className="text-sm text-muted-foreground line-clamp-3">
+                    <p className="text-sm leading-relaxed text-muted-foreground line-clamp-3">
                       {tool.description}
                     </p>
                     <div className="flex flex-wrap gap-2">
@@ -346,9 +415,9 @@ export default function Home() {
                         </Badge>
                       ))}
                     </div>
-                    <div className="mt-2 w-full rounded-lg border border-primary/30 bg-primary/5 px-4 py-2 text-center text-sm font-medium text-primary transition-all duration-300 group-hover:shadow-[0_0_18px_rgba(59,130,246,0.45)]">
+                    <div className="mt-2 w-full rounded-lg border-2 border-primary/40 bg-gradient-to-r from-primary/10 to-primary/5 px-4 py-3 text-center text-sm font-semibold text-primary transition-all duration-300 group-hover:border-primary/60 group-hover:bg-gradient-to-r group-hover:from-primary/15 group-hover:to-primary/10 group-hover:shadow-lg">
                       Try tool
-                      <ExternalLink className="ml-2 inline h-4 w-4" />
+                      <ExternalLink className="ml-2 inline h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </div>
                   </CardContent>
                 </Card>
@@ -359,26 +428,27 @@ export default function Home() {
       </section>
 
       {/* Recommended + Recent */}
-      <section className="py-10">
-        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted px-3 py-1 text-xs text-muted-foreground">
+      <section className="py-16">
+        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted px-4 py-1.5 text-xs font-medium text-muted-foreground">
+              <Users className="h-3.5 w-3.5" />
               Personalized
             </div>
-            <h2 className="mt-3 text-3xl font-semibold text-foreground">Recommended for you</h2>
-            <div className="section-divider mt-3 w-16 rounded-full" />
-            <p className="mt-2 max-w-2xl text-muted-foreground">
+            <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">Recommended for you</h2>
+            <div className="section-divider mt-4 w-20 rounded-full" />
+            <p className="mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground">
               Popular picks curated from what creators use most.
             </p>
           </div>
-          <Button variant="outline" asChild>
-            <Link href="/tools">
+          <Button variant="outline" asChild className="group">
+            <Link href="/tools" className="flex items-center">
               Explore all tools
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </Button>
         </div>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {recommendedList.map((tool) => {
             const accent = getAccentColor(tool.title)
             const pricingBadge = getPricingBadge(tool.tags)
@@ -393,29 +463,32 @@ export default function Home() {
                 className="group block"
                 aria-label={`Open ${tool.title}`}
               >
-                <Card className="h-full overflow-hidden rounded-2xl border border-border bg-card transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg">
-                  <div className="h-1 w-full" style={{ backgroundColor: accent }} />
-                  <CardContent className="flex flex-col gap-4 p-5">
+                <Card className="h-full overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 ease-out hover:-translate-y-2 hover:border-primary/30 hover:shadow-xl">
+                  <div className="h-1.5 w-full" style={{ backgroundColor: accent }} />
+                  <CardContent className="flex flex-col gap-4 p-6">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-white text-sm font-semibold text-foreground">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl border-2 border-border bg-gradient-to-br from-white to-muted text-sm font-bold text-foreground shadow-sm transition-transform duration-300 group-hover:scale-110">
                         {tool.title.slice(0, 1).toUpperCase()}
                       </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-semibold text-foreground">{tool.title}</p>
-                        <p className="text-xs text-muted-foreground">{tool.category}</p>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-bold text-foreground transition-colors group-hover:text-primary">{tool.title}</p>
+                        <p className="mt-1 text-xs font-medium text-muted-foreground">{tool.category}</p>
                       </div>
-                      <Badge variant="outline" className="text-[10px]">
+                      <Badge variant="outline" className="text-[10px] font-medium shrink-0">
                         {trustSignal}
                       </Badge>
                     </div>
-                    <p className="text-sm text-muted-foreground line-clamp-2">
+                    <p className="text-sm leading-relaxed text-muted-foreground line-clamp-2">
                       {tool.description}
                     </p>
-                    <div className="flex items-center justify-between">
-                      <Badge className={`border text-xs ${pricingBadge.className}`}>
+                    <div className="flex items-center justify-between pt-2">
+                      <Badge className={`border text-xs font-medium ${pricingBadge.className}`}>
                         {pricingBadge.label}
                       </Badge>
-                      <span className="text-xs text-muted-foreground">{tool.clickCount.toLocaleString()} clicks</span>
+                      <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                        <Zap className="h-3 w-3" />
+                        <span>{tool.clickCount.toLocaleString()}</span>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -425,15 +498,14 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-6">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted px-3 py-1 text-xs text-muted-foreground">
-              History
-            </div>
-            <h3 className="mt-3 text-2xl font-semibold text-foreground">Recently viewed</h3>
-            <p className="mt-2 text-muted-foreground">Pick up where you left off.</p>
+      <section className="py-12">
+        <div className="mb-8">
+          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted px-4 py-1.5 text-xs font-medium text-muted-foreground">
+            <Clock className="h-3.5 w-3.5" />
+            History
           </div>
+          <h3 className="mt-4 text-2xl font-bold tracking-tight text-foreground md:text-3xl">Recently viewed</h3>
+          <p className="mt-2 text-base text-muted-foreground">Pick up where you left off.</p>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {recentTools.map((tool) => (
@@ -446,16 +518,16 @@ export default function Home() {
               className="group block"
               aria-label={`Open ${tool.title}`}
             >
-              <Card className="h-full border border-border bg-card transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg">
-                <CardContent className="flex items-center gap-3 p-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-white text-sm font-semibold text-foreground">
+              <Card className="h-full border border-border bg-card shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary/30 hover:shadow-md">
+                <CardContent className="flex items-center gap-3 p-5">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl border-2 border-border bg-gradient-to-br from-white to-muted text-sm font-bold text-foreground shadow-sm transition-transform duration-300 group-hover:scale-110">
                     {tool.title.slice(0, 1).toUpperCase()}
                   </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-foreground">{tool.title}</p>
-                    <p className="text-xs text-muted-foreground">{tool.category}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground transition-colors group-hover:text-primary">{tool.title}</p>
+                    <p className="mt-0.5 text-xs font-medium text-muted-foreground">{tool.category}</p>
                   </div>
-                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <Clock className="h-4 w-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />
                 </CardContent>
               </Card>
             </a>
@@ -468,33 +540,33 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-8">
-        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted px-3 py-1 text-xs text-muted-foreground">
-              Use-case discovery
-            </div>
-            <h3 className="mt-3 text-2xl font-semibold text-foreground">Explore by focus area</h3>
-            <p className="mt-2 text-muted-foreground">Jump into the collections built for your workflow.</p>
+      <section className="py-12">
+        <div className="mb-8">
+          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted px-4 py-1.5 text-xs font-medium text-muted-foreground">
+            <Briefcase className="h-3.5 w-3.5" />
+            Use-case discovery
           </div>
+          <h3 className="mt-4 text-2xl font-bold tracking-tight text-foreground md:text-3xl">Explore by focus area</h3>
+          <p className="mt-2 text-base text-muted-foreground">Jump into the collections built for your workflow.</p>
         </div>
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
+        <div className="grid gap-5 md:grid-cols-3">
           {useCaseCards.map((item) => {
             const Icon = item.icon
             return (
               <Link
                 key={item.title}
                 href={item.href}
-                className="group rounded-2xl border border-border bg-card p-5 transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg"
+                className="group rounded-2xl border border-border bg-card p-6 shadow-sm transition-all duration-300 ease-out hover:-translate-y-2 hover:border-primary/30 hover:shadow-xl"
               >
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                    <Icon className="h-5 w-5" />
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 text-primary shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:shadow-md">
+                    <Icon className="h-6 w-6" />
                   </div>
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">{item.title}</p>
-                    <p className="text-xs text-muted-foreground">{item.description}</p>
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-foreground transition-colors group-hover:text-primary">{item.title}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{item.description}</p>
                   </div>
+                  <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-all duration-300 group-hover:translate-x-1 group-hover:text-primary" />
                 </div>
               </Link>
             )
@@ -503,62 +575,66 @@ export default function Home() {
       </section>
 
       {/* Trending Learning Videos */}
-      <section className="py-10">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted px-3 py-1 text-xs text-muted-foreground">
+      <section className="py-16">
+        <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted px-4 py-1.5 text-xs font-medium text-muted-foreground">
+              <BookOpen className="h-3.5 w-3.5" />
               Learn AI
             </div>
-            <h2 className="mt-3 text-3xl font-semibold text-foreground">Trending learning videos</h2>
-            <p className="mt-2 max-w-2xl text-muted-foreground">
+            <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">Trending learning videos</h2>
+            <div className="section-divider mt-4 w-20 rounded-full" />
+            <p className="mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground">
               Watch the latest lessons or featured picks to level up fast.
             </p>
           </div>
-          <Button variant="outline" asChild>
-            <Link href="/learn-ai">
+          <Button variant="outline" asChild className="group">
+            <Link href="/learn-ai" className="flex items-center">
               View all videos
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </Button>
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {learningVideos.map((video) => (
-            <Card key={video._id} className="group overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-              <div className="overflow-hidden">
+            <Card key={video._id} className="group overflow-hidden rounded-2xl border border-border bg-card shadow-md transition-all duration-300 hover:-translate-y-2 hover:border-primary/30 hover:shadow-2xl">
+              <div className="relative overflow-hidden">
                 <img
                   src={video.thumbnail}
                   alt={video.title}
                   loading="lazy"
-                  className="h-44 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  className="h-48 w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
               </div>
-              <CardHeader className="pb-3">
+              <CardHeader className="pb-4">
                 <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="text-xs">
+                  <Badge variant="secondary" className="text-xs font-medium">
                     {video.topic}
                   </Badge>
                   {video.isTrending && (
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-xs font-medium border-amber-300 text-amber-700 dark:border-amber-600 dark:text-amber-400">
+                      <Zap className="mr-1 h-3 w-3" />
                       Trending
                     </Badge>
                   )}
                 </div>
-                <CardTitle className="mt-3 text-lg font-semibold text-foreground line-clamp-2">
+                <CardTitle className="mt-4 text-lg font-bold text-foreground transition-colors group-hover:text-primary line-clamp-2">
                   {video.title}
                 </CardTitle>
-                <CardDescription className="text-sm text-muted-foreground line-clamp-2">
+                <CardDescription className="mt-2 text-sm leading-relaxed text-muted-foreground line-clamp-2">
                   {video.description}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <Button
                   variant="outline"
-                  className="w-full border-primary/30 bg-primary/5 text-primary hover:bg-primary/10"
+                  className="w-full border-2 border-primary/40 bg-gradient-to-r from-primary/10 to-primary/5 font-semibold text-primary transition-all duration-300 hover:border-primary/60 hover:bg-gradient-to-r hover:from-primary/15 hover:to-primary/10 hover:shadow-lg"
                   asChild
                 >
-                  <a href={video.youtubeUrl} target="_blank" rel="noopener noreferrer">
+                  <a href={video.youtubeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center">
                     Watch video
-                    <ExternalLink className="ml-2 h-4 w-4" />
+                    <ExternalLink className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </a>
                 </Button>
               </CardContent>
@@ -573,17 +649,21 @@ export default function Home() {
       </section>
 
       {/* Latest AI Prompts */}
-      <section className="py-10" ref={promptsSectionRef}>
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-3xl font-bold text-foreground">Latest AI Prompts</h2>
-            <div className="section-divider mt-3 w-16 rounded-full" />
-            <p className="text-muted-foreground mt-2">Ready-to-use prompts for ChatGPT, Claude, and other AI models</p>
+      <section className="py-16" ref={promptsSectionRef}>
+        <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted px-4 py-1.5 text-xs font-medium text-muted-foreground">
+              <MessageSquare className="h-3.5 w-3.5" />
+              AI Prompts
+            </div>
+            <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">Latest AI Prompts</h2>
+            <div className="section-divider mt-4 w-20 rounded-full" />
+            <p className="mt-3 text-base leading-relaxed text-muted-foreground">Ready-to-use prompts for ChatGPT, Claude, and other AI models</p>
           </div>
-          <Button variant="outline" asChild>
-            <Link href="/prompts">
+          <Button variant="outline" asChild className="group">
+            <Link href="/prompts" className="flex items-center">
               Browse All Prompts
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </Button>
         </div>
@@ -591,44 +671,42 @@ export default function Home() {
           {latestPrompts.map((prompt, index) => (
             <Card
               key={prompt.id}
-              className="group border border-border bg-card flex flex-col h-full transition-all duration-300 hover:shadow-lg hover:ring-1 hover:ring-primary/40"
+              className="group border border-border bg-card flex flex-col h-full shadow-md transition-all duration-300 hover:-translate-y-2 hover:border-primary/30 hover:shadow-2xl"
               style={{
                 opacity: promptsVisible ? 1 : 0,
                 transform: promptsVisible ? 'translateY(0px)' : 'translateY(12px)',
                 transitionDelay: promptsVisible ? `${index * 90}ms` : '0ms'
               }}
             >
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <Badge variant="secondary" className="text-xs">
+              <CardHeader className="pb-4">
+                <div className="flex items-start justify-between gap-2 mb-3">
+                  <Badge variant="secondary" className="text-xs font-medium">
                     {prompt.category}
                   </Badge>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Badge
-                      className={`text-xs ${
-                        prompt.difficulty === 'Beginner'
-                          ? 'bg-emerald-100 text-emerald-900 border border-emerald-200'
-                          : prompt.difficulty === 'Intermediate'
-                            ? 'bg-blue-100 text-blue-900 border border-blue-200'
-                            : 'bg-rose-100 text-rose-900 border border-rose-200'
-                      }`}
-                    >
-                      {prompt.difficulty}
-                    </Badge>
-                  </div>
+                  <Badge
+                    className={`text-xs font-medium ${
+                      prompt.difficulty === 'Beginner'
+                        ? 'bg-emerald-100 text-emerald-900 border border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-700'
+                        : prompt.difficulty === 'Intermediate'
+                          ? 'bg-blue-100 text-blue-900 border border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700'
+                          : 'bg-rose-100 text-rose-900 border border-rose-200 dark:bg-rose-900/30 dark:text-rose-300 dark:border-rose-700'
+                    }`}
+                  >
+                    {prompt.difficulty}
+                  </Badge>
                 </div>
                 
-                <CardTitle className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                <CardTitle className="text-lg font-bold text-foreground transition-colors group-hover:text-primary line-clamp-2">
                   {prompt.title}
                 </CardTitle>
                 
-                <CardDescription className="text-sm text-muted-foreground line-clamp-2">
+                <CardDescription className="mt-2 text-sm leading-relaxed text-muted-foreground line-clamp-2">
                   {prompt.description}
                 </CardDescription>
               </CardHeader>
               
-              <CardContent className="flex-1 flex flex-col">
-                <div className="flex flex-wrap gap-1 mb-4">
+              <CardContent className="flex-1 flex flex-col gap-4">
+                <div className="flex flex-wrap gap-2">
                   {prompt.tags.slice(0, 3).map((tag) => (
                     <Badge key={tag} variant="outline" className="text-xs">
                       {tag}
@@ -641,25 +719,26 @@ export default function Home() {
                   )}
                 </div>
                 
-                <div className="text-xs text-muted-foreground mb-4 flex items-center gap-1">
-                  <Zap className="h-3 w-3" />
+                <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                  <Zap className="h-3.5 w-3.5" />
                   <span>{prompt.useCase}</span>
                 </div>
                 
                 <Button
                   onClick={() => copyToClipboard(prompt.prompt, prompt.id)}
                   variant="outline"
-                  className="w-full mt-auto bg-white hover:bg-blue-50 text-blue-600 border-blue-300 dark:bg-transparent dark:border-border dark:text-foreground dark:hover:bg-accent dark:hover:text-accent-foreground font-medium transition-all duration-300 group-hover:shadow-lg"
+                  className="w-full mt-auto border-2 border-primary/40 bg-gradient-to-r from-primary/10 to-primary/5 font-semibold text-primary transition-all duration-300 hover:border-primary/60 hover:bg-gradient-to-r hover:from-primary/15 hover:to-primary/10 hover:shadow-lg dark:bg-transparent dark:border-border dark:text-foreground dark:hover:bg-accent dark:hover:text-accent-foreground"
                 >
                   {copiedStates[prompt.id] ? (
-                    <>
-                      Copied ✓
-                    </>
+                    <span className="flex items-center">
+                      <span className="mr-2">✓</span>
+                      Copied!
+                    </span>
                   ) : (
-                    <>
-                      <Copy className="h-4 w-4 mr-2" />
+                    <span className="flex items-center">
+                      <Copy className="mr-2 h-4 w-4" />
                       Copy Prompt
-                    </>
+                    </span>
                   )}
                 </Button>
               </CardContent>
@@ -669,67 +748,71 @@ export default function Home() {
       </section>
 
       {/* Featured Research Papers */}
-      <section className="py-10">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-3xl font-bold text-foreground">Breakthrough Research 2025</h2>
-            <div className="section-divider mt-3 w-16 rounded-full" />
-            <p className="text-muted-foreground mt-2">Explore groundbreaking AI papers shaping the future - AGI, multimodal AI, and beyond</p>
+      <section className="py-16">
+        <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted px-4 py-1.5 text-xs font-medium text-muted-foreground">
+              <FileText className="h-3.5 w-3.5" />
+              Research
+            </div>
+            <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">Breakthrough Research 2025</h2>
+            <div className="section-divider mt-4 w-20 rounded-full" />
+            <p className="mt-3 text-base leading-relaxed text-muted-foreground">Explore groundbreaking AI papers shaping the future - AGI, multimodal AI, and beyond</p>
           </div>
-          <Button variant="outline" asChild>
-            <Link href="/research">
+          <Button variant="outline" asChild className="group">
+            <Link href="/research" className="flex items-center">
               Browse Papers
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </Button>
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {featuredPapers.map((paper) => (
-            <Card key={paper.id} className="group border border-border bg-card flex flex-col h-full transition-all duration-300 hover:shadow-lg hover:bg-muted/40">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-2 mb-3">
-                  <Badge variant="secondary" className="rounded-full text-xs">
+            <Card key={paper.id} className="group border border-border bg-card flex flex-col h-full shadow-md transition-all duration-300 hover:-translate-y-2 hover:border-primary/30 hover:shadow-2xl">
+              <CardHeader className="pb-4">
+                <div className="flex items-start justify-between gap-2 mb-4">
+                  <Badge variant="secondary" className="rounded-full text-xs font-medium">
                     {paper.category}
                   </Badge>
-                  <Badge variant="outline" className="rounded-full text-xs text-muted-foreground">
-                    <Calendar className="h-3 w-3 mr-1" />
+                  <Badge variant="outline" className="rounded-full text-xs font-medium text-muted-foreground">
+                    <Calendar className="mr-1.5 h-3 w-3" />
                     {new Date(paper.publishedDate).getFullYear()}
                   </Badge>
                 </div>
                 
-                <CardTitle className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                <CardTitle className="text-lg font-bold text-foreground transition-colors group-hover:text-primary line-clamp-2">
                   {paper.title}
                 </CardTitle>
                 
-                <CardDescription className="text-sm text-muted-foreground line-clamp-1">
+                <CardDescription className="mt-2 text-sm font-medium text-muted-foreground line-clamp-1">
                   {paper.authors.slice(0, 2).join(', ')}{paper.authors.length > 2 && ' et al.'}
                 </CardDescription>
               </CardHeader>
               
               <CardContent className="flex-1 flex flex-col gap-4">
-                <p className="text-sm text-muted-foreground leading-relaxed max-w-[92%] line-clamp-3">
+                <p className="text-sm leading-relaxed text-muted-foreground line-clamp-3">
                   {paper.abstract}
                 </p>
                 
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <FileText className="h-3 w-3" />
+                <div className="flex items-center justify-between pt-2">
+                  <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                    <FileText className="h-3.5 w-3.5" />
                     <span>Research Paper</span>
                   </div>
-                  <div className="flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-primary">
-                    <span className="h-2 w-2 rounded-full bg-primary" />
-                    <span className="text-xs font-semibold">{paper.citationCount} citations</span>
+                  <div className="flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1.5 text-primary">
+                    <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                    <span className="text-xs font-bold">{paper.citationCount} citations</span>
                   </div>
                 </div>
                 
                 <Button 
                   variant="outline"
-                  className="w-full mt-auto bg-white hover:bg-blue-50 text-blue-600 border-blue-300 dark:bg-transparent dark:border-border dark:text-foreground dark:hover:bg-accent dark:hover:text-accent-foreground font-medium transition-all duration-200 ease-out group-hover:shadow-lg group-hover:translate-y-0 translate-y-2 opacity-0 group-hover:opacity-100" 
+                  className="w-full mt-auto border-2 border-primary/40 bg-gradient-to-r from-primary/10 to-primary/5 font-semibold text-primary transition-all duration-300 hover:border-primary/60 hover:bg-gradient-to-r hover:from-primary/15 hover:to-primary/10 hover:shadow-lg" 
                   asChild
                 >
-                  <a href={paper.pdfUrl} target="_blank" rel="noopener noreferrer">
+                  <a href={paper.pdfUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center">
                     Read Paper
-                    <ExternalLink className="ml-2 h-4 w-4" />
+                    <ExternalLink className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </a>
                 </Button>
               </CardContent>
@@ -742,42 +825,49 @@ export default function Home() {
 
 
       {/* Contact Section */}
-      <section className="py-12" id="contact">
-        <div className="rounded-3xl border border-border bg-muted/40 px-6 py-10 shadow-sm">
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold text-foreground">Get in Touch</h2>
-            <p className="text-muted-foreground mt-2">Have an idea, feedback, or collaboration in mind?</p>
+      <section className="py-16" id="contact">
+        <div className="rounded-3xl border border-border bg-gradient-to-br from-muted/60 to-muted/40 px-8 py-12 shadow-lg backdrop-blur-sm">
+          <div className="mb-10">
+            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-1.5 text-xs font-medium text-muted-foreground mb-4">
+              <Mail className="h-3.5 w-3.5" />
+              Contact
+            </div>
+            <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">Get in Touch</h2>
+            <p className="mt-3 text-base leading-relaxed text-muted-foreground">Have an idea, feedback, or collaboration in mind?</p>
           </div>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
-          <Card className="border border-border bg-card">
-            <CardHeader className="pb-2">
-              <div className="flex items-center gap-2 text-foreground">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Mail className="h-4 w-4" />
+        <div className="grid gap-6 sm:grid-cols-2">
+          <Card className="group border border-border bg-card shadow-md transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-xl">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-3 text-foreground">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 text-primary shadow-sm transition-transform duration-300 group-hover:scale-110">
+                  <Mail className="h-5 w-5" />
                 </span>
-                <CardTitle className="text-base">Email</CardTitle>
+                <CardTitle className="text-lg font-bold">Email</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground mb-2">Direct support and inquiries</p>
-              <a href="mailto:mkparmar.131@gmail.com" className="text-sm font-medium text-primary hover:underline">mkparmar.131@gmail.com</a>
+              <p className="mb-3 text-sm leading-relaxed text-muted-foreground">Direct support and inquiries</p>
+              <a href="mailto:mkparmar.131@gmail.com" className="inline-flex items-center text-sm font-semibold text-primary transition-colors hover:text-primary/80 hover:underline">
+                mkparmar.131@gmail.com
+                <ExternalLink className="ml-2 h-3.5 w-3.5" />
+              </a>
             </CardContent>
           </Card>
 
-          <Card className="border border-border bg-card">
-            <CardHeader className="pb-2">
-              <div className="flex items-center gap-2 text-foreground">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Github className="h-4 w-4" />
+          <Card className="group border border-border bg-card shadow-md transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-xl">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-3 text-foreground">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 text-primary shadow-sm transition-transform duration-300 group-hover:scale-110">
+                  <Github className="h-5 w-5" />
                 </span>
-                <CardTitle className="text-base">GitHub</CardTitle>
+                <CardTitle className="text-lg font-bold">GitHub</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground mb-2">Issues, ideas, and contributions</p>
-              <a href="https://github.com/mkparmar1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-sm font-medium text-primary hover:underline">
+              <p className="mb-3 text-sm leading-relaxed text-muted-foreground">Issues, ideas, and contributions</p>
+              <a href="https://github.com/mkparmar1" target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-sm font-semibold text-primary transition-colors hover:text-primary/80 hover:underline">
                 github.com/mkparmar1
-                <ExternalLink className="ml-1 h-3 w-3" />
+                <ExternalLink className="ml-2 h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
               </a>
             </CardContent>
           </Card>
@@ -835,9 +925,6 @@ export default function Home() {
             <div className="space-y-3 text-sm">
               <p className="text-sm font-semibold text-foreground">Learn</p>
               <Link href="/learn-ai" className="block text-muted-foreground hover:text-foreground">Learn AI</Link>
-              <Link href="/learn" className="block text-muted-foreground hover:text-foreground">Courses</Link>
-              <Link href="/news" className="block text-muted-foreground hover:text-foreground">AI News</Link>
-              <Link href="/discover" className="block text-muted-foreground hover:text-foreground">Discover</Link>
             </div>
 
             <div className="space-y-3 text-sm">
@@ -849,21 +936,49 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="mt-10 flex flex-col gap-4 rounded-2xl border border-border bg-muted/40 px-6 py-6 md:flex-row md:items-center md:justify-between">
-            <div>
-              <p className="text-sm font-semibold text-foreground">Weekly AI highlights</p>
-              <p className="text-xs text-muted-foreground">Join the newsletter for new tools, prompts, and research.</p>
+          <div className="mt-10 flex flex-col gap-4 rounded-2xl border border-border bg-gradient-to-br from-muted/60 to-muted/40 px-6 py-6 shadow-md md:flex-row md:items-center md:justify-between">
+            <div className="flex-1">
+              <p className="text-sm font-bold text-foreground">Weekly AI highlights</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">Join the newsletter for new tools, prompts, and research.</p>
             </div>
-            <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center md:w-auto">
+            <form onSubmit={handleNewsletterSubmit} className="flex w-full flex-col gap-2 sm:flex-row sm:items-center md:w-auto">
               <Input
                 type="email"
                 placeholder="Enter your email"
-                className="h-10 w-full sm:w-64"
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
+                disabled={newsletterLoading}
+                className={`h-11 w-full sm:w-72 transition-all duration-300 ${
+                  newsletterSuccess 
+                    ? 'border-green-500 bg-green-50 dark:bg-green-950/20' 
+                    : 'border-border'
+                }`}
+                required
               />
-              <Button type="button" className="btn-gradient h-10 px-6">
-                Subscribe
+              <Button 
+                type="submit" 
+                disabled={newsletterLoading || newsletterSuccess}
+                className={`h-11 px-8 font-semibold transition-all duration-300 ${
+                  newsletterSuccess 
+                    ? 'bg-green-600 hover:bg-green-700' 
+                    : 'btn-gradient'
+                } ${newsletterLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+              >
+                {newsletterLoading ? (
+                  <span className="flex items-center">
+                    <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    Subscribing...
+                  </span>
+                ) : newsletterSuccess ? (
+                  <span className="flex items-center">
+                    <span className="mr-2">✓</span>
+                    Subscribed!
+                  </span>
+                ) : (
+                  'Subscribe'
+                )}
               </Button>
-            </div>
+            </form>
           </div>
         </div>
         <div className="container mx-auto px-4 pb-8">
@@ -875,8 +990,19 @@ export default function Home() {
 
 
       {toastMessage && (
-        <div className="fixed right-6 top-6 z-50 rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground shadow-lg">
-          {toastMessage}
+        <div className="fixed right-6 top-6 z-50 animate-in slide-in-from-top-5 rounded-xl border border-border bg-card px-5 py-4 text-sm font-medium text-foreground shadow-2xl backdrop-blur-sm">
+          <div className="flex items-center gap-3">
+            {toastMessage.includes('🎉') || toastMessage.includes('Successfully') ? (
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500 text-white">
+                <span className="text-xs">✓</span>
+              </div>
+            ) : (
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-white">
+                <span className="text-xs">!</span>
+              </div>
+            )}
+            <span>{toastMessage}</span>
+          </div>
         </div>
       )}
       <style jsx>{`

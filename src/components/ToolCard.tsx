@@ -7,6 +7,32 @@ import { trackToolClick } from '@/utils/activityTracker'
 import { useAuth } from '@/contexts/AuthContext'
 import { useState } from 'react'
 
+const getAccentColor = (value: string) => {
+  let hash = 0
+  for (let i = 0; i < value.length; i += 1) {
+    hash = value.charCodeAt(i) + ((hash << 5) - hash)
+  }
+  const hue = Math.abs(hash) % 360
+  return `hsl(${hue} 70% 50%)`
+}
+
+const getPricingBadge = (tags: string[] = []) => {
+  const normalized = tags.map(tag => tag.toLowerCase())
+  if (normalized.includes('freemium')) {
+    return { label: 'Freemium', className: 'bg-amber-100 text-amber-900 border-amber-200' }
+  }
+  if (normalized.includes('paid')) {
+    return { label: 'Paid', className: 'bg-rose-100 text-rose-900 border-rose-200' }
+  }
+  return { label: 'Free', className: 'bg-emerald-100 text-emerald-900 border-emerald-200' }
+}
+
+const getTrustSignal = (isTrending: boolean | undefined, clickCount: number) => {
+  if (isTrending) return 'Trending'
+  if (clickCount >= 1000000) return 'Most used'
+  return "Editor's pick"
+}
+
 interface ToolCardProps {
   tool: Tool
   viewMode?: 'grid' | 'list'
@@ -29,6 +55,9 @@ export default function ToolCard({
   const { user, isAuthenticated } = useAuth()
   const [isLiking, setIsLiking] = useState(false)
   const [isBookmarking, setIsBookmarking] = useState(false)
+  const accent = getAccentColor(tool.title)
+  const pricingBadge = getPricingBadge(tool.tags)
+  const trustSignal = getTrustSignal(tool.isTrending, tool.clickCount)
 
   const redirectToLogin = () => {
     window.location.href = '/login'
@@ -146,7 +175,8 @@ export default function ToolCard({
   }
   if (viewMode === 'list') {
     return (
-      <Card className="group relative overflow-hidden bg-card border border-border/50 hover:border-primary/30 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300">
+      <Card className="group relative overflow-hidden bg-card border border-border rounded-xl shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg">
+        <div className="absolute inset-x-0 top-0 h-1" style={{ backgroundColor: accent }} />
         {/* Like and Save Icons - Top Right */}
         {showInteractionButtons && (
           <div className="absolute top-3 right-3 flex items-center gap-1 z-10">
@@ -176,10 +206,8 @@ export default function ToolCard({
 
         <div className="flex items-center p-6">
           {/* Tool Icon */}
-          <div className="w-12 h-12 rounded-lg flex-shrink-0 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mr-4">
-            <span className="text-white font-bold text-lg">
-              {tool.title.charAt(0).toUpperCase()}
-            </span>
+          <div className="w-12 h-12 rounded-xl flex-shrink-0 border border-border bg-white flex items-center justify-center mr-4 text-sm font-semibold text-foreground">
+            {tool.title.slice(0, 1).toUpperCase()}
           </div>
           
           {/* Tool Info */}
@@ -189,19 +217,11 @@ export default function ToolCard({
                 {tool.title}
               </h3>
               <Badge 
-                variant="outline" 
-                className="text-xs font-medium bg-primary/5 text-primary border-primary/20 flex-shrink-0"
+                variant="outline"
+                className="text-xs font-medium flex-shrink-0"
               >
-                {tool.category}
+                {trustSignal}
               </Badge>
-              {tool.isTrending && (
-                <Badge 
-                  variant="secondary"
-                  className="text-xs font-medium bg-orange-500/90 text-white border-0 flex-shrink-0"
-                >
-                  Trending
-                </Badge>
-              )}
             </div>
             
             <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
@@ -218,10 +238,9 @@ export default function ToolCard({
               </div>
               
               <Badge 
-                variant="secondary"
-                className="text-xs font-medium bg-blue-500/90 text-white border-0 ml-auto flex-shrink-0"
+                className={`border text-xs ml-auto flex-shrink-0 ${pricingBadge.className}`}
               >
-                {tool.clickCount.toLocaleString()} clicks
+                {pricingBadge.label}
               </Badge>
             </div>
           </div>
@@ -230,7 +249,7 @@ export default function ToolCard({
           <div className="ml-4 flex items-center gap-2">
             {/* CTA Button */}
             <Button 
-              className="bg-white hover:bg-blue-50 text-blue-600 border-blue-300 dark:bg-transparent dark:border-border dark:text-foreground dark:hover:bg-accent dark:hover:text-accent-foreground font-medium transition-all duration-300" 
+              className="btn-gradient font-medium transition-all duration-200 ease-out" 
               variant="outline"
               asChild
             >
@@ -252,7 +271,8 @@ export default function ToolCard({
 
   // Grid view (default)
   return (
-    <Card className="group relative overflow-hidden bg-card border border-border/50 hover:border-primary/30 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
+    <Card className="group relative overflow-hidden bg-card border border-border rounded-xl shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg h-full flex flex-col">
+      <div className="absolute inset-x-0 top-0 h-1" style={{ backgroundColor: accent }} />
       {/* Like and Save Icons - Top Right */}
       {showInteractionButtons && (
         <div className="absolute top-3 right-3 flex items-center gap-1 z-10">
@@ -280,36 +300,24 @@ export default function ToolCard({
         </div>
       )}
 
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-start gap-2 mb-3">
-          <Badge 
-            variant="outline" 
-            className="text-xs font-medium bg-primary/5 text-primary border-primary/20"
-          >
-            {tool.category}
+      <CardHeader className="pb-3 pt-6">
+        <div className="flex items-center justify-between gap-2 mb-3">
+          <Badge variant="outline" className="text-xs font-medium">
+            {trustSignal}
           </Badge>
-          {tool.isTrending && (
-            <Badge 
-              variant="secondary"
-              className="text-xs font-medium bg-orange-500/90 text-white border-0"
-            >
-              Trending
-            </Badge>
-          )}
+          <span className="text-xs text-muted-foreground">{tool.category}</span>
         </div>
-        
+
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-8 h-8 rounded-lg flex-shrink-0 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-            <span className="text-white font-bold text-sm">
-              {tool.title.charAt(0).toUpperCase()}
-            </span>
+          <div className="w-10 h-10 rounded-xl flex-shrink-0 border border-border bg-white flex items-center justify-center text-sm font-semibold text-foreground">
+            {tool.title.slice(0, 1).toUpperCase()}
           </div>
-          
-          <CardTitle className="text-lg font-bold text-foreground group-hover:text-primary transition-colors duration-300 line-clamp-1">
+
+          <CardTitle className="text-lg font-bold text-foreground group-hover:text-primary transition-colors duration-200 line-clamp-1">
             {tool.title}
           </CardTitle>
         </div>
-        
+
         <CardDescription className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
           {tool.description}
         </CardDescription>
@@ -325,21 +333,19 @@ export default function ToolCard({
           ))}
         </div>
 
-        {/* Click Count */}
-        <div className="mb-4">
-          <Badge 
-            variant="secondary"
-            className="text-xs font-medium bg-blue-500/90 text-white border-0"
-          >
-            {tool.clickCount.toLocaleString()} clicks
+        {/* Pricing + Clicks */}
+        <div className="mb-4 flex items-center justify-between">
+          <Badge className={`border text-xs ${pricingBadge.className}`}>
+            {pricingBadge.label}
           </Badge>
+          <span className="text-xs text-muted-foreground">{tool.clickCount.toLocaleString()} clicks</span>
         </div>
 
         {/* Action Buttons */}
         <div className="mt-auto">
           {/* CTA Button */}
           <Button 
-            className="w-full bg-white hover:bg-blue-50 text-blue-600 border-blue-300 dark:bg-transparent dark:border-border dark:text-foreground dark:hover:bg-accent dark:hover:text-accent-foreground font-medium transition-all duration-300 group-hover:shadow-lg" 
+            className="w-full btn-gradient font-medium transition-all duration-200 ease-out" 
             variant="outline"
             asChild
           >
