@@ -128,55 +128,67 @@ export default function LearnAIPage() {
     <MainLayout>
       <div className="space-y-10">
         {/* Hero */}
-        <section className="relative overflow-hidden rounded-3xl border bg-slate-950 text-white">
+        <section className="relative overflow-hidden rounded-3xl border border-border/50 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white shadow-2xl">
+          {/* Animated background gradients */}
           <div className="pointer-events-none absolute inset-0">
-            <div className="absolute -top-24 right-0 h-72 w-72 rounded-full bg-indigo-500/30 blur-3xl" />
-            <div className="absolute -bottom-24 left-0 h-72 w-72 rounded-full bg-sky-500/30 blur-3xl" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.12),_transparent_55%)]" />
+            <div className="absolute -top-24 -right-24 h-96 w-96 animate-soft-pulse rounded-full bg-indigo-500/20 blur-3xl" />
+            <div className="absolute -bottom-24 -left-24 h-96 w-96 animate-soft-pulse rounded-full bg-violet-500/20 blur-3xl" style={{ animationDelay: '0.5s' }} />
+            <div className="absolute top-1/2 left-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-fuchsia-500/10 blur-3xl" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,_rgba(120,119,198,0.15),_transparent_50%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,_rgba(139,92,246,0.15),_transparent_50%)]" />
           </div>
-          <div className="relative grid gap-10 px-6 py-12 lg:grid-cols-[1.2fr_0.8fr] lg:px-12">
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/70">
-                <Sparkles className="h-3.5 w-3.5" />
+          
+          <div className="relative grid gap-10 px-6 py-16 lg:grid-cols-[1.2fr_0.8fr] lg:px-12 lg:py-20">
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm px-4 py-1.5 text-xs uppercase tracking-[0.2em] text-white/80 shadow-lg">
+                <Sparkles className="h-3.5 w-3.5 animate-pulse" />
                 Learn AI
               </div>
-              <h1 className="mt-4 font-display text-4xl font-semibold tracking-tight md:text-5xl">
-                Learn AI faster with curated video lessons.
+              <h1 className="font-display text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
+                Learn AI faster with{' '}
+                <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-purple-400 bg-clip-text text-transparent">
+                  curated video lessons
+                </span>
+                .
               </h1>
-              <p className="mt-4 max-w-xl text-sm text-white/70 md:text-base">
+              <p className="max-w-xl text-base leading-relaxed text-white/80 md:text-lg">
                 Handpicked YouTube content covering AI fundamentals, Python, automation, and real-world projects.
               </p>
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row" />
-              <div className="mt-8 grid gap-4 sm:grid-cols-3">
-                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                  <p className="text-xs uppercase tracking-widest text-white/60">Videos</p>
-                  <p className="mt-1 text-2xl font-semibold">{totalCount.toLocaleString()}</p>
+              <div className="grid gap-4 pt-4 sm:grid-cols-3">
+                <div className="group cursor-pointer rounded-2xl border border-white/20 bg-white/10 px-5 py-5 backdrop-blur-sm shadow-lg transition-all duration-300 hover:scale-[1.03] hover:border-white/30 hover:bg-white/15 hover:shadow-xl">
+                  <p className="text-xs font-medium uppercase tracking-widest text-white/70">Videos</p>
+                  <p className="mt-4 text-3xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">{totalCount.toLocaleString()}</p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                  <p className="text-xs uppercase tracking-widest text-white/60">Topics</p>
-                  <p className="mt-1 text-2xl font-semibold">{topics.length.toLocaleString()}</p>
+                <div className="group cursor-pointer rounded-2xl border border-white/20 bg-white/10 px-5 py-5 backdrop-blur-sm shadow-lg transition-all duration-300 hover:scale-[1.03] hover:border-white/30 hover:bg-white/15 hover:shadow-xl">
+                  <p className="text-xs font-medium uppercase tracking-widest text-white/70">Topics</p>
+                  <p className="mt-4 text-3xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">{topics.length.toLocaleString()}</p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                  <p className="text-xs uppercase tracking-widest text-white/60">Showing</p>
-                  <p className="mt-1 text-2xl font-semibold">{videos.length.toLocaleString()}</p>
+                <div className="group cursor-pointer rounded-2xl border border-white/20 bg-white/10 px-5 py-5 backdrop-blur-sm shadow-lg transition-all duration-300 hover:scale-[1.03] hover:border-white/30 hover:bg-white/15 hover:shadow-xl">
+                  <p className="text-xs font-medium uppercase tracking-widest text-white/70">Showing</p>
+                  <p className="mt-4 text-3xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">{videos.length.toLocaleString()}</p>
                 </div>
               </div>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-semibold">Popular topics</p>
-                <span className="text-xs text-white/60">Pick a track</span>
+            <div className="rounded-2xl border border-white/20 bg-white/10 p-6 backdrop-blur-sm shadow-xl lg:p-8">
+              <div className="flex items-center justify-between mb-6">
+                <p className="text-sm font-semibold text-white">Popular topics</p>
+                <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">Pick a track</span>
               </div>
-              <div className="mt-5 flex flex-wrap gap-2">
-                {topics.slice(0, 8).map(topic => (
-                  <Badge key={topic} variant="secondary" className="bg-white/10 text-white/80">
-                    {topic}
-                  </Badge>
-                ))}
-              </div>
-              <div className="mt-6 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-                <p className="text-xs text-white/60">Now streaming</p>
-                <p className="mt-1 text-sm font-medium">{videos.length.toLocaleString()} videos ready</p>
+              <div className="space-y-5">
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/70 mb-3">Learning paths</p>
+                  <div className="flex flex-wrap gap-2">
+                    {topics.slice(0, 8).map(topic => (
+                      <Badge key={topic} variant="secondary" className="bg-white/10 text-white/80 border-white/20 backdrop-blur-sm font-medium">
+                        {topic}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-white/20 bg-white/10 px-4 py-4 backdrop-blur-sm">
+                  <p className="text-xs font-medium text-white/70">Now streaming</p>
+                  <p className="mt-2 text-sm font-semibold text-white">{videos.length.toLocaleString()} videos ready</p>
+                </div>
               </div>
             </div>
           </div>
@@ -184,54 +196,99 @@ export default function LearnAIPage() {
 
         {/* Grid */}
         <section className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {videos.map((v) => (
-            <Card key={v._id || v.youtubeUrl} className="group overflow-hidden bg-card border border-border/50 hover:border-primary/30 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
-              <CardHeader className="p-0">
-                <div className="relative w-full h-40 bg-muted">
-                  {v.thumbnail ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={v.thumbnail} alt={v.title} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">No thumbnail</div>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent className="flex-1 flex flex-col p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <Badge variant="outline" className="text-xs font-medium bg-primary/5 text-primary border-primary/20">
-                    {v.topic}
-                  </Badge>
-                </div>
-                <CardTitle className="text-base font-bold line-clamp-2">{v.title}</CardTitle>
-                <CardDescription className="text-sm text-muted-foreground line-clamp-2 mt-1">{v.description}</CardDescription>
-                <Button asChild className="mt-4" variant="outline">
-                  <a href={v.youtubeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center">
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    Watch Now
-                  </a>
-                </Button>
-              </CardContent>
-            </Card>
+          {videos.map((v, index) => (
+            <div
+              key={v._id || v.youtubeUrl}
+              style={{
+                animation: `fadeInUp 0.5s ease-out ${index * 0.05}s both`
+              }}
+            >
+              <Card className="group overflow-hidden bg-card border border-border rounded-2xl shadow-md transition-all duration-300 hover:-translate-y-2 hover:border-primary/30 hover:shadow-2xl h-full flex flex-col">
+                <CardHeader className="p-0">
+                  <div className="relative w-full h-48 bg-muted overflow-hidden">
+                    {v.thumbnail ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img 
+                        src={v.thumbnail} 
+                        alt={v.title} 
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-gradient-to-br from-muted to-muted/50">
+                        No thumbnail
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  </div>
+                </CardHeader>
+                <CardContent className="flex-1 flex flex-col p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <Badge variant="outline" className="text-xs font-semibold bg-primary/10 text-primary border-primary/30 px-2.5 py-0.5">
+                      {v.topic}
+                    </Badge>
+                  </div>
+                  <CardTitle className="text-base font-bold line-clamp-2 mb-2 group-hover:text-primary transition-colors">{v.title}</CardTitle>
+                  <CardDescription className="text-sm text-muted-foreground line-clamp-2 leading-relaxed mb-4">{v.description}</CardDescription>
+                  <Button 
+                    asChild 
+                    className="mt-auto border-2 border-primary/40 bg-gradient-to-r from-primary/10 to-primary/5 font-semibold text-primary transition-all duration-300 hover:border-primary/60 hover:bg-gradient-to-r hover:from-primary/15 hover:to-primary/10 hover:shadow-lg h-10" 
+                    variant="outline"
+                  >
+                    <a href={v.youtubeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center">
+                      Watch Now
+                      <ExternalLink className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </a>
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
           ))}
         </section>
 
         {isLoading && (
-          <div className="flex justify-center items-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <span className="ml-2 text-muted-foreground">Loading videos...</span>
+          <div className="flex flex-col justify-center items-center py-16">
+            <div className="flex items-center gap-3">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <span className="text-base font-medium text-muted-foreground">Loading videos...</span>
+            </div>
+            <p className="mt-3 text-sm text-muted-foreground">Please wait while we fetch the latest AI learning videos</p>
           </div>
         )}
 
         {hasMore && !isLoading && (
-          <div ref={sentinelRef} className="h-10 w-full" aria-hidden="true" />
+          <div ref={sentinelRef} className="flex justify-center py-12">
+            {isLoadingMore && (
+              <div className="flex flex-col items-center gap-3">
+                <Loader2 className="h-7 w-7 animate-spin text-primary" />
+                <span className="text-sm font-medium text-muted-foreground">Loading more videos...</span>
+              </div>
+            )}
+          </div>
         )}
 
-        {!hasMore && !isLoading && (
-          <div className="text-center py-8">
-            <p className="text-muted-foreground">You have reached the end. All {totalCount.toLocaleString()} videos loaded.</p>
+        {!hasMore && !isLoading && videos.length > 0 && (
+          <div className="text-center py-12 rounded-2xl border border-border bg-muted/30">
+            <p className="text-base font-medium text-muted-foreground">
+              You have reached the end of the results.
+            </p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Found {videos.length} {videos.length === 1 ? 'video' : 'videos'} matching your criteria.
+            </p>
           </div>
         )}
       </div>
+      <style jsx>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </MainLayout>
   )
 }

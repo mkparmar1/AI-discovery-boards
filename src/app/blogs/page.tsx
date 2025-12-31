@@ -324,163 +324,241 @@ const BlogsPage = () => {
     <MainLayout>
       <div className="space-y-10">
         {/* Hero */}
-        <section className="relative overflow-hidden rounded-3xl border bg-slate-950 text-white">
+        <section className="relative overflow-hidden rounded-3xl border border-border/50 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white shadow-2xl">
+          {/* Animated background gradients */}
           <div className="pointer-events-none absolute inset-0">
-            <div className="absolute -top-24 right-0 h-72 w-72 rounded-full bg-indigo-500/30 blur-3xl" />
-            <div className="absolute -bottom-24 left-0 h-72 w-72 rounded-full bg-sky-500/30 blur-3xl" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.12),_transparent_55%)]" />
+            <div className="absolute -top-24 -right-24 h-96 w-96 animate-soft-pulse rounded-full bg-indigo-500/20 blur-3xl" />
+            <div className="absolute -bottom-24 -left-24 h-96 w-96 animate-soft-pulse rounded-full bg-emerald-500/20 blur-3xl" style={{ animationDelay: '0.5s' }} />
+            <div className="absolute top-1/2 left-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-teal-500/10 blur-3xl" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,_rgba(120,119,198,0.15),_transparent_50%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,_rgba(16,185,129,0.15),_transparent_50%)]" />
           </div>
-          <div className="relative grid gap-10 px-6 py-12 lg:grid-cols-[1.2fr_0.8fr] lg:px-12">
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/70">
-                <Sparkles className="h-3.5 w-3.5" />
+          
+          <div className="relative grid gap-10 px-6 py-16 lg:grid-cols-[1.2fr_0.8fr] lg:px-12 lg:py-20">
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm px-4 py-1.5 text-xs uppercase tracking-[0.2em] text-white/80 shadow-lg">
+                <Sparkles className="h-3.5 w-3.5 animate-pulse" />
                 AI Blogs
               </div>
-              <h1 className="mt-4 font-display text-4xl font-semibold tracking-tight md:text-5xl">
-                Ideas, playbooks, and AI field notes.
+              <h1 className="font-display text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
+                Ideas, playbooks, and{' '}
+                <span className="bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
+                  AI field notes
+                </span>
+                .
               </h1>
-              <p className="mt-4 max-w-xl text-sm text-white/70 md:text-base">
+              <p className="max-w-xl text-base leading-relaxed text-white/80 md:text-lg">
                 Browse expert breakdowns, workflow guides, and product perspectives from across the AI ecosystem.
               </p>
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                <div className="relative flex-1">
-                  <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-white/60" />
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <div className="relative flex-1 group">
+                  <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white/60 transition-colors group-focus-within:text-white/90" />
                   <Input
                     placeholder="Search blogs by title, content, or tags..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="h-11 border-white/10 bg-white/10 pl-10 pr-10 text-white placeholder:text-white/60 focus-visible:ring-white/40"
+                    className="h-12 border-white/20 bg-white/10 pl-12 pr-12 text-white placeholder:text-white/60 backdrop-blur-sm transition-all duration-300 focus-visible:border-white/40 focus-visible:bg-white/15 focus-visible:ring-2 focus-visible:ring-white/30"
                   />
                   {searchTerm && (
                     <button
                       onClick={() => setSearchTerm('')}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors"
                     >
                       <X className="h-4 w-4" />
                     </button>
                   )}
                 </div>
-                <Button asChild className="h-11 bg-white text-slate-900 hover:bg-white/90">
-                  <Link href="/learn-ai">
+                <Button asChild className="h-12 px-8 btn-gradient shadow-lg hover:shadow-xl">
+                  <Link href="/learn-ai" className="flex items-center">
                     Explore learning paths
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </Button>
               </div>
-              <div className="mt-8 grid gap-4 sm:grid-cols-3">
-                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                  <p className="text-xs uppercase tracking-widest text-white/60">Posts</p>
-                  <p className="mt-1 text-2xl font-semibold">{totalPostsLabel}</p>
+              <div className="grid gap-4 pt-4 sm:grid-cols-3">
+                <div className="group cursor-pointer rounded-2xl border border-white/20 bg-white/10 px-5 py-5 backdrop-blur-sm shadow-lg transition-all duration-300 hover:scale-[1.03] hover:border-white/30 hover:bg-white/15 hover:shadow-xl">
+                  <p className="text-xs font-medium uppercase tracking-widest text-white/70">Posts</p>
+                  <p className="mt-4 text-3xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">{totalPostsLabel}</p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                  <p className="text-xs uppercase tracking-widest text-white/60">Topics</p>
-                  <p className="mt-1 text-2xl font-semibold">{tagCountLabel}</p>
+                <div className="group cursor-pointer rounded-2xl border border-white/20 bg-white/10 px-5 py-5 backdrop-blur-sm shadow-lg transition-all duration-300 hover:scale-[1.03] hover:border-white/30 hover:bg-white/15 hover:shadow-xl">
+                  <p className="text-xs font-medium uppercase tracking-widest text-white/70">Topics</p>
+                  <p className="mt-4 text-3xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">{tagCountLabel}</p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                  <p className="text-xs uppercase tracking-widest text-white/60">Results</p>
-                  <p className="mt-1 text-2xl font-semibold">{resultsLabel}</p>
+                <div className="group cursor-pointer rounded-2xl border border-white/20 bg-white/10 px-5 py-5 backdrop-blur-sm shadow-lg transition-all duration-300 hover:scale-[1.03] hover:border-white/30 hover:bg-white/15 hover:shadow-xl">
+                  <p className="text-xs font-medium uppercase tracking-widest text-white/70">Results</p>
+                  <p className="mt-4 text-3xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">{allFilteredPosts.length.toLocaleString()}</p>
                 </div>
               </div>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-semibold">Trending topics</p>
-                <span className="text-xs text-white/60">Pick a focus</span>
+            <div className="rounded-2xl border border-white/20 bg-white/10 p-6 backdrop-blur-sm shadow-xl lg:p-8">
+              <div className="flex items-center justify-between mb-6">
+                <p className="text-sm font-semibold text-white">Trending topics</p>
+                <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">Pick a focus</span>
               </div>
-              <div className="mt-5 flex flex-wrap gap-2">
-                {allTags.slice(0, 8).map(tag => (
-                  <Button
-                    key={tag}
-                    variant="ghost"
-                    className="h-8 rounded-full border border-white/10 bg-white/5 px-4 text-xs text-white hover:bg-white/10"
-                    onClick={() => setSelectedTag(tag)}
-                  >
-                    #{tag}
-                  </Button>
-                ))}
-              </div>
-              <div className="mt-6 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-                <p className="text-xs text-white/60">Filters applied</p>
-                <p className="mt-1 text-sm font-medium">{resultsLabel}</p>
+              <div className="space-y-5">
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/70 mb-3">Popular tags</p>
+                  <div className="flex flex-wrap gap-2">
+                    {allTags.slice(0, 8).map(tag => (
+                      <Button
+                        key={tag}
+                        variant="ghost"
+                        className="h-8 rounded-full border border-white/20 bg-white/10 px-4 text-xs font-medium text-white backdrop-blur-sm transition-all duration-300 hover:border-white/30 hover:bg-white/15 hover:shadow-md"
+                        onClick={() => setSelectedTag(tag)}
+                      >
+                        #{tag}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-white/20 bg-white/10 px-4 py-4 backdrop-blur-sm">
+                  <p className="text-xs font-medium text-white/70">Filters applied</p>
+                  <p className="mt-2 text-sm font-semibold text-white">{resultsLabel}</p>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
         {/* Filters */}
-        <section className="rounded-2xl border bg-card p-6 shadow-sm">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <h2 className="text-lg font-semibold text-foreground">Filter posts</h2>
-              <p className="text-sm text-muted-foreground">
-                Showing {Math.min(displayedPosts.length, allFilteredPosts.length)} of {allFilteredPosts.length} posts
-                {(searchTerm || selectedTag || showLikedOnly || showSavedOnly) && (
-                  <span className="ml-1">(filtered from {totalPostsLabel} total)</span>
-                )}
-              </p>
+        <section className="rounded-2xl border border-border bg-card p-6 shadow-md lg:p-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-sm">
+                  <Filter className="h-5 w-5" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-foreground">Filter posts</h2>
+                  <p className="text-sm leading-relaxed text-muted-foreground mt-1">
+                    Showing {Math.min(displayedPosts.length, allFilteredPosts.length)} of {allFilteredPosts.length} posts
+                    {(searchTerm || selectedTag || showLikedOnly || showSavedOnly) && (
+                      <span className="ml-1">(filtered from {totalPostsLabel} total)</span>
+                    )}
+                    {(searchTerm || selectedTag || showLikedOnly || showSavedOnly) && (
+                      <Button variant="link" size="sm" onClick={resetFilters} className="ml-2 h-auto p-0 text-primary font-medium hover:underline">
+                        Clear filters
+                      </Button>
+                    )}
+                  </p>
+                </div>
+              </div>
             </div>
-            {(searchTerm || selectedTag || showLikedOnly || showSavedOnly) && (
-              <Button variant="link" size="sm" onClick={resetFilters} className="h-auto p-0 text-primary">
-                Clear filters
-              </Button>
-            )}
           </div>
-          <div className="mt-5 flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2 min-w-[220px]">
-              <Filter className="h-4 w-4 text-muted-foreground" />
-              <SearchableSelect
-                options={[{ value: '', label: 'All tags' }, ...allTags.map(tag => ({ value: tag, label: tag }))]}
-                value={selectedTag}
-                onChange={setSelectedTag}
-                placeholder="Select a tag..."
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <div className="relative w-full sm:w-80">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search blogs..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 h-11 border-border bg-background focus-visible:ring-2 focus-visible:ring-primary/20 transition-all"
               />
             </div>
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-muted-foreground" />
+              <div className="min-w-[180px]">
+                <SearchableSelect
+                  options={[{ value: '', label: 'All tags' }, ...allTags.map(tag => ({ value: tag, label: tag }))]}
+                  value={selectedTag}
+                  onChange={setSelectedTag}
+                  placeholder="All Tags"
+                  className="w-full"
+                />
+              </div>
+            </div>
             {isAuthenticated && (
-              <div className="flex items-center gap-2">
+              <>
                 <Button
-                  variant={showLikedOnly ? "default" : "outline"}
+                  variant={showLikedOnly ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => setShowLikedOnly(!showLikedOnly)}
-                  className="flex items-center gap-1"
+                  onClick={() => {
+                    setShowLikedOnly(!showLikedOnly)
+                    if (!showLikedOnly) setShowSavedOnly(false)
+                  }}
+                  className={`flex items-center gap-2 whitespace-nowrap h-11 font-medium transition-all ${
+                    showLikedOnly ? 'bg-red-500 hover:bg-red-600 text-white border-red-500' : ''
+                  }`}
                 >
                   <Heart className={`h-4 w-4 ${showLikedOnly ? 'fill-current' : ''}`} />
                   Liked
                 </Button>
                 <Button
-                  variant={showSavedOnly ? "default" : "outline"}
+                  variant={showSavedOnly ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => setShowSavedOnly(!showSavedOnly)}
-                  className="flex items-center gap-1"
+                  onClick={() => {
+                    setShowSavedOnly(!showSavedOnly)
+                    if (!showSavedOnly) setShowLikedOnly(false)
+                  }}
+                  className={`flex items-center gap-2 whitespace-nowrap h-11 font-medium transition-all ${
+                    showSavedOnly ? 'bg-blue-500 hover:bg-blue-600 text-white border-blue-500' : ''
+                  }`}
                 >
                   <Bookmark className={`h-4 w-4 ${showSavedOnly ? 'fill-current' : ''}`} />
                   Saved
                 </Button>
-              </div>
+              </>
             )}
             {(selectedTag || showLikedOnly || showSavedOnly || searchTerm) && (
               <Button
                 variant="outline"
                 size="sm"
                 onClick={resetFilters}
-                className="text-xs whitespace-nowrap"
+                className="whitespace-nowrap h-11 font-medium hover:bg-destructive/10 hover:text-destructive hover:border-destructive"
               >
-                Clear all filters
+                Clear all
               </Button>
             )}
           </div>
           {(searchTerm || selectedTag || showLikedOnly || showSavedOnly) && (
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="mt-5 flex flex-wrap gap-2">
               {searchTerm && (
-                <Badge variant="secondary">Search: {searchTerm}</Badge>
+                <Badge variant="secondary" className="font-medium flex items-center gap-1.5 px-3 py-1">
+                  <span>Search: {searchTerm}</span>
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="ml-1 hover:text-destructive transition-colors"
+                    aria-label="Remove search filter"
+                  >
+                    ×
+                  </button>
+                </Badge>
               )}
               {selectedTag && (
-                <Badge variant="secondary">Tag: {selectedTag}</Badge>
+                <Badge variant="secondary" className="font-medium flex items-center gap-1.5 px-3 py-1">
+                  <span>Tag: {selectedTag}</span>
+                  <button
+                    onClick={() => setSelectedTag('')}
+                    className="ml-1 hover:text-destructive transition-colors"
+                    aria-label="Remove tag filter"
+                  >
+                    ×
+                  </button>
+                </Badge>
               )}
               {showLikedOnly && (
-                <Badge variant="secondary">Liked posts</Badge>
+                <Badge variant="secondary" className="font-medium flex items-center gap-1.5 px-3 py-1 bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-300 dark:border-red-800">
+                  <span>Liked posts</span>
+                  <button
+                    onClick={() => setShowLikedOnly(false)}
+                    className="ml-1 hover:text-red-900 dark:hover:text-red-200 transition-colors"
+                    aria-label="Remove liked filter"
+                  >
+                    ×
+                  </button>
+                </Badge>
               )}
               {showSavedOnly && (
-                <Badge variant="secondary">Saved posts</Badge>
+                <Badge variant="secondary" className="font-medium flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-300 dark:border-blue-800">
+                  <span>Saved posts</span>
+                  <button
+                    onClick={() => setShowSavedOnly(false)}
+                    className="ml-1 hover:text-blue-900 dark:hover:text-blue-200 transition-colors"
+                    aria-label="Remove saved filter"
+                  >
+                    ×
+                  </button>
+                </Badge>
               )}
             </div>
           )}
@@ -489,12 +567,18 @@ const BlogsPage = () => {
         {/* Posts Grid */}
         <section className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {displayedPosts.map((post, index) => (
-            <Card key={`${post.id}-${index}`} className="group relative overflow-hidden bg-card border border-border/50 hover:border-primary/30 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
+            <div
+              key={`${post.id}-${index}`}
+              style={{
+                animation: `fadeInUp 0.5s ease-out ${index * 0.05}s both`
+              }}
+            >
+              <Card className="group relative overflow-hidden bg-card border border-border rounded-2xl shadow-md transition-all duration-300 hover:-translate-y-2 hover:border-primary/30 hover:shadow-2xl h-full flex flex-col">
               {/* Post Header with Abstract Pattern */}
-              <div className="relative h-48 overflow-hidden bg-slate-100 dark:bg-slate-800 group-hover:bg-slate-200 dark:group-hover:bg-slate-700 transition-all duration-300">
+              <div className="relative h-52 overflow-hidden bg-gradient-to-br from-slate-100 via-slate-50 to-slate-100 dark:from-slate-800 dark:via-slate-900 dark:to-slate-800 group-hover:from-slate-200 group-hover:via-slate-100 group-hover:to-slate-200 dark:group-hover:from-slate-700 dark:group-hover:via-slate-800 dark:group-hover:to-slate-700 transition-all duration-300">
                 {/* Abstract geometric pattern */}
-                <div className="absolute inset-0 opacity-10">
-                  <div className="absolute top-4 left-4 w-16 h-16 bg-blue-500 rounded-full"></div>
+                <div className="absolute inset-0 opacity-10 group-hover:opacity-15 transition-opacity duration-300">
+                  <div className="absolute top-4 left-4 w-16 h-16 bg-blue-500 rounded-full animate-soft-pulse"></div>
                   <div className="absolute top-8 right-8 w-12 h-12 bg-purple-500 rounded-lg rotate-45"></div>
                   <div className="absolute bottom-6 left-8 w-20 h-8 bg-pink-500 rounded-full"></div>
                   <div className="absolute bottom-12 right-12 w-8 h-20 bg-green-500 rounded-lg"></div>
@@ -504,124 +588,147 @@ const BlogsPage = () => {
                 {/* Content overlay */}
                  <div className="absolute inset-0 flex flex-col justify-between p-6">
                    <div className="flex justify-between items-start">
-                     <div className="bg-white/90 dark:bg-slate-900/90 px-3 py-1 rounded-full">
-                       <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                     <Badge className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm px-3 py-1 rounded-full border border-white/20 shadow-sm">
+                       <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                          {post.tags[0] || 'Blog'}
                        </span>
-                     </div>
+                     </Badge>
                    </div>
                    
                    <div>
-                     <h3 className="text-slate-800 dark:text-slate-200 font-bold text-xl line-clamp-2 mb-1 drop-shadow-sm">
+                     <h3 className="text-slate-800 dark:text-slate-200 font-bold text-xl line-clamp-2 mb-1 drop-shadow-md">
                        {post.title}
                      </h3>
                    </div>
                  </div>
               </div>
 
-              <CardHeader className="pb-3">
-                <CardDescription className="text-sm text-muted-foreground leading-relaxed line-clamp-3 mb-3">
+              <CardHeader className="pb-4 pt-6">
+                <CardDescription className="text-sm leading-relaxed text-muted-foreground line-clamp-3 mb-4 min-h-[3.75rem]">
                   {post.excerpt}
                 </CardDescription>
                 
                 {/* Tags */}
-                <div className="flex flex-wrap gap-1">
+                <div className="flex flex-wrap gap-1.5">
                   {post.tags.slice(1, 4).map(tag => (
-                    <Badge key={tag} variant="outline" className="text-xs font-medium bg-primary/5 text-primary border-primary/20">
+                    <Badge key={tag} variant="outline" className="text-xs font-medium bg-primary/10 text-primary border-primary/30 px-2 py-0.5">
                       #{tag}
                     </Badge>
                   ))}
                 </div>
               </CardHeader>
               
-              <CardContent className="flex-1 flex flex-col p-4 pt-0">
+              <CardContent className="flex-1 flex flex-col p-6 pt-0 gap-4">
                 {/* Meta Information */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
+                <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                  <div className="flex items-center gap-4 text-xs font-medium text-muted-foreground">
+                    <div className="flex items-center gap-1.5">
+                      <Calendar className="h-3.5 w-3.5" />
                       <span>{formatDate(post.date)}</span>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
+                    <div className="flex items-center gap-1.5">
+                      <Clock className="h-3.5 w-3.5" />
                       <span>{calculateReadTime(post.content)} min read</span>
                     </div>
                   </div>
                   
                   {/* Like and Bookmark buttons */}
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        handleLikeToggle(post.id)
-                      }}
-                      className={`p-1 rounded-full transition-colors ${
-                        userInteractions[post.id]?.isLiked
-                          ? 'text-red-500 hover:text-red-600'
-                          : 'text-muted-foreground hover:text-red-500'
-                      }`}
-                      title={userInteractions[post.id]?.isLiked ? 'Unlike' : 'Like'}
-                    >
-                      <Heart 
-                        className={`h-4 w-4 ${
-                          userInteractions[post.id]?.isLiked ? 'fill-current' : ''
-                        }`} 
-                      />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        handleBookmarkToggle(post.id)
-                      }}
-                      className={`p-1 rounded-full transition-colors ${
-                        userInteractions[post.id]?.isBookmarked
-                          ? 'text-blue-500 hover:text-blue-600'
-                          : 'text-muted-foreground hover:text-blue-500'
-                      }`}
-                      title={userInteractions[post.id]?.isBookmarked ? 'Remove bookmark' : 'Bookmark'}
-                    >
-                      <Bookmark 
-                        className={`h-4 w-4 ${
-                          userInteractions[post.id]?.isBookmarked ? 'fill-current' : ''
-                        }`} 
-                      />
-                    </button>
-                  </div>
+                  {isAuthenticated && (
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          handleLikeToggle(post.id)
+                        }}
+                        className={`p-2 rounded-lg transition-all duration-200 ${
+                          userInteractions[post.id]?.isLiked
+                            ? 'text-red-500 hover:text-red-600 bg-red-50 dark:bg-red-950/30'
+                            : 'text-muted-foreground hover:text-red-500 hover:bg-muted'
+                        }`}
+                        title={userInteractions[post.id]?.isLiked ? 'Unlike' : 'Like'}
+                      >
+                        <Heart 
+                          className={`h-4 w-4 ${
+                            userInteractions[post.id]?.isLiked ? 'fill-current' : ''
+                          }`} 
+                        />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          handleBookmarkToggle(post.id)
+                        }}
+                        className={`p-2 rounded-lg transition-all duration-200 ${
+                          userInteractions[post.id]?.isBookmarked
+                            ? 'text-blue-500 hover:text-blue-600 bg-blue-50 dark:bg-blue-950/30'
+                            : 'text-muted-foreground hover:text-blue-500 hover:bg-muted'
+                        }`}
+                        title={userInteractions[post.id]?.isBookmarked ? 'Remove bookmark' : 'Bookmark'}
+                      >
+                        <Bookmark 
+                          className={`h-4 w-4 ${
+                            userInteractions[post.id]?.isBookmarked ? 'fill-current' : ''
+                          }`} 
+                        />
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Read More Button */}
                 <Button 
-                  className="w-full mt-auto bg-white hover:bg-blue-50 text-blue-600 border-blue-300 dark:bg-transparent dark:border-border dark:text-foreground dark:hover:bg-accent dark:hover:text-accent-foreground font-medium transition-all duration-300 group-hover:shadow-lg" 
+                  className="w-full mt-auto border-2 border-primary/40 bg-gradient-to-r from-primary/10 to-primary/5 font-semibold text-primary transition-all duration-300 hover:border-primary/60 hover:bg-gradient-to-r hover:from-primary/15 hover:to-primary/10 hover:shadow-lg h-10" 
                   variant="outline"
                   asChild
                 >
-                  <Link href={`/blogs/${createSlug(post.title)}`}>
+                  <Link href={`/blogs/${createSlug(post.title)}`} className="flex items-center justify-center">
                     Read More
-                    <ExternalLink className="ml-2 h-4 w-4" />
+                    <ExternalLink className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </Button>
               </CardContent>
             </Card>
+            </div>
           ))}
         </section>
 
         {/* Loading Indicator */}
         {isLoading && (
-          <div className="flex justify-center items-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <span className="ml-2 text-muted-foreground">Loading more posts...</span>
+          <div className="flex flex-col justify-center items-center py-16">
+            <div className="flex items-center gap-3">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <span className="text-base font-medium text-muted-foreground">Loading more posts...</span>
+            </div>
+            <p className="mt-3 text-sm text-muted-foreground">Please wait while we fetch the latest blog posts</p>
           </div>
         )}
 
         {/* End of Results */}
         {!hasMore && displayedPosts.length > 0 && (
-          <div className="text-center py-8">
-            <p className="text-muted-foreground">You have reached the end. {totalPostsLabel} posts loaded.</p>
+          <div className="text-center py-12 rounded-2xl border border-border bg-muted/30">
+            <p className="text-base font-medium text-muted-foreground">
+              You have reached the end of the results.
+            </p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Found {displayedPosts.length} {displayedPosts.length === 1 ? 'post' : 'posts'} matching your criteria.
+            </p>
           </div>
         )}
       </div>
+      <style jsx>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </MainLayout>
   )
 }
