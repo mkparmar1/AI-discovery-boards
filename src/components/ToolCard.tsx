@@ -175,8 +175,8 @@ export default function ToolCard({
   }
   if (viewMode === 'list') {
     return (
-      <Card className="group relative overflow-hidden bg-card border border-border rounded-xl shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg">
-        <div className="absolute inset-x-0 top-0 h-1" style={{ backgroundColor: accent }} />
+      <Card className="group relative overflow-hidden bg-card border border-border rounded-2xl shadow-md transition-all duration-300 ease-out hover:-translate-y-2 hover:border-primary/30 hover:shadow-xl">
+        <div className="absolute inset-x-0 top-0 h-1.5" style={{ backgroundColor: accent }} />
         {/* Like and Save Icons - Top Right */}
         {showInteractionButtons && (
           <div className="absolute top-3 right-3 flex items-center gap-1 z-10">
@@ -206,13 +206,13 @@ export default function ToolCard({
 
         <div className="flex items-center p-6">
           {/* Tool Icon */}
-          <div className="w-12 h-12 rounded-xl flex-shrink-0 border border-border bg-white flex items-center justify-center mr-4 text-sm font-semibold text-foreground">
+          <div className="w-14 h-14 rounded-xl flex-shrink-0 border-2 border-border bg-gradient-to-br from-white to-muted flex items-center justify-center mr-5 text-base font-bold text-foreground shadow-sm transition-transform duration-300 group-hover:scale-110">
             {tool.title.slice(0, 1).toUpperCase()}
           </div>
           
           {/* Tool Info */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
+            <div className="flex items-center gap-2 mb-2">
               <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors duration-300 truncate">
                 {tool.title}
               </h3>
@@ -224,21 +224,21 @@ export default function ToolCard({
               </Badge>
             </div>
             
-            <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+            <p className="text-sm leading-relaxed text-muted-foreground mb-3 line-clamp-2">
               {tool.description}
             </p>
             
             <div className="flex items-center gap-2">
-              <div className="flex flex-wrap gap-1">
+              <div className="flex flex-wrap gap-1.5">
                 {tool.tags.slice(0, 3).map(tag => (
-                  <Badge key={tag} variant="secondary" className="text-xs bg-muted/50 text-muted-foreground">
+                  <Badge key={tag} variant="secondary" className="text-xs bg-muted/50 text-muted-foreground font-medium">
                     #{tag}
                   </Badge>
                 ))}
               </div>
               
               <Badge 
-                className={`border text-xs ml-auto flex-shrink-0 ${pricingBadge.className}`}
+                className={`border text-xs ml-auto flex-shrink-0 font-medium ${pricingBadge.className}`}
               >
                 {pricingBadge.label}
               </Badge>
@@ -246,10 +246,10 @@ export default function ToolCard({
           </div>
           
           {/* Action Buttons */}
-          <div className="ml-4 flex items-center gap-2">
+          <div className="ml-6 flex items-center gap-2">
             {/* CTA Button */}
             <Button 
-              className="btn-gradient font-medium transition-all duration-200 ease-out" 
+              className="btn-gradient font-semibold transition-all duration-300 ease-out hover:shadow-lg" 
               variant="outline"
               asChild
             >
@@ -258,9 +258,10 @@ export default function ToolCard({
                 target="_blank" 
                 rel="noopener noreferrer"
                 onClick={handleToolClick}
+                className="flex items-center"
               >
                 Visit Tool
-                <ExternalLink className="ml-2 h-4 w-4" />
+                <ExternalLink className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </a>
             </Button>
           </div>
@@ -271,8 +272,8 @@ export default function ToolCard({
 
   // Grid view (default)
   return (
-    <Card className="group relative overflow-hidden bg-card border border-border rounded-xl shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg h-full flex flex-col">
-      <div className="absolute inset-x-0 top-0 h-1" style={{ backgroundColor: accent }} />
+    <Card className="group relative overflow-hidden bg-card border border-border rounded-2xl shadow-md transition-all duration-300 ease-out hover:-translate-y-2 hover:border-primary/30 hover:shadow-2xl h-full flex flex-col">
+      <div className="absolute inset-x-0 top-0 h-1.5" style={{ backgroundColor: accent }} />
       {/* Like and Save Icons - Top Right */}
       {showInteractionButtons && (
         <div className="absolute top-3 right-3 flex items-center gap-1 z-10">
@@ -300,52 +301,52 @@ export default function ToolCard({
         </div>
       )}
 
-      <CardHeader className="pb-3 pt-6">
-        <div className="flex items-center justify-between gap-2 mb-3">
-          <Badge variant="outline" className="text-xs font-medium">
+      <CardHeader className="pb-4 pt-6">
+        <div className="flex items-center justify-between gap-2 mb-4">
+          <Badge variant="outline" className="text-xs font-semibold px-2.5 py-0.5">
             {trustSignal}
           </Badge>
-          <span className="text-xs text-muted-foreground">{tool.category}</span>
+          <span className="text-xs font-medium text-muted-foreground">{tool.category}</span>
         </div>
 
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl flex-shrink-0 border border-border bg-white flex items-center justify-center text-sm font-semibold text-foreground">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-14 h-14 rounded-xl flex-shrink-0 border-2 border-border bg-gradient-to-br from-white to-muted flex items-center justify-center text-lg font-bold text-foreground shadow-sm transition-transform duration-300 group-hover:scale-110">
             {tool.title.slice(0, 1).toUpperCase()}
           </div>
 
-          <CardTitle className="text-lg font-bold text-foreground group-hover:text-primary transition-colors duration-200 line-clamp-1">
+          <CardTitle className="text-lg font-bold text-foreground group-hover:text-primary transition-colors duration-300 line-clamp-1 flex-1">
             {tool.title}
           </CardTitle>
         </div>
 
-        <CardDescription className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+        <CardDescription className="text-sm leading-relaxed text-muted-foreground line-clamp-2 min-h-[2.5rem]">
           {tool.description}
         </CardDescription>
       </CardHeader>
       
-      <CardContent className="flex-1 flex flex-col p-4 pt-0">
+      <CardContent className="flex-1 flex flex-col p-6 pt-0 gap-4">
         {/* Tags */}
-        <div className="flex flex-wrap gap-1 mb-3">
+        <div className="flex flex-wrap gap-1.5">
           {tool.tags.slice(0, 3).map(tag => (
-            <Badge key={tag} variant="secondary" className="text-xs bg-muted/50 text-muted-foreground hover:bg-muted transition-colors">
+            <Badge key={tag} variant="secondary" className="text-xs bg-muted/60 text-muted-foreground hover:bg-muted transition-colors font-medium px-2 py-0.5">
               #{tag}
             </Badge>
           ))}
         </div>
 
         {/* Pricing + Clicks */}
-        <div className="mb-4 flex items-center justify-between">
-          <Badge className={`border text-xs ${pricingBadge.className}`}>
+        <div className="flex items-center justify-between pt-2 border-t border-border/50">
+          <Badge className={`border text-xs font-semibold px-2.5 py-0.5 ${pricingBadge.className}`}>
             {pricingBadge.label}
           </Badge>
-          <span className="text-xs text-muted-foreground">{tool.clickCount.toLocaleString()} clicks</span>
+          <span className="text-xs font-medium text-muted-foreground">{tool.clickCount.toLocaleString()} clicks</span>
         </div>
 
         {/* Action Buttons */}
-        <div className="mt-auto">
+        <div className="mt-auto pt-2">
           {/* CTA Button */}
           <Button 
-            className="w-full btn-gradient font-medium transition-all duration-200 ease-out" 
+            className="w-full btn-gradient font-semibold transition-all duration-300 ease-out hover:shadow-lg h-10" 
             variant="outline"
             asChild
           >
@@ -354,9 +355,10 @@ export default function ToolCard({
               target="_blank" 
               rel="noopener noreferrer"
               onClick={handleToolClick}
+              className="flex items-center justify-center"
             >
               Visit Tool
-              <ExternalLink className="ml-2 h-4 w-4" />
+              <ExternalLink className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </a>
           </Button>
         </div>

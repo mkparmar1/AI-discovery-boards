@@ -189,13 +189,18 @@ export default function ToolsPage() {
   if (isError) {
     return (
       <MainLayout>
-        <div className="py-12">
-          <div className="rounded-2xl border bg-card p-8 text-center shadow-sm">
-            <h2 className="text-2xl font-semibold text-foreground mb-4">Error Loading Tools</h2>
-            <p className="text-muted-foreground mb-4">
+        <div className="py-16">
+          <div className="rounded-2xl border border-destructive/50 bg-destructive/5 p-10 text-center shadow-lg max-w-2xl mx-auto">
+            <div className="flex justify-center mb-4">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
+                <span className="text-2xl">⚠️</span>
+              </div>
+            </div>
+            <h2 className="text-2xl font-bold text-foreground mb-3">Error Loading Tools</h2>
+            <p className="text-base leading-relaxed text-muted-foreground mb-6">
               {error?.message || 'Failed to load tools. Please try again.'}
             </p>
-            <Button onClick={() => window.location.reload()}>
+            <Button onClick={() => window.location.reload()} className="btn-gradient">
               Retry
             </Button>
           </div>
@@ -208,71 +213,79 @@ export default function ToolsPage() {
     <MainLayout>
       <div className="space-y-10">
         {/* Hero */}
-        <section className="relative overflow-hidden rounded-3xl border bg-slate-950 text-white">
+        <section className="relative overflow-hidden rounded-3xl border border-border/50 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white shadow-2xl">
+          {/* Animated background gradients */}
           <div className="pointer-events-none absolute inset-0">
-            <div className="absolute -top-24 right-0 h-72 w-72 rounded-full bg-indigo-500/30 blur-3xl" />
-            <div className="absolute -bottom-24 left-0 h-72 w-72 rounded-full bg-sky-500/30 blur-3xl" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.12),_transparent_55%)]" />
+            <div className="absolute -top-24 -right-24 h-96 w-96 animate-soft-pulse rounded-full bg-indigo-500/20 blur-3xl" />
+            <div className="absolute -bottom-24 -left-24 h-96 w-96 animate-soft-pulse rounded-full bg-sky-500/20 blur-3xl" style={{ animationDelay: '0.5s' }} />
+            <div className="absolute top-1/2 left-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-purple-500/10 blur-3xl" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,_rgba(120,119,198,0.15),_transparent_50%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,_rgba(59,130,246,0.15),_transparent_50%)]" />
           </div>
-          <div className="relative grid gap-10 px-6 py-12 lg:grid-cols-[1.2fr_0.8fr] lg:px-12">
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/70">
-                <Sparkles className="h-3.5 w-3.5" />
+          
+          <div className="relative grid gap-10 px-6 py-16 lg:grid-cols-[1.2fr_0.8fr] lg:px-12 lg:py-20">
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm px-4 py-1.5 text-xs uppercase tracking-[0.2em] text-white/80 shadow-lg">
+                <Sparkles className="h-3.5 w-3.5 animate-pulse" />
                 AI Tools
               </div>
-              <h1 className="mt-4 font-display text-4xl font-semibold tracking-tight md:text-5xl">
-                Find the AI tools that fit your stack.
+              <h1 className="font-display text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
+                Find the{' '}
+                <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                  AI tools
+                </span>
+                {' '}that fit your stack.
               </h1>
-              <p className="mt-4 max-w-xl text-sm text-white/70 md:text-base">
+              <p className="max-w-xl text-base leading-relaxed text-white/80 md:text-lg">
                 Filter by category, tags, and community favorites to uncover the tools worth trying this week.
               </p>
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                <div className="relative flex-1">
-                  <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-white/60" />
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <div className="relative flex-1 group">
+                  <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white/60 transition-colors group-focus-within:text-white/90" />
                   <Input
                     type="text"
                     placeholder="Search AI tools..."
                     value={rawSearchTerm}
                     onChange={(e) => setRawSearchTerm(e.target.value)}
-                    className="h-11 border-white/10 bg-white/10 pl-10 text-white placeholder:text-white/60 focus-visible:ring-white/40"
+                    className="h-12 border-white/20 bg-white/10 pl-12 pr-4 text-white placeholder:text-white/60 backdrop-blur-sm transition-all duration-300 focus-visible:border-white/40 focus-visible:bg-white/15 focus-visible:ring-2 focus-visible:ring-white/30"
                   />
                 </div>
-                <Button asChild className="h-11 bg-white text-slate-900 hover:bg-white/90">
-                  <Link href="/tools">
+                <Button asChild className="h-12 px-8 btn-gradient shadow-lg hover:shadow-xl">
+                  <Link href="/tools" className="flex items-center">
                     Explore tools
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </Button>
               </div>
-              <div className="mt-8 grid gap-4 sm:grid-cols-3">
-                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                  <p className="text-xs uppercase tracking-widest text-white/60">Tools tracked</p>
-                  <p className="mt-1 text-2xl font-semibold">{totalCountLabel}</p>
+              <div className="grid gap-4 pt-4 sm:grid-cols-3">
+                <div className="group cursor-pointer rounded-2xl border border-white/20 bg-white/10 px-5 py-5 backdrop-blur-sm shadow-lg transition-all duration-300 hover:scale-[1.03] hover:border-white/30 hover:bg-white/15 hover:shadow-xl">
+                  <p className="text-xs font-medium uppercase tracking-widest text-white/70">Tools tracked</p>
+                  <p className="mt-4 text-3xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">{totalCountLabel}</p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                  <p className="text-xs uppercase tracking-widest text-white/60">Categories</p>
-                  <p className="mt-1 text-2xl font-semibold">{categoryCountLabel}</p>
+                <div className="group cursor-pointer rounded-2xl border border-white/20 bg-white/10 px-5 py-5 backdrop-blur-sm shadow-lg transition-all duration-300 hover:scale-[1.03] hover:border-white/30 hover:bg-white/15 hover:shadow-xl">
+                  <p className="text-xs font-medium uppercase tracking-widest text-white/70">Categories</p>
+                  <p className="mt-4 text-3xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">{categoryCountLabel}</p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                  <p className="text-xs uppercase tracking-widest text-white/60">Tags</p>
-                  <p className="mt-1 text-2xl font-semibold">{tagCountLabel}</p>
+                <div className="group cursor-pointer rounded-2xl border border-white/20 bg-white/10 px-5 py-5 backdrop-blur-sm shadow-lg transition-all duration-300 hover:scale-[1.03] hover:border-white/30 hover:bg-white/15 hover:shadow-xl">
+                  <p className="text-xs font-medium uppercase tracking-widest text-white/70">Tags</p>
+                  <p className="mt-4 text-3xl font-bold bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">{tagCountLabel}</p>
                 </div>
               </div>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-semibold">Quick filters</p>
-                <span className="text-xs text-white/60">Refine results</span>
+            <div className="rounded-2xl border border-white/20 bg-white/10 p-6 backdrop-blur-sm shadow-xl lg:p-8">
+              <div className="flex items-center justify-between mb-6">
+                <p className="text-sm font-semibold text-white">Quick filters</p>
+                <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">Refine results</span>
               </div>
-              <div className="mt-5 space-y-4">
+              <div className="space-y-5">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-white/60">Trending tags</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
+                  <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/70 mb-3">Trending tags</p>
+                  <div className="flex flex-wrap gap-2">
                     {allTags.slice(0, 6).map(tag => (
                       <Button
                         key={tag}
                         variant="ghost"
-                        className="h-8 rounded-full border border-white/10 bg-white/5 px-4 text-xs text-white hover:bg-white/10"
+                        className="h-8 rounded-full border border-white/20 bg-white/10 px-4 text-xs font-medium text-white backdrop-blur-sm transition-all duration-300 hover:border-white/30 hover:bg-white/15 hover:shadow-md"
                         onClick={() => setSelectedTag(tag)}
                       >
                         #{tag}
@@ -280,9 +293,9 @@ export default function ToolsPage() {
                     ))}
                   </div>
                 </div>
-                <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-                  <p className="text-xs text-white/60">Filters applied</p>
-                  <p className="mt-1 text-sm font-medium">{resultsLabel}</p>
+                <div className="rounded-xl border border-white/20 bg-white/10 px-4 py-4 backdrop-blur-sm">
+                  <p className="text-xs font-medium text-white/70">Filters applied</p>
+                  <p className="mt-2 text-sm font-semibold text-white">{resultsLabel}</p>
                 </div>
               </div>
             </div>
@@ -290,50 +303,61 @@ export default function ToolsPage() {
         </section>
 
         {/* Filters */}
-        <section className="rounded-2xl border bg-card p-6 shadow-sm">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <h2 className="text-lg font-semibold text-foreground">Filter tools</h2>
-              <p className="text-sm text-muted-foreground">
-                {resultsLabel}
-                {(debouncedSearchTerm || selectedCategory !== 'all' || selectedTag !== 'all' || showLikedOnly || showSavedOnly) && (
-                  <Button
-                    variant="link"
-                    size="sm"
-                    onClick={resetFilters}
-                    className="ml-2 h-auto p-0 text-primary"
-                  >
-                    Clear filters
-                  </Button>
-                )}
-              </p>
+        <section className="rounded-2xl border border-border bg-card p-6 shadow-md lg:p-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-sm">
+                  <Filter className="h-5 w-5" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-foreground">Filter tools</h2>
+                  <p className="text-sm leading-relaxed text-muted-foreground mt-1">
+                    {resultsLabel}
+                    {(debouncedSearchTerm || selectedCategory !== 'all' || selectedTag !== 'all' || showLikedOnly || showSavedOnly) && (
+                      <Button
+                        variant="link"
+                        size="sm"
+                        onClick={resetFilters}
+                        className="ml-2 h-auto p-0 text-primary font-medium hover:underline"
+                      >
+                        Clear filters
+                      </Button>
+                    )}
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/50 p-1 shadow-sm">
               <Button
-                variant={viewMode === 'grid' ? 'default' : 'outline'}
+                variant={viewMode === 'grid' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewMode('grid')}
+                className="flex items-center gap-2 font-medium"
               >
                 <Grid className="h-4 w-4" />
+                <span className="hidden sm:inline">Grid</span>
               </Button>
               <Button
-                variant={viewMode === 'list' ? 'default' : 'outline'}
+                variant={viewMode === 'list' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewMode('list')}
+                className="flex items-center gap-2 font-medium"
               >
                 <List className="h-4 w-4" />
+                <span className="hidden sm:inline">List</span>
               </Button>
             </div>
           </div>
-          <div className="mt-5 flex flex-wrap items-center gap-3">
-            <div className="relative w-full sm:w-72">
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <div className="relative w-full sm:w-80">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder="Search AI tools..."
                 value={rawSearchTerm}
                 onChange={(e) => setRawSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 h-11 border-border bg-background focus-visible:ring-2 focus-visible:ring-primary/20 transition-all"
               />
             </div>
             <div className="flex items-center gap-2">
@@ -366,7 +390,9 @@ export default function ToolsPage() {
                     setShowLikedOnly(!showLikedOnly)
                     setShowSavedOnly(false)
                   }}
-                  className="flex items-center gap-2 whitespace-nowrap"
+                  className={`flex items-center gap-2 whitespace-nowrap h-11 font-medium transition-all ${
+                    showLikedOnly ? 'bg-red-500 hover:bg-red-600 text-white border-red-500' : ''
+                  }`}
                 >
                   <Heart className={`h-4 w-4 ${showLikedOnly ? 'fill-current' : ''}`} />
                   Liked
@@ -378,7 +404,9 @@ export default function ToolsPage() {
                     setShowSavedOnly(!showSavedOnly)
                     setShowLikedOnly(false)
                   }}
-                  className="flex items-center gap-2 whitespace-nowrap"
+                  className={`flex items-center gap-2 whitespace-nowrap h-11 font-medium transition-all ${
+                    showSavedOnly ? 'bg-blue-500 hover:bg-blue-600 text-white border-blue-500' : ''
+                  }`}
                 >
                   <Bookmark className={`h-4 w-4 ${showSavedOnly ? 'fill-current' : ''}`} />
                   Saved
@@ -390,28 +418,73 @@ export default function ToolsPage() {
                 variant="outline"
                 size="sm"
                 onClick={resetFilters}
-                className="whitespace-nowrap"
+                className="whitespace-nowrap h-11 font-medium hover:bg-destructive/10 hover:text-destructive hover:border-destructive"
               >
                 Clear all
               </Button>
             )}
           </div>
           {(debouncedSearchTerm || selectedCategory !== 'all' || selectedTag !== 'all' || showLikedOnly || showSavedOnly) && (
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="mt-5 flex flex-wrap gap-2">
               {debouncedSearchTerm && (
-                <Badge variant="secondary">Search: {debouncedSearchTerm}</Badge>
+                <Badge variant="secondary" className="font-medium flex items-center gap-1.5 px-3 py-1">
+                  <span>Search: {debouncedSearchTerm}</span>
+                  <button
+                    onClick={() => setRawSearchTerm('')}
+                    className="ml-1 hover:text-destructive transition-colors"
+                    aria-label="Remove search filter"
+                  >
+                    ×
+                  </button>
+                </Badge>
               )}
               {selectedCategory !== 'all' && (
-                <Badge variant="secondary">Category: {selectedCategory}</Badge>
+                <Badge variant="secondary" className="font-medium flex items-center gap-1.5 px-3 py-1">
+                  <span>Category: {selectedCategory}</span>
+                  <button
+                    onClick={() => setSelectedCategory('all')}
+                    className="ml-1 hover:text-destructive transition-colors"
+                    aria-label="Remove category filter"
+                  >
+                    ×
+                  </button>
+                </Badge>
               )}
               {selectedTag !== 'all' && (
-                <Badge variant="secondary">Tag: {selectedTag}</Badge>
+                <Badge variant="secondary" className="font-medium flex items-center gap-1.5 px-3 py-1">
+                  <span>Tag: {selectedTag}</span>
+                  <button
+                    onClick={() => setSelectedTag('all')}
+                    className="ml-1 hover:text-destructive transition-colors"
+                    aria-label="Remove tag filter"
+                  >
+                    ×
+                  </button>
+                </Badge>
               )}
               {showLikedOnly && (
-                <Badge variant="secondary">Liked tools</Badge>
+                <Badge variant="secondary" className="font-medium flex items-center gap-1.5 px-3 py-1 bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-300 dark:border-red-800">
+                  <span>Liked tools</span>
+                  <button
+                    onClick={() => setShowLikedOnly(false)}
+                    className="ml-1 hover:text-red-900 dark:hover:text-red-200 transition-colors"
+                    aria-label="Remove liked filter"
+                  >
+                    ×
+                  </button>
+                </Badge>
               )}
               {showSavedOnly && (
-                <Badge variant="secondary">Saved tools</Badge>
+                <Badge variant="secondary" className="font-medium flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-300 dark:border-blue-800">
+                  <span>Saved tools</span>
+                  <button
+                    onClick={() => setShowSavedOnly(false)}
+                    className="ml-1 hover:text-blue-900 dark:hover:text-blue-200 transition-colors"
+                    aria-label="Remove saved filter"
+                  >
+                    ×
+                  </button>
+                </Badge>
               )}
             </div>
           )}
@@ -419,9 +492,12 @@ export default function ToolsPage() {
 
         {/* Loading State */}
         {isLoading && (
-          <div className="flex justify-center items-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <span className="ml-2 text-muted-foreground">Loading tools...</span>
+          <div className="flex flex-col justify-center items-center py-16">
+            <div className="flex items-center gap-3">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <span className="text-base font-medium text-muted-foreground">Loading tools...</span>
+            </div>
+            <p className="mt-3 text-sm text-muted-foreground">Please wait while we fetch the latest AI tools</p>
           </div>
         )}
 
@@ -429,19 +505,27 @@ export default function ToolsPage() {
         {!isLoading && (
           <>
             {displayedTools.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground text-lg">
-                  No tools found matching your criteria.
-                </p>
-                {(debouncedSearchTerm || selectedCategory !== 'all' || selectedTag !== 'all') && (
-                  <Button
-                    variant="outline"
-                    onClick={resetFilters}
-                    className="mt-4"
-                  >
-                    Clear filters
-                  </Button>
-                )}
+              <div className="text-center py-16 rounded-2xl border border-border bg-card shadow-sm">
+                <div className="max-w-md mx-auto space-y-4">
+                  <div className="flex justify-center">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                      <Search className="h-8 w-8 text-muted-foreground" />
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground">No tools found</h3>
+                  <p className="text-base leading-relaxed text-muted-foreground">
+                    No tools found matching your criteria. Try adjusting your filters or search terms.
+                  </p>
+                  {(debouncedSearchTerm || selectedCategory !== 'all' || selectedTag !== 'all') && (
+                    <Button
+                      variant="outline"
+                      onClick={resetFilters}
+                      className="mt-4"
+                    >
+                      Clear filters
+                    </Button>
+                  )}
+                </div>
               </div>
             ) : (
               <div className={
@@ -449,28 +533,34 @@ export default function ToolsPage() {
                   ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
                   : 'space-y-4'
               }>
-                {displayedTools.map((tool) => (
-                  <ToolCard
+                {displayedTools.map((tool, index) => (
+                  <div
                     key={tool.id}
-                    tool={tool}
-                    viewMode={viewMode}
-                    isLiked={userInteractions[tool.id]?.isLiked || false}
-                    isBookmarked={userInteractions[tool.id]?.isBookmarked || false}
-                    onLikeToggle={handleLikeToggle}
-                    onBookmarkToggle={handleBookmarkToggle}
-                    showInteractionButtons
-                  />
+                    style={{
+                      animation: `fadeInUp 0.5s ease-out ${index * 0.05}s both`
+                    }}
+                  >
+                    <ToolCard
+                      tool={tool}
+                      viewMode={viewMode}
+                      isLiked={userInteractions[tool.id]?.isLiked || false}
+                      isBookmarked={userInteractions[tool.id]?.isBookmarked || false}
+                      onLikeToggle={handleLikeToggle}
+                      onBookmarkToggle={handleBookmarkToggle}
+                      showInteractionButtons
+                    />
+                  </div>
                 ))}
               </div>
             )}
 
             {/* Load More Trigger */}
             {hasNextPage && (
-              <div ref={sentinelRef} className="flex justify-center py-8">
+              <div ref={sentinelRef} className="flex justify-center py-12">
                 {isFetchingNextPage && (
-                  <div className="flex items-center gap-2">
-                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                    <span className="text-muted-foreground">Loading more tools...</span>
+                  <div className="flex flex-col items-center gap-3">
+                    <Loader2 className="h-7 w-7 animate-spin text-primary" />
+                    <span className="text-sm font-medium text-muted-foreground">Loading more tools...</span>
                   </div>
                 )}
               </div>
@@ -478,15 +568,30 @@ export default function ToolsPage() {
 
             {/* End of results */}
             {!hasNextPage && displayedTools.length > 0 && (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">
+              <div className="text-center py-12 rounded-2xl border border-border bg-muted/30">
+                <p className="text-base font-medium text-muted-foreground">
                   You have reached the end of the results.
+                </p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Found {displayedTools.length} {displayedTools.length === 1 ? 'tool' : 'tools'} matching your criteria.
                 </p>
               </div>
             )}
           </>
         )}
       </div>
+      <style jsx>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </MainLayout>
   )
 }
