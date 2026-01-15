@@ -8,17 +8,18 @@ import Tool from '@/models/Tool'
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     await connectDB()
 
     // Delete by _id (MongoDB ObjectId)
-    const result = await Tool.findByIdAndDelete(params.id)
+    const result = await Tool.findByIdAndDelete(id)
 
     if (!result) {
       // Try deleting by the 'id' field if _id doesn't work
-      const resultById = await Tool.findOneAndDelete({ id: params.id })
+      const resultById = await Tool.findOneAndDelete({ id: id })
       if (!resultById) {
         return NextResponse.json(
           { success: false, error: 'Tool not found' },

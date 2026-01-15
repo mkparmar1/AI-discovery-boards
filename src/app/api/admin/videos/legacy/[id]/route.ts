@@ -5,7 +5,7 @@ import LearnAIVideo from '@/models/LearnAIVideo'
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const adminUser = await getAdminUserFromRequest(request)
@@ -16,9 +16,10 @@ export async function DELETE(
       )
     }
 
+    const { id } = await params
     await connectDB()
     
-    const video = await LearnAIVideo.findByIdAndDelete(params.id)
+    const video = await LearnAIVideo.findByIdAndDelete(id)
     
     if (!video) {
       return NextResponse.json(

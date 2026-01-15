@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     if (slug) {
       // Get single blog by slug
-      const blog = await AdminBlogService.getBySlug(slug)
+      const blog = await AdminBlogService.getBySlug(slug) as any
       if (!blog || blog.status !== 'published') {
         return NextResponse.json(
           { success: false, error: 'Blog not found' },

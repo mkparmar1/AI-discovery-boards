@@ -45,7 +45,7 @@ export async function GET() {
       .limit(3)
       .lean()
 
-    let videos: VideoDoc[] = trendingVideos as VideoDoc[]
+    let videos: VideoDoc[] = trendingVideos as unknown as VideoDoc[]
 
     if (videos.length < 3) {
       const latestVideos = await LearnAIVideo.find({ status: 'Active' })
@@ -56,7 +56,7 @@ export async function GET() {
       const existingIds = new Set(videos.map(video => String(video._id)))
       const available = latestVideos.filter(video => !existingIds.has(String(video._id)))
       const fill = shuffle(available).slice(0, 3 - videos.length)
-      videos = videos.concat(fill as VideoDoc[])
+      videos = videos.concat(fill as unknown as VideoDoc[])
     }
 
     return NextResponse.json({

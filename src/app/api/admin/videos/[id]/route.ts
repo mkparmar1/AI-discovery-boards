@@ -4,7 +4,7 @@ import { getAdminUserFromRequest } from '@/lib/auth'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const adminUser = await getAdminUserFromRequest(request)
@@ -15,7 +15,8 @@ export async function GET(
       )
     }
 
-    const video = await AdminVideoService.getById(params.id)
+    const { id } = await params
+    const video = await AdminVideoService.getById(id)
     
     if (!video) {
       return NextResponse.json(
@@ -39,7 +40,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const adminUser = await getAdminUserFromRequest(request)
@@ -50,8 +51,9 @@ export async function PUT(
       )
     }
 
+    const { id } = await params
     const body = await request.json()
-    const video = await AdminVideoService.update(params.id, body)
+    const video = await AdminVideoService.update(id, body)
 
     if (!video) {
       return NextResponse.json(
@@ -76,7 +78,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const adminUser = await getAdminUserFromRequest(request)
@@ -87,7 +89,8 @@ export async function DELETE(
       )
     }
 
-    const video = await AdminVideoService.delete(params.id)
+    const { id } = await params
+    const video = await AdminVideoService.delete(id)
 
     if (!video) {
       return NextResponse.json(

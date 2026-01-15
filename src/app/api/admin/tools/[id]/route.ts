@@ -4,7 +4,7 @@ import { getAdminUserFromRequest } from '@/lib/auth'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const adminUser = await getAdminUserFromRequest(request)
@@ -15,7 +15,8 @@ export async function GET(
       )
     }
 
-    const tool = await AdminToolService.getById(params.id)
+    const { id } = await params
+    const tool = await AdminToolService.getById(id)
     
     if (!tool) {
       return NextResponse.json(
@@ -39,7 +40,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const adminUser = await getAdminUserFromRequest(request)
@@ -50,8 +51,9 @@ export async function PUT(
       )
     }
 
+    const { id } = await params
     const body = await request.json()
-    const tool = await AdminToolService.update(params.id, body)
+    const tool = await AdminToolService.update(id, body)
 
     if (!tool) {
       return NextResponse.json(
@@ -76,7 +78,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const adminUser = await getAdminUserFromRequest(request)
@@ -87,7 +89,8 @@ export async function DELETE(
       )
     }
 
-    const tool = await AdminToolService.delete(params.id)
+    const { id } = await params
+    const tool = await AdminToolService.delete(id)
 
     if (!tool) {
       return NextResponse.json(

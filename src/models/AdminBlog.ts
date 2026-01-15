@@ -59,7 +59,7 @@ const AdminBlogSchema: Schema = new Schema<IAdminBlog>({
 
 // Auto-generate slug from title if not provided
 AdminBlogSchema.pre('save', function (next) {
-  if (!this.slug && this.title) {
+  if (!this.slug && this.title && typeof this.title === 'string') {
     this.slug = this.title
       .toLowerCase()
       .replace(/[^a-z0-9 -]/g, '')
