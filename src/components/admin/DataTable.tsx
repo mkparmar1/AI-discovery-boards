@@ -147,6 +147,9 @@ export default function DataTable<T extends { _id: string }>({
                 className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
               >
                 <option value="">All Status</option>
+                <option value="new">New</option>
+                <option value="read">Read</option>
+                <option value="archived">Archived</option>
                 <option value="draft">Draft</option>
                 <option value="published">Published</option>
               </select>
