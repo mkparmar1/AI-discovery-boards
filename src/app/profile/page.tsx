@@ -72,8 +72,48 @@ export default function ProfilePage() {
   const [prompts, setPrompts] = useState<PromptForm[]>([emptyPrompt()])
   const [promptOptions, setPromptOptions] = useState<SelectOption[]>([])
   const [isLoadingPrompts, setIsLoadingPrompts] = useState(false)
+  const [refreshingUser, setRefreshingUser] = useState(false)
 
-  const isAdmin = useMemo(() => user?.role === 'admin', [user?.role])
+  // Debug: Log user object to see structure
+  useEffect(() => {
+    if (user) {
+      console.log('🔍 User object in profile:', user)
+      console.log('🔍 User role:', user.role)
+      console.log('🔍 Is admin?', user.role === 'admin')
+    }
+  }, [user])
+
+  const isAdmin = useMemo(() => {
+    // Check multiple possible ways the role might be stored
+    const role = user?.role || (user as any)?.role || (user as any)?.userRole
+    const isAdminUser = role === 'admin'
+    console.log('🔍 Admin check - role:', role, 'isAdmin:', isAdminUser)
+    return isAdminUser
+  }, [user?.role])
+
+  // Manual refresh function (no auto-refresh to prevent loops)
+  const handleRefreshRole = async () => {
+    if (!user?.id) return
+    
+    try {
+      setRefreshingUser(true)
+      const response = await fetch(`/api/auth/me?userId=${user.id}`)
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success && data.user) {
+          // Update localStorage with fresh user data
+          localStorage.setItem('user', JSON.stringify(data.user))
+          // Reload page to update AuthContext
+          window.location.reload()
+        }
+      }
+    } catch (error) {
+      console.error('Error refreshing user data:', error)
+      alert('Failed to refresh role. Please try logging out and back in.')
+    } finally {
+      setRefreshingUser(false)
+    }
+  }
 
   const updateTool = (index: number, field: keyof ToolForm, value: string) => {
     setTools(prev => {
@@ -416,8 +456,42 @@ export default function ProfilePage() {
             <CardTitle>Account</CardTitle>
             <CardDescription>Signed in as {user?.email}</CardDescription>
           </CardHeader>
-          <CardContent className="flex items-center gap-2">
-            <Badge variant="secondary">{user?.role || 'user'}</Badge>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary">{user?.role || 'user'}</Badge>
+              {refreshingUser && (
+                <span className="text-sm text-muted-foreground ml-2">Refreshing...</span>
+              )}
+              {isAdmin && (
+                <Button asChild className="ml-auto">
+                  <Link href="/admin/dashboard">Go to Admin Panel</Link>
+                </Button>
+              )}
+              {!isAdmin && user?.id && (
+                <Button 
+                  variant="outline" 
+                  className="ml-auto"
+                  onClick={handleRefreshRole}
+                  disabled={refreshingUser}
+                >
+                  {refreshingUser ? 'Refreshing...' : 'Refresh Role'}
+                </Button>
+              )}
+            </div>
+            
+            {/* Debug info - remove in production */}
+            {process.env.NODE_ENV === 'development' && (
+              <div className="text-xs text-muted-foreground border-t pt-2 mt-2">
+                <p><strong>Debug Info:</strong></p>
+                <p>Role from user object: {user?.role || 'undefined'}</p>
+                <p>Is Admin check: {isAdmin ? 'true' : 'false'}</p>
+                <p>User ID: {user?.id || 'undefined'}</p>
+                <details className="mt-1">
+                  <summary className="cursor-pointer">Full user object</summary>
+                  <pre className="mt-1 text-xs overflow-auto">{JSON.stringify(user, null, 2)}</pre>
+                </details>
+              </div>
+            )}
           </CardContent>
         </Card>
         

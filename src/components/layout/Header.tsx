@@ -16,7 +16,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
   // Authentication state from localStorage
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [showProfileDropdown, setShowProfileDropdown] = useState(false)
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null)
+  const [user, setUser] = useState<{ name: string; email: string; role?: string } | null>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
 
@@ -144,6 +144,15 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
                       <User className="mr-2 h-4 w-4" />
                       Profile
                     </Link>
+                    {user && user.role === 'admin' && (
+                      <Link
+                        href="/admin/dashboard"
+                        className="flex w-full items-center px-3 py-2 text-sm hover:bg-accent rounded-sm"
+                      >
+                        <User className="mr-2 h-4 w-4" />
+                        Admin Panel
+                      </Link>
+                    )}
                     <button 
                       onClick={handleLogout}
                       className="flex w-full items-center px-3 py-2 text-sm hover:bg-accent rounded-sm text-red-600"
